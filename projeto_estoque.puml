@@ -1,0 +1,22 @@
+@startuml
+'https://plantuml.com/use-case-diagram
+
+(Cadastrar escola) as (UC01)
+(Cadastrar Alimento) as (UC02)
+(Cadastrar Fornecedor) as (UC03)
+(Consultar Histórico de Entregas de Fornecedor) as (UC04)
+(Registrar Entrada de Alimento) as (UC05)
+(Registrar Saída de Alimento) as (UC06)
+(Emitir Guia de Movimentação) as (UC07)
+(Consultar Estoque de Escola) as (UC08)
+
+
+Usuario -> (UC01)
+Usuario --> (UC02)
+Usuario --> (UC03)
+Usuario ---> (UC04)
+Usuario ---> (UC05)
+Usuario ----> (UC06)
+Usuario --> (UC07)
+Usuario --> (UC08)
+@enduml
