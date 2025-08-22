@@ -3,6 +3,8 @@
 skinparam classAttributeIconSize 0
 hide empty members
 
+left to right direction
+
 class Usuario {
     -idUsuario: int
     -login: string
@@ -46,24 +48,31 @@ class Fornecedor {
 abstract class Movimentacao {
     -idMovimentacao: int
     -data: date
-    -quantidadeAlimento: int
     +imprimirGuia(): void
 }
 
 class Entrada extends Movimentacao {}
 class Saida extends Movimentacao {}
 
+class Item {
+    - quantidade: int
+}
+
 
 Usuario "1" -- "0..*" Movimentacao : registra
 
-Movimentacao "0..*" -- "1..*" Alimento : refere-se a
+' Movimentacao "0..*" -- "1..*" Alimento : refere-se a
+
+Item "1..*" -- "1" Movimentacao
+
+Alimento "1" -- "0..*" Item
 
 Entrada "0..*" -- "1" Fornecedor : contém
 
-Saida "0..*" -- "1" Escola : solicitada por
+Saida "0..*" -- "1" Escola : vai para
 
-Fornecedor "0..*" -- "0..*" Alimento : fornece
+' Fornecedor "0..*" -- "0..*" Alimento : fornece
 
-Escola "0..*" -- "0..*" Alimento : recebe
+' Escola "0..*" -- "0..*" Alimento : recebe
 
 @enduml
