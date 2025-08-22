@@ -1,0 +1,78 @@
+@startuml
+
+skinparam classAttributeIconSize 0
+hide empty members
+
+left to right direction
+
+class Usuario {
+    -idUsuario: int
+    -login: string
+    -senha: string
+    +autenticar(): bool
+    +registrarEntradaAlimento(): void
+    +registrarSaidaAlimento(): void
+    +consultarEstoque(): void
+    +consultarHistorico(): void
+}
+
+class Administrador extends Usuario {
+    +cadastrarEscola(): void
+    +cadastrarAlimento(): void
+    +cadastrarFornecedor(): void
+}
+
+class Escola {
+    -idEscola: int
+    -codigo: string
+    -nome: string
+    -endereco: string
+    -numeroAlunos: int
+}
+
+class Alimento {
+    -idAlimento: int
+    -nome: string
+    -unidadeMedida: string
+    -categoria: string
+    -mediaConsumida: float
+    -quantidadeEmEstoque: int 
+}
+
+class Fornecedor {
+    -idFornecedor: int
+    -nomeRazaoSocial: string
+    -contato: string
+}
+
+abstract class Movimentacao {
+    -idMovimentacao: int
+    -data: date
+    +imprimirGuia(): void
+}
+
+class Entrada extends Movimentacao {}
+class Saida extends Movimentacao {}
+
+class Item {
+    - quantidade: int
+}
+
+
+Usuario "1" -- "0..*" Movimentacao : registra
+
+' Movimentacao "0..*" -- "1..*" Alimento : refere-se a
+
+Item "1..*" -- "1" Movimentacao
+
+Alimento "1" -- "0..*" Item
+
+Entrada "0..*" -- "1" Fornecedor : contém
+
+Saida "0..*" -- "1" Escola : vai para
+
+' Fornecedor "0..*" -- "0..*" Alimento : fornece
+
+' Escola "0..*" -- "0..*" Alimento : recebe
+
+@enduml
