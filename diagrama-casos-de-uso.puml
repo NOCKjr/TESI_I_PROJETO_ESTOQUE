@@ -21,6 +21,6 @@ Usuario ---> (UC04)
 Usuario ---> (UC05)
 Usuario --> (UC08)
 
-(UC05) .. (UC07) : <<extend>>
+(UC05) <.. (UC07) : <<extend>>
 ' (UC06) .. (UC07) : <<extend>>
 @enduml

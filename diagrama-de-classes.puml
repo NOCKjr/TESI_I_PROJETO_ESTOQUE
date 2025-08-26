@@ -45,14 +45,12 @@ class Fornecedor {
     -contato: string
 }
 
-abstract class Movimentacao {
+class Movimentacao {
     -idMovimentacao: int
     -data: date
+    -tipo: enum 
     +imprimirGuia(): void
 }
-
-class Entrada extends Movimentacao {}
-class Saida extends Movimentacao {}
 
 class Item {
     - quantidade: int
@@ -65,8 +63,8 @@ Item "1..*" -- "1" Movimentacao
 
 Insumo "1" -- "0..*" Item
 
-Entrada "0..*" -- "1" Fornecedor : contém
+Movimentacao "0..*" -- "1" Fornecedor : contém
 
-Saida "0..*" -- "1" Escola : vai para
+Movimentacao "0..*" -- "1" Escola : vai para
 
 @enduml
