@@ -2,7 +2,7 @@
 'https://plantuml.com/use-case-diagram
 
 (Cadastrar escola) as (UC01)
-(Cadastrar Alimento) as (UC02)
+(Cadastrar Insumo) as (UC02)
 (Cadastrar Fornecedor) as (UC03)
 (Consultar Histórico de movimentações) as (UC04)
 (Movimentar Itens) as (UC05)
@@ -22,5 +22,5 @@ Usuario ---> (UC05)
 Usuario --> (UC08)
 
 (UC05) .. (UC07) : <<extend>>
-(UC06) .. (UC07) : <<extend>>
+' (UC06) .. (UC07) : <<extend>>
 @enduml

@@ -10,15 +10,15 @@ class Usuario {
     -login: string
     -senha: string
     +autenticar(): bool
-    +registrarEntradaAlimento(): void
-    +registrarSaidaAlimento(): void
+    +registrarEntradaInsumo(): void
+    +registrarSaidaInsumo(): void
     +consultarEstoque(): void
     +consultarHistorico(): void
 }
 
 class Administrador extends Usuario {
     +cadastrarEscola(): void
-    +cadastrarAlimento(): void
+    +cadastrarInsumo(): void
     +cadastrarFornecedor(): void
 }
 
@@ -30,8 +30,8 @@ class Escola {
     -numeroAlunos: int
 }
 
-class Alimento {
-    -idAlimento: int
+class Insumo {
+    -idInsumo: int
     -nome: string
     -unidadeMedida: string
     -categoria: string
@@ -61,18 +61,12 @@ class Item {
 
 Usuario "1" -- "0..*" Movimentacao : registra
 
-' Movimentacao "0..*" -- "1..*" Alimento : refere-se a
-
 Item "1..*" -- "1" Movimentacao
 
-Alimento "1" -- "0..*" Item
+Insumo "1" -- "0..*" Item
 
 Entrada "0..*" -- "1" Fornecedor : contém
 
 Saida "0..*" -- "1" Escola : vai para
-
-' Fornecedor "0..*" -- "0..*" Alimento : fornece
-
-' Escola "0..*" -- "0..*" Alimento : recebe
 
 @enduml
