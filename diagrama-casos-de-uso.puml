@@ -1,14 +1,18 @@
 @startuml Diagrama de Casos de Uso
 'https://plantuml.com/use-case-diagram
 
-(Cadastrar escola) as (UC01)
-(Cadastrar Insumo) as (UC02)
-(Cadastrar Fornecedor) as (UC03)
-(Consultar Histórico de movimentações) as (UC04)
-(Movimentar Itens) as (UC05)
-(Emitir Guia de Movimentação) as (UC07)
-(Consultar Estoque de Escola) as (UC08)
+left to right direction
 
+rectangle {
+
+    (Cadastrar escola) as (UC01)
+    (Cadastrar Insumo) as (UC02)
+    (Cadastrar Fornecedor) as (UC03)
+    (Consultar Histórico de movimentações) as (UC04)
+    (Movimentar Itens) as (UC05)
+    (Emitir Guia de Movimentação) as (UC07)
+    (Consultar Estoque de Escola) as (UC08)
+}
 
 Administrador -> (UC01)
 Administrador --> (UC02)
@@ -17,10 +21,11 @@ Administrador ---> (UC04)
 Administrador ---> (UC05)
 Administrador --> (UC08)
 
-Usuario ---> (UC04)
-Usuario ---> (UC05)
-Usuario --> (UC08)
+(UC04) <--- Usuario
+(UC05) <--- Usuario 
+(UC08) <--- Usuario
 
-(UC05) <.. (UC07) : <<extend>>
+(UC05) <. (UC07) : <<extend>>
+
 ' (UC06) .. (UC07) : <<extend>>
 @enduml
