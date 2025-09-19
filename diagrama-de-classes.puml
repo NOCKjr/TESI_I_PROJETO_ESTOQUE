@@ -9,6 +9,7 @@ class Usuario {
     -idUsuario: int
     -login: string
     -senha: string
+
     +autenticar(): bool
     +registrarEntradaInsumo(): void
     +registrarSaidaInsumo(): void
@@ -17,17 +18,35 @@ class Usuario {
 }
 
 class Administrador extends Usuario {
+    +cadastrarUsuario(): void
     +cadastrarEscola(): void
-    +cadastrarInsumo(): void
     +cadastrarFornecedor(): void
+    +cadastrarInsumo(): void
+}
+
+class Movimentacao {
+    -idMovimentacao: int
+    -data: date
+    -tipo: enum 
+
+    +imprimirGuia(): void
 }
 
 class Escola {
     -idEscola: int
-    -codigo: string
     -nome: string
     -endereco: string
     -numeroAlunos: int
+}
+
+class Fornecedor {
+    -idFornecedor: int
+    -nomeRazaoSocial: string
+    -contato: string
+}
+
+class Item {
+    - quantidade: int
 }
 
 class Insumo {
@@ -39,32 +58,15 @@ class Insumo {
     -quantidadeEmEstoque: int 
 }
 
-class Fornecedor {
-    -idFornecedor: int
-    -nomeRazaoSocial: string
-    -contato: string
-}
 
-class Movimentacao {
-    -idMovimentacao: int
-    -data: date
-    -tipo: enum 
-    +imprimirGuia(): void
-}
+Usuario "1" -- "0..*" Movimentacao : Registra
 
-class Item {
-    - quantidade: int
-}
+Movimentacao "0..*" -- "1" Escola : Vai para
 
+Movimentacao "0..*" -- "1" Fornecedor : Contém
 
-Usuario "1" -- "0..*" Movimentacao : registra
-
-Item "1..*" -- "1" Movimentacao
+Item "1..*" -- "1" Movimentacao: Pertence 
 
 Insumo "1" -- "0..*" Item
-
-Movimentacao "0..*" -- "1" Fornecedor : contém
-
-Movimentacao "0..*" -- "1" Escola : vai para
 
 @enduml
