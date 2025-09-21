@@ -1,4 +1,4 @@
-@startuml
+@startuml Diagrama de Classes do SIGEME
 
 skinparam classAttributeIconSize 0
 hide empty members
