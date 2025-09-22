@@ -42,9 +42,13 @@ class TelaLogin(tk.Frame):
         self.ent_senha.pack(anchor='w')
 
         ### Esqueci a senha
-        self.btn_esqueciASenha = tk.Button(self.modal_login, text='Esqueceu a senha?', relief='flat', bg=self.cores['cinza'])
-        self.btn_esqueciASenha.grid(row=4, column=2, columnspan=1, sticky='e')
+        self.lbl_esqueciASenha = tk.Label(self.modal_login, text='Esqueceu a senha?', relief='flat', bg=self.cores['cinza'])
+        self.lbl_esqueciASenha.grid(row=4, column=2, columnspan=1, sticky='e')
+        self.lbl_esqueciASenha.bind('<Button-1>', self.test)
 
         ### Botão continuar
         self.btn_continuar = tk.Button(self.modal_login, text='Continuar', bg=self.cores['principal'], fg=self.cores['branco'])
         self.btn_continuar.grid(row=5, column=0, columnspan=3, sticky='nswe')
+
+    def test(self, event):
+        print('Testando bind!')
