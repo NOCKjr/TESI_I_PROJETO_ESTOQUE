@@ -150,7 +150,6 @@ temp/
 tmp/
 
 # Database files
-*.db
 *.sqlite
 *.sqlite3
 
