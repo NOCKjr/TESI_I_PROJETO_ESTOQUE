@@ -1,12 +1,13 @@
 import tkinter as tk
-from tkinter import ttk
-from view.telas.tela_interface import TelaInterface
-from view.telas.gerenciador_de_janelas import GerenciadoDeJanelasInterface
 import constants
 
-class TelaLogin(tk.Frame, ):
-    def __init__(self, master, gerenciador_de_janelas: GerenciadoDeJanelasInterface, largura=constants.LARGURA_JANELA, altura=constants.ALTURA_JANELA):
-        super().__init__(master, width=largura, height=altura, bg='#ffffff')        
+from tkinter import ttk
+from view.telas.tela_interface import TelaInterface
+from view.telas.gerenciador_de_janelas import GerenciadorDeJanelasBase
+
+class TelaLogin(TelaInterface):
+    def __init__(self, master, gerenciador_de_janelas: GerenciadorDeJanelasBase, largura=constants.LARGURA_JANELA, altura=constants.ALTURA_JANELA):
+        super().__init__(master, width=largura, height=altura, bg="#ffffff")
 
         # guarda qual objeto está gerenciando a troca entre janelas
         self.gerenciador_de_janelas = gerenciador_de_janelas
@@ -54,9 +55,15 @@ class TelaLogin(tk.Frame, ):
         ### Botão continuar
         self.btn_continuar = tk.Button(self.modal_login, text='Continuar', bg=self.cores['principal'], fg=self.cores['branco'], command=self.onContinuar)
         self.btn_continuar.grid(row=5, column=0, columnspan=3, sticky='nswe')
+    
+    def mostrar(self):
+        self.pack(expand=True, fill='both', anchor='center')
+    
+    def esconder(self):
+        self.pack_forget()
 
     def test(self, event):
         print('Testando bind!')
     
     def onContinuar(self):
-        self.gerenciador_de_janelas.alterarParaATela("menu")
+        self.gerenciador_de_janelas.alterar_para_a_tela("menu")

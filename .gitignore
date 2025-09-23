@@ -159,3 +159,8 @@ tmp/
 # Backup files
 *.bak
 *.backup
+
+# Cache do Python
+__pycache__/
+*.py[cod]
+*$py.class
