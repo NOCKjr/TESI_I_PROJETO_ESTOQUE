@@ -12,13 +12,6 @@ class TelaLogin(TelaInterface):
         # guarda qual objeto está gerenciando a troca entre janelas
         self.gerenciador_de_janelas = gerenciador_de_janelas
 
-        self.cores = {
-            "principal": '#075F8B',
-            "secundario": '#87C5FF',
-            "cinza": "#d9d9d9",
-            'branco': '#ffffff'
-        }
-
         ### Container com o título da aplicação e' os campos de login
         self.container_visual = tk.Frame(self, bg=self.cores['branco'], padx=30, pady=20)
         self.container_visual.place(anchor='center', relx=0.5, rely=0.45)
@@ -66,4 +59,4 @@ class TelaLogin(TelaInterface):
         print('Testando bind!')
     
     def onContinuar(self):
-        self.gerenciador_de_janelas.alterar_para_a_tela("menu")
+        self.gerenciador_de_janelas.alterar_para_a_tela(constants.TELA_MENU_PRINCIPAL)

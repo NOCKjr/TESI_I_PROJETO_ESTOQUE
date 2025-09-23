@@ -14,10 +14,16 @@ class GerenciadorDeJanelasBase(tk.Frame, abc.ABC):
         pass
     
     def alterar_para_a_tela(self, proxima_tela: str):
-        tela_anterior = self.tela_atual
-        self.tela_atual = self.get_tela(proxima_tela)
+        tela = self.get_tela(proxima_tela)
 
-        if tela_anterior is not None:
-            tela_anterior.pack_forget()
-        
-        self.tela_atual.mostrar()
+        # só troca de tela se a próxima tela é uma referência válida
+        # (sugestão: trocar depois para lançar uma exceção?)
+        if tela is not None:
+            
+            tela_anterior = self.tela_atual
+            self.tela_atual = tela
+
+            if tela_anterior is not None:
+                tela_anterior.pack_forget()
+            
+            self.tela_atual.mostrar()
