@@ -1,4 +1,4 @@
-from model.conexao.conexao import Conexao
+from model.conexao import Conexao
 from sqlite3 import Error
 class UsuarioModel:
     def __init__(self):
@@ -40,13 +40,3 @@ class UsuarioModel:
 
     def update(self, sql):
         pass
-
-    def tables(self, sql):
-        try:
-            con = self.con.get_conexao()
-            cursor = con.cursor()
-            resultado = cursor.execute(sql)
-            con.close()
-            return resultado
-        except Error as er:
-            print(er)
