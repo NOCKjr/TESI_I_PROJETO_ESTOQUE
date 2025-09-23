@@ -31,7 +31,8 @@ class App(GerenciadorDeJanelasBase):
         }
         
         # Inicia na tela de login
-        self.alterar_para_a_tela("login")
+        # self.alterar_para_a_tela(constants.TELA_LOGIN)
+        self.alterar_para_a_tela(constants.TELA_MENU_CADASTROS)
     
     def get_tela(self, nome_tela: str):
         if nome_tela in self.telas:

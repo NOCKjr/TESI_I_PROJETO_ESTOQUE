@@ -8,7 +8,9 @@ class TelaInterface(abc.ABC, tk.Frame):
         "principal": '#075F8B',
         "secundario": '#87C5FF',
         "cinza": "#d9d9d9",
-        'branco': '#ffffff'
+        'branco': '#ffffff',
+        'verde': '#3AB800',
+        'vermelho': "#FF0000",
     }
     
     @abc.abstractmethod
