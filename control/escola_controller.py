@@ -16,5 +16,5 @@ class EscolaController:
         sql = f'DELETE FROM escola WHERE esc_id = {id}'
         return self.model.delete(sql)
 
-    def atualizar_usuario(self):
+    def atualizar_escola(self):
         pass
