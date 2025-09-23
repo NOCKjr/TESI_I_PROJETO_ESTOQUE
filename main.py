@@ -7,6 +7,7 @@ if __name__ == '__main__':
     root = tk.Tk()
     root.geometry(f'{constants.LARGURA_JANELA}x{constants.ALTURA_JANELA}')
     root.minsize(width=constants.LARGURA_JANELA, height=constants.ALTURA_JANELA)
+    # root.resizable(width=False, height=False)
     root.title('SIGEME - Sistema de Gerenciamento de Estoque de Merendas Escolares')
 
     # frame inicial

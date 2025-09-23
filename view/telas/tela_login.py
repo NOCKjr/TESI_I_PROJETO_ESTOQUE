@@ -1,19 +1,18 @@
 import tkinter as tk
-from tkinter import ttk
 import constants
 
-class TelaLogin(tk.Frame):
-    def __init__(self, master, largura=constants.LARGURA_JANELA, altura=constants.ALTURA_JANELA):
-        super().__init__(master, width=largura, height=altura, bg='#ffffff')        
+from tkinter import ttk
+from view.telas.tela_interface import TelaInterface
+from view.telas.gerenciador_de_janelas import GerenciadorDeJanelasBase
 
-        self.cores = {
-            "principal": '#075F8B',
-            "secundario": '#87C5FF',
-            "cinza": "#d9d9d9",
-            'branco': '#ffffff'
-        }
+class TelaLogin(TelaInterface):
+    def __init__(self, master, gerenciador_de_janelas: GerenciadorDeJanelasBase, largura=constants.LARGURA_JANELA, altura=constants.ALTURA_JANELA):
+        super().__init__(master, width=largura, height=altura, bg="#ffffff")
 
-        ### Container com o título da aplicação e os campos de login
+        # guarda qual objeto está gerenciando a troca entre janelas
+        self.gerenciador_de_janelas = gerenciador_de_janelas
+
+        ### Container com o título da aplicação e' os campos de login
         self.container_visual = tk.Frame(self, bg=self.cores['branco'], padx=30, pady=20)
         self.container_visual.place(anchor='center', relx=0.5, rely=0.45)
 
@@ -47,8 +46,17 @@ class TelaLogin(tk.Frame):
         self.lbl_esqueciASenha.bind('<Button-1>', self.test)
 
         ### Botão continuar
-        self.btn_continuar = tk.Button(self.modal_login, text='Continuar', bg=self.cores['principal'], fg=self.cores['branco'])
+        self.btn_continuar = tk.Button(self.modal_login, text='Continuar', bg=self.cores['principal'], fg=self.cores['branco'], command=self.onContinuar)
         self.btn_continuar.grid(row=5, column=0, columnspan=3, sticky='nswe')
+    
+    def mostrar(self):
+        self.pack(expand=True, fill='both', anchor='center')
+    
+    def esconder(self):
+        self.pack_forget()
 
     def test(self, event):
         print('Testando bind!')
+    
+    def onContinuar(self):
+        self.gerenciador_de_janelas.alterar_para_a_tela(constants.TELA_MENU_PRINCIPAL)
