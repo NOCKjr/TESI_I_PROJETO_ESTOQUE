@@ -1,10 +1,10 @@
-from conexao import Conexao
+from model.conexao.conexao import Conexao
 from sqlite3 import Error
-class FornecedorModel:
+class UsuarioModel:
     def __init__(self):
         self.con = Conexao()
 
-    def get_fornecedor(self, sql):
+    def get(self, sql):
         try:
             con = self.con.get_conexao()
             cursor = con.cursor()
@@ -14,7 +14,7 @@ class FornecedorModel:
         except Error as er:
             print(er)
 
-    def insert_fornecedor(self, sql):
+    def insert(self, sql):
         try:
             con = self.con.get_conexao()
             cursor = con.cursor()
@@ -26,7 +26,7 @@ class FornecedorModel:
         except Error as er:
             print(er)
 
-    def delete_fornecedor(self, sql):
+    def delete(self, sql):
         try:
             con = self.con.get_conexao()
             cursor = con.cursor()
@@ -38,5 +38,15 @@ class FornecedorModel:
         except Error as er:
             print(er)
 
-    def update_fornecedor(self, sql):
+    def update(self, sql):
         pass
+
+    def tables(self, sql):
+        try:
+            con = self.con.get_conexao()
+            cursor = con.cursor()
+            resultado = cursor.execute(sql)
+            con.close()
+            return resultado
+        except Error as er:
+            print(er)
