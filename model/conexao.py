@@ -3,7 +3,7 @@ from sqlite3 import Error
 
 class Conexao:
     def get_conexao(self):
-        caminho = '../model/banco.db'
+        caminho = 'model/banco.db'
         try:
             con = sqlite3.connect(caminho)
             return con

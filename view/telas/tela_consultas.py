@@ -28,8 +28,14 @@ class TelaConsultas(TelaInterface):
         colunas = ['ID', 'LOGIN', 'SENHA', 'TIPO']
         self.tvw_usuarios = ttk.Treeview(self, height=5, columns=colunas, show='headings')
         tuplas = self.controle_usuarios.listar_usuario()
+
+        for coluna in colunas:
+            self.tvw_usuarios.heading(coluna, text=coluna)
+            self.tvw_usuarios.column(coluna, width=100, anchor="center")
+
         for item in tuplas:
             self.tvw_usuarios.insert('', 'end', values=item)
+        self.tvw_usuarios.pack()
 
 
     def mostrar(self):
