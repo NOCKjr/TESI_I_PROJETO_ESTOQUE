@@ -11,7 +11,9 @@ from view.telas.tela_interface import TelaInterface
 from view.telas.tela_login import TelaLogin
 from view.telas.tela_menu_cadastros import TelaMenuCadastros
 from view.telas.tela_menu_principal import TelaMenuPrincipal
+from view.telas.tela_consultas import TelaConsultas
 from view.telas.gerenciador_de_janelas import GerenciadorDeJanelasBase
+
 
 class App(GerenciadorDeJanelasBase):
     def __init__(self, master):
@@ -28,11 +30,13 @@ class App(GerenciadorDeJanelasBase):
             constants.TELA_CADASTRAR_INSUMO: TelaCadastrarInsumo(self, self),         # Tela cadsatro de insumo
             constants.TELA_MOVIMENTACOES: TelaMovimentacoes(self, self),              # Tela de movimentações
             constants.TELA_HISTORICO: TelaHistorico(self, self),                      # Tela de histórico
+            constants.TELA_CONSULTAS: TelaConsultas(self, self)                       # Tela de consultas
         }
         
         # Inicia na tela de login
-        # self.alterar_para_a_tela(constants.TELA_LOGIN)
-        self.alterar_para_a_tela(constants.TELA_MENU_CADASTROS)
+        self.alterar_para_a_tela(constants.TELA_LOGIN)
+        # self.alterar_para_a_tela(constants.TELA_MENU_CADASTROS)
+        # self.alterar_para_a_tela(constants.TELA_CONSULTAS)
     
     def get_tela(self, nome_tela: str):
         if nome_tela in self.telas:

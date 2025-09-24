@@ -32,8 +32,8 @@ class TelaMenuPrincipal(TelaInterface):
         self.btn_continuar = tk.Button(self.container_visual, text='Movimentações', bg=self.cores['principal'], fg=self.cores['branco'], command=lambda: self.alterar_para_a_tela(constants.TELA_MOVIMENTACOES))
         self.btn_continuar.grid(row=1, column=0, columnspan=1, sticky='nswe', padx=2, pady=2)
     
-        ## Botão Histórico
-        self.btn_continuar = tk.Button(self.container_visual, text='Histórico', bg=self.cores['principal'], fg=self.cores['branco'], command=lambda: self.alterar_para_a_tela(constants.TELA_HISTORICO))
+        ## Botão Consulta
+        self.btn_continuar = tk.Button(self.container_visual, text='Opções de Consulta', bg=self.cores['principal'], fg=self.cores['branco'], command=lambda: self.alterar_para_a_tela(constants.TELA_CONSULTAS))
         self.btn_continuar.grid(row=2, column=0, columnspan=1, sticky='nswe', padx=2, pady=2)
     
     def mostrar(self):
