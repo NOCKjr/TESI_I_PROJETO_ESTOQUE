@@ -16,8 +16,6 @@ class FornecedorController:
         sql = f'DELETE FROM fornecedor WHERE for_id = {id}'
         return self.model.delete(sql)
 
-    def atualizar_fornecedor(self):
-        pass
-
-#teste = FornecedorController()
-#print(teste.listar_fornecedor())
+    def atualizar_fornecedor(self, id, razao_social, contato):
+        sql = f'UPDATE fornecedor SET for_razao_social = "{razao_social}", for_contato = "{contato}" WHERE for_id = {id};'
+        return self.model.update(sql)

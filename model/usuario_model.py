@@ -50,4 +50,3 @@ class UsuarioModel:
         except Error as er:
             print(er)
 
-#print(UsuarioModel().get("SELECT * FROM usuario"))

@@ -9,5 +9,3 @@ class Conexao:
             return con
         except Error as er:
             print(er)
-
-#print(Conexao().get_conexao().cursor().execute("SELECT * FROM usuario").fetchall())
