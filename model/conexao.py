@@ -3,9 +3,11 @@ from sqlite3 import Error
 
 class Conexao:
     def get_conexao(self):
-        caminho = 'model/banco.db'
+        caminho = '../banco/banco.db'
         try:
             con = sqlite3.connect(caminho)
             return con
         except Error as er:
             print(er)
+
+#print(Conexao().get_conexao().cursor().execute("SELECT * FROM usuario").fetchall())

@@ -39,4 +39,13 @@ class FornecedorModel:
             print(er)
 
     def update(self, sql):
-        pass
+        try:
+            con = self.con.get_conexao()
+            cursor = con.cursor()
+            cursor.execute(sql)
+            if cursor.rowcount == 1:
+                con.commit()
+            con.close()
+            return cursor.rowcount
+        except Error as er:
+            print(er)
