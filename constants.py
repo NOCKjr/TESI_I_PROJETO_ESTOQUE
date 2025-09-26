@@ -15,3 +15,13 @@ TELA_CADASTRAR_INSUMO = "cadastrar-insumo"
 TELA_CONSULTAS = "consultas"
 TELA_LISTAGEM_USUARIOS = "listagem-usuarios"
 TELA_EDITAR_USUARIO = "cadastrar-usuario"
+
+# Cores
+cores = {
+    "principal": '#075F8B',
+    "secundario": '#87C5FF',
+    "cinza": "#d9d9d9",
+    'branco': '#ffffff',
+    'verde': '#3AB800',
+    'vermelho': "#FF0000",
+}
