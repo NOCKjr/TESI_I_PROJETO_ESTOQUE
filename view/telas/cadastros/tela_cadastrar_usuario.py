@@ -75,8 +75,6 @@ class TelaCadastrarUsuario(TelaInterface):
         for c in range(30):
             self.container_formulario.columnconfigure(c, minsize=10)
 
-
-    
     def mostrar(self):
         self.pack(expand=True, fill='both', anchor='center')
     
@@ -88,6 +86,11 @@ class TelaCadastrarUsuario(TelaInterface):
     
     def alterar_para_a_tela(self, proxima_tela):
         self.gerenciador_de_janelas.alterar_para_a_tela(proxima_tela)
+    
+    def limpar_campos(self):
+        self.ent_login_usuario.delete(0, 'end')
+        self.ent_senha_usuario.delete(0, 'end')
+        self.cmb_tipo_usuario.current(0)
     
     def onConfirmar(self):
         # Captura os valores dos campos
@@ -101,10 +104,17 @@ class TelaCadastrarUsuario(TelaInterface):
         # Chama o controller para inserir o usuário
         self.controle_usuarios.inserir_usuario(login, senha, tipo_codigo)
         
+        # Reseta os valores dos campos do formulário
+        self.limpar_campos()
+        
         # Volta para o menu de cadastros
         self.gerenciador_de_janelas.alterar_para_a_tela(constants.TELA_MENU_CADASTROS)
 
     def onCancelar(self):
+        # Reseta os valores dos campos do formulário
+        self.limpar_campos()
+        
+        # Volta para o menu de cadastros
         self.gerenciador_de_janelas.alterar_para_a_tela(constants.TELA_MENU_CADASTROS)
 
 

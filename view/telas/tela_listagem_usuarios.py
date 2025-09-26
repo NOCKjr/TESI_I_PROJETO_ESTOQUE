@@ -54,6 +54,15 @@ class TelaListagemUsuarios(TelaInterface):
 
         # Criar menu de contexto
         self.criar_menu_contexto()
+    
+    def atualizar_listagem_usuarios(self):
+        # Apaga os itens da treeview
+        self.tvw_usuarios.delete(*self.tvw_usuarios.get_children())
+
+        # Atualiza a treeview com os dados do banco
+        tuplas = self.controle_usuarios.listar_usuario()
+        for item in tuplas:
+            self.tvw_usuarios.insert('', 'end', values=item)
 
     def criar_menu_contexto(self):
         """Cria o menu de contexto com opções de editar e excluir"""
@@ -102,6 +111,10 @@ class TelaListagemUsuarios(TelaInterface):
                     tk.messagebox.showerror("Erro", "Erro ao excluir o usuário!")
 
     def mostrar(self):
+        # Atualiza os dados
+        self.atualizar_listagem_usuarios()
+
+        # Mostra o componente na tela
         self.pack(expand=True, fill='both', anchor='center')
     
     def esconder(self):

@@ -152,6 +152,7 @@ tmp/
 # Database files
 *.sqlite
 *.sqlite3
+*.db
 
 # Log files
 *.log
