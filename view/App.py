@@ -11,9 +11,9 @@ from view.telas.tela_interface import TelaInterface
 from view.telas.tela_login import TelaLogin
 from view.telas.tela_menu_cadastros import TelaMenuCadastros
 from view.telas.tela_menu_principal import TelaMenuPrincipal
-from view.telas.tela_consultas import TelaConsultas
+from view.telas.listagem.tela_consultas import TelaConsultas
 from view.telas.gerenciador_de_janelas import GerenciadorDeJanelasBase
-from view.telas.tela_listagem_usuarios import TelaListagemUsuarios
+from view.telas.listagem.tela_listagem_usuarios import TelaListagemUsuarios
 
 class App(GerenciadorDeJanelasBase):
     def __init__(self, master):
