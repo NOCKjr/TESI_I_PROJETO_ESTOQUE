@@ -1,8 +1,8 @@
-from model import escola_model
+from model import model_base
 
 class EscolaController:
     def __init__(self):
-        self.model = escola_model.EscolaModel()
+        self.model = model_base.ModelBase()
 
     def inserir_escola(self, nome='', endereco='', numero_alunos=0):
         sql = f"INSERT INTO escola(esc_nome, esc_endereco, esc_numero_alunos) VALUES ('{nome}', '{endereco}', '{numero_alunos}');"

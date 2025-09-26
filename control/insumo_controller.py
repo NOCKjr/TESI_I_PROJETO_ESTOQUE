@@ -1,8 +1,8 @@
-from model import insumo_model
+from model import model_base
 
 class InsumoController:
     def __init__(self):
-        self.model = insumo_model.InsumoModel()
+        self.model = model_base.ModelBase()
 
     def inserir_insumo(self, nome, media_consumida, quantidade_estoque, medida_id):
         sql = f"INSERT INTO insumo(ins_nome, ins_media_consumida, ins_quantidade_estoque, ins_med_id) VALUES ('{nome}',{media_consumida}, {quantidade_estoque}, {medida_id});"

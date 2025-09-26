@@ -1,8 +1,8 @@
-from model import usuario_model
+from model import model_base
 
 class UsuarioController:
     def __init__(self):
-        self.model = usuario_model.UsuarioModel()
+        self.model = model_base.ModelBase()
 
     def inserir_usuario(self, login='', senha='', tipo='C'):
         sql = f"INSERT INTO usuario(usu_login, usu_senha, usu_tipo) VALUES ('{login}', '{senha}', '{tipo}');"

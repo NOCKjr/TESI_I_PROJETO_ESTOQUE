@@ -1,8 +1,8 @@
-from model import fornecedor_model
+from model import model_base
 
 class FornecedorController:
     def __init__(self):
-        self.model = fornecedor_model.FornecedorModel()
+        self.model = model_base.ModelBase()
 
     def inserir_fornecedor(self, razao_social='', contato=''):
         sql = f"INSERT INTO fornecedor(for_razao_social, for_contato) VALUES ('{razao_social}','{contato}');"

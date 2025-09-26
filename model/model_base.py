@@ -1,6 +1,6 @@
 from model.conexao import Conexao
 from sqlite3 import Error
-class EscolaModel:
+class ModelBase:
     def __init__(self):
         self.con = Conexao()
 
@@ -49,3 +49,4 @@ class EscolaModel:
             return cursor.rowcount
         except Error as er:
             print(er)
+

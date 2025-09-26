@@ -1,8 +1,8 @@
-from model import medida_model
+from model import model_base
 
 class MedidaController:
     def __init__(self):
-        self.model = medida_model.MedidaModel()
+        self.model = model_base.ModelBase()
 
     def inserir_medida(self, unidade):
         sql = f"INSERT INTO medida(med_unidade) VALUES ('{unidade}');"
