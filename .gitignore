@@ -26,7 +26,9 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
-model/conexao.py
+
+# Ignorar a mudança no arquivo de conexão com o banco
+model\conexao.py
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
