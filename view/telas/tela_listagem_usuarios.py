@@ -86,10 +86,12 @@ class TelaListagemUsuarios(TelaInterface):
         valores = self.tvw_usuarios.item(item_selecionado, 'values')
         
         if valores:
+            self.gerenciador_de_janelas.editar_usuario(valores)
+            
             # Aqui você pode implementar uma janela de edição ou navegar para uma tela de edição
             print(f"Editando usuário: ID={valores[0]}, LOGIN={valores[1]}")
             # Por enquanto, apenas mostra uma mensagem
-            tk.messagebox.showinfo("Editar", f"Função de edição será implementada para o usuário: {valores[1]}")
+            # tk.messagebox.showinfo("Editar", f"Função de edição será implementada para o usuário: {valores[1]}")
 
     def excluir_usuario(self):
         """Exclui o usuário selecionado"""

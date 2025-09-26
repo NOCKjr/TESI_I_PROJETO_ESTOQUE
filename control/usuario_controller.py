@@ -16,6 +16,6 @@ class UsuarioController:
         sql = f'DELETE FROM usuario WHERE usu_id = {id}'
         return self.model.delete(sql)
 
-    def atualizar_usuario(self, id, login, senha):
-        sql = f'UPDATE usuario SET usu_login = "{login}", usu_senha = "{senha}" WHERE usu_id = {id};'
+    def atualizar_usuario(self, id, login, senha, tipo):
+        sql = f'UPDATE usuario SET usu_login = "{login}", usu_senha = "{senha}", usu_tipo = "{tipo}" WHERE usu_id = {id};'
         return self.model.update(sql)

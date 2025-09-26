@@ -31,7 +31,8 @@ class App(GerenciadorDeJanelasBase):
             constants.TELA_MOVIMENTACOES: TelaMovimentacoes(self, self),              # Tela de movimentações
             constants.TELA_HISTORICO: TelaHistorico(self, self),                      # Tela de histórico
             constants.TELA_CONSULTAS: TelaConsultas(self, self),                      # Tela de consultas
-            constants.TELA_LISTAGEM_USUARIOS: TelaListagemUsuarios(self, self)        # Tela de listagem de usuários
+            constants.TELA_LISTAGEM_USUARIOS: TelaListagemUsuarios(self, self),       # Tela de listagem de usuários
+            constants.TELA_EDITAR_USUARIO: TelaCadastrarUsuario(self, self),          # Tela de editar um usuário
         }
         
         # Inicia na tela de login
@@ -42,4 +43,20 @@ class App(GerenciadorDeJanelasBase):
     def get_tela(self, nome_tela: str):
         if nome_tela in self.telas:
             return self.telas[nome_tela]
+    
+    def editar_usuario(self, usuario):
+        tela_editar = self.get_tela(constants.TELA_EDITAR_USUARIO)
+
+        if type(usuario) == list or type(usuario) == tuple:
+            usuario = {
+                'id': usuario[0],
+                'login': usuario[1],
+                'senha': usuario[2],
+                'tipo': usuario[3]
+            }
+        # Configura o formulário para editar o usuario informado
+        tela_editar.editar_usuario(usuario)
+
+        # Abre o formulário para edição
+        self.alterar_para_a_tela(constants.TELA_EDITAR_USUARIO)
         

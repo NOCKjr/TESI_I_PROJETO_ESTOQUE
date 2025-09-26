@@ -6,9 +6,14 @@ from view.telas.gerenciador_de_janelas import GerenciadorDeJanelasBase
 from view.telas.tela_interface import TelaInterface
 from control.usuario_controller import UsuarioController
 
-class TelaCadastrarUsuario(TelaInterface):
-    def __init__(self, master, gerenciador_de_janelas: GerenciadorDeJanelasBase, largura=constants.LARGURA_JANELA, altura=constants.ALTURA_JANELA):
+class TelaCadastrarUsuario(TelaInterface):    
+    def __init__(self, master, gerenciador_de_janelas: GerenciadorDeJanelasBase, modo_editar=False, largura=constants.LARGURA_JANELA, altura=constants.ALTURA_JANELA):
         super().__init__(master, width=largura, height=altura, bg='#ffffff')
+
+        # Para saber se o formulário foi aberto para inserir um novo usuário ou editar um existente
+        self.flag_editar_usuario = modo_editar
+        # Se o formulário foi aberto como edição, define-se o id do usuário editado
+        self.id_usuario_editado = None
 
         # guarda qual objeto está gerenciando a troca entre janelas
         self.gerenciador_de_janelas = gerenciador_de_janelas
@@ -91,6 +96,17 @@ class TelaCadastrarUsuario(TelaInterface):
         self.ent_login_usuario.delete(0, 'end')
         self.ent_senha_usuario.delete(0, 'end')
         self.cmb_tipo_usuario.current(0)
+        self.flag_editar_usuario = False
+    
+    def editar_usuario(self, usuario):
+        self.ent_login_usuario.delete(0, 'end')
+        self.ent_login_usuario.insert(0, usuario['login'])
+        self.ent_senha_usuario.delete(0, 'end')
+        self.ent_senha_usuario.insert(0, usuario['senha'])
+        self.cmb_tipo_usuario.current(0)
+        self.cmb_tipo_usuario.current(0 if usuario['tipo'] == 'C' else 1)
+        self.id_usuario_editado = usuario['id']
+        self.flag_editar_usuario = True
     
     def onConfirmar(self):
         # Captura os valores dos campos
@@ -101,8 +117,13 @@ class TelaCadastrarUsuario(TelaInterface):
         # Converte o tipo de usuário para o código esperado pelo banco
         tipo_codigo = 'A' if tipo_usuario == "Administrador" else 'C'
         
-        # Chama o controller para inserir o usuário
-        self.controle_usuarios.inserir_usuario(login, senha, tipo_codigo)
+        if self.flag_editar_usuario:
+            id = self.id_usuario_editado
+            # Chama o controller para atualizar o usuário
+            self.controle_usuarios.atualizar_usuario(id, login, senha, tipo_codigo)
+        else:
+            # Chama o controller para inserir novo usuário
+            self.controle_usuarios.inserir_usuario(login, senha, tipo_codigo)
         
         # Reseta os valores dos campos do formulário
         self.limpar_campos()
@@ -117,4 +138,8 @@ class TelaCadastrarUsuario(TelaInterface):
         # Volta para o menu de cadastros
         self.gerenciador_de_janelas.alterar_para_a_tela(constants.TELA_MENU_CADASTROS)
 
+    def set_flag_edicao(self, valor_flag=True):
+        self.flag_editar_usuario = valor_flag
 
+    def set_id_usuario_edicao(self, valor_id=None):
+        self.id_usuario_editado = valor_id
