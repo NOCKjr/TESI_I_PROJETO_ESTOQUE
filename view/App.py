@@ -13,7 +13,7 @@ from view.telas.tela_menu_cadastros import TelaMenuCadastros
 from view.telas.tela_menu_principal import TelaMenuPrincipal
 from view.telas.tela_consultas import TelaConsultas
 from view.telas.gerenciador_de_janelas import GerenciadorDeJanelasBase
-
+from view.telas.tela_listagem_usuarios import TelaListagemUsuarios
 
 class App(GerenciadorDeJanelasBase):
     def __init__(self, master):
@@ -30,7 +30,8 @@ class App(GerenciadorDeJanelasBase):
             constants.TELA_CADASTRAR_INSUMO: TelaCadastrarInsumo(self, self),         # Tela cadsatro de insumo
             constants.TELA_MOVIMENTACOES: TelaMovimentacoes(self, self),              # Tela de movimentações
             constants.TELA_HISTORICO: TelaHistorico(self, self),                      # Tela de histórico
-            constants.TELA_CONSULTAS: TelaConsultas(self, self)                       # Tela de consultas
+            constants.TELA_CONSULTAS: TelaConsultas(self, self),                      # Tela de consultas
+            constants.TELA_LISTAGEM_USUARIOS: TelaListagemUsuarios(self, self)        # Tela de listagem de usuários
         }
         
         # Inicia na tela de login

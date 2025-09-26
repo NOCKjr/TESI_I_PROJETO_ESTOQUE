@@ -1,17 +1,12 @@
 import tkinter as tk
-import ttkbootstrap as ttk
 import constants
 
 from view.telas.gerenciador_de_janelas import GerenciadorDeJanelasBase
 from view.telas.tela_interface import TelaInterface
-from control.usuario_controller import UsuarioController
-
 
 class TelaConsultas(TelaInterface):
     def __init__(self, master, gerenciador_de_janelas: GerenciadorDeJanelasBase, largura=constants.LARGURA_JANELA, altura=constants.ALTURA_JANELA):
         super().__init__(master, width=largura, height=altura, bg='#ffffff')
-
-        self.controle_usuarios = UsuarioController()
 
         # guarda qual objeto está gerenciando a troca entre janelas
         self.gerenciador_de_janelas = gerenciador_de_janelas
@@ -20,22 +15,24 @@ class TelaConsultas(TelaInterface):
         self.lbl_sigeme = tk.Label(self, text='SIGEME', bg=self.cores['branco'])
         self.lbl_sigeme.pack(side='top')
 
+        ### Voltar ao menu
+        self.btn_logoff = tk.Button(self, text="Voltar", command=lambda: self.alterar_para_a_tela(constants.TELA_MENU_PRINCIPAL))
+        self.btn_logoff.place(anchor='ne', x=largura - 5, y=5)
+
+        ### Container com as opções de consultas disponíveis
+        self.container_visual = tk.Frame(self, bg=self.cores['branco'], padx=30, pady=20)
+        self.container_visual.place(anchor='center', relx=0.5, rely=0.45)
+
         # Botão que ativa a consulta na lista de usuários
-        self.btn_usuarios = tk.Button(self, text='Usuários', command=self.listar_usuarios)
-        self.btn_usuarios.pack()
+        self.btn_continuar = tk.Button(self.container_visual, text='Usuários', bg=self.cores['principal'], fg=self.cores['branco'], command=self.listar_usuarios)
+        self.btn_continuar.grid(row=0, column=0, columnspan=1, sticky='nswe', padx=2, pady=2)
+
 
     def listar_usuarios(self):
-        colunas = ['ID', 'LOGIN', 'SENHA', 'TIPO']
-        self.tvw_usuarios = ttk.Treeview(self, height=5, columns=colunas, show='headings')
-        tuplas = self.controle_usuarios.listar_usuario()
+        self.gerenciador_de_janelas.alterar_para_a_tela(constants.TELA_LISTAGEM_USUARIOS)
 
-        for coluna in colunas:
-            self.tvw_usuarios.heading(coluna, text=coluna)
-            self.tvw_usuarios.column(coluna, width=100, anchor="center")
-
-        for item in tuplas:
-            self.tvw_usuarios.insert('', 'end', values=item)
-        self.tvw_usuarios.pack()
+    def alterar_para_a_tela(self, tela):
+        self.gerenciador_de_janelas.alterar_para_a_tela(tela)
 
 
     def mostrar(self):
