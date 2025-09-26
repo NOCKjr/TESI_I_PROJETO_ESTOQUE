@@ -19,3 +19,5 @@ class EscolaController:
     def atualizar_escola(self, id, nome, endereco, numero_alunos):
         sql = f"UPDATE escola SET esc_nome = '{nome}', esc_endereco = '{endereco}', esc_numero_alunos = {numero_alunos} WHERE esc_id = {id};"
         return self.model.update(sql)
+teste = EscolaController()
+print(teste.listar_escola())
