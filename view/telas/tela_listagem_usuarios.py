@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 import constants
 
 from view.telas.gerenciador_de_janelas import GerenciadorDeJanelasBase
@@ -31,7 +31,7 @@ class TelaListagemUsuarios(TelaInterface):
         colunas = ['ID', 'LOGIN', 'SENHA', 'TIPO']
         self.tvw_usuarios = ttk.Treeview(self, height=5, columns=colunas, show='headings')
         tuplas = self.controle_usuarios.listar_usuario()
-        
+
         self.tvw_usuarios.heading('ID', text='ID')
         self.tvw_usuarios.column('ID', width=20, anchor='center')
 
@@ -46,7 +46,60 @@ class TelaListagemUsuarios(TelaInterface):
 
         for item in tuplas:
             self.tvw_usuarios.insert('', 'end', values=item)
+        
+        # Bind do botão direito para abrir o menu de contexto
+        self.tvw_usuarios.bind("<Button-3>", self.abrir_menu_contexto)
+        
         self.tvw_usuarios.pack(pady=17, padx=10, fill='x', expand=False)
+
+        # Criar menu de contexto
+        self.criar_menu_contexto()
+
+    def criar_menu_contexto(self):
+        """Cria o menu de contexto com opções de editar e excluir"""
+        self.menu_contexto = tk.Menu(self, tearoff=0)
+        self.menu_contexto.add_command(label="Editar", command=self.editar_usuario)
+        self.menu_contexto.add_command(label="Excluir", command=self.excluir_usuario)
+
+    def abrir_menu_contexto(self, event):
+        """Abre o menu de contexto quando clica com botão direito"""
+        # Seleciona o item clicado
+        item = self.tvw_usuarios.identify_row(event.y)
+        if item:
+            self.tvw_usuarios.selection_set(item)
+            self.tvw_usuarios.focus(item)
+            # Mostra o menu de contexto na posição do mouse
+            self.menu_contexto.post(event.x_root, event.y_root)
+
+    def editar_usuario(self):
+        """Edita o usuário selecionado"""
+        item_selecionado = self.tvw_usuarios.selection()[0]
+        valores = self.tvw_usuarios.item(item_selecionado, 'values')
+        
+        if valores:
+            # Aqui você pode implementar uma janela de edição ou navegar para uma tela de edição
+            print(f"Editando usuário: ID={valores[0]}, LOGIN={valores[1]}")
+            # Por enquanto, apenas mostra uma mensagem
+            tk.messagebox.showinfo("Editar", f"Função de edição será implementada para o usuário: {valores[1]}")
+
+    def excluir_usuario(self):
+        """Exclui o usuário selecionado"""
+        item_selecionado = self.tvw_usuarios.selection()[0]
+        valores = self.tvw_usuarios.item(item_selecionado, 'values')
+        
+        if valores:
+            # Confirma a exclusão
+            resposta = tk.messagebox.askyesno("Confirmar Exclusão", 
+                                            f"Tem certeza que deseja excluir o usuário '{valores[1]}'?")
+            if resposta:
+                # Chama o controller para excluir
+                resultado = self.controle_usuarios.excluir_usuario(valores[0])
+                if resultado:
+                    # Remove o item da treeview
+                    self.tvw_usuarios.delete(item_selecionado)
+                    tk.messagebox.showinfo("Sucesso", "Usuário excluído com sucesso!")
+                else:
+                    tk.messagebox.showerror("Erro", "Erro ao excluir o usuário!")
 
     def mostrar(self):
         self.pack(expand=True, fill='both', anchor='center')
