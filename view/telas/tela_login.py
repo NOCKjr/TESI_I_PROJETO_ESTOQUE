@@ -4,6 +4,7 @@ import constants
 from tkinter import ttk
 from view.telas.tela_interface import TelaInterface
 from view.telas.gerenciador_de_janelas import GerenciadorDeJanelasBase
+from control.usuario_controller import UsuarioController
 
 class TelaLogin(TelaInterface):
     def __init__(self, master, gerenciador_de_janelas: GerenciadorDeJanelasBase, largura=constants.LARGURA_JANELA, altura=constants.ALTURA_JANELA):
@@ -11,6 +12,9 @@ class TelaLogin(TelaInterface):
 
         # guarda qual objeto está gerenciando a troca entre janelas
         self.gerenciador_de_janelas = gerenciador_de_janelas
+
+        # Controlador de usuários
+        self.controle_usuarios = UsuarioController()
 
         ### Container com o título da aplicação e' os campos de login
         self.container_visual = tk.Frame(self, bg=self.cores['branco'], padx=30, pady=20)
@@ -59,4 +63,35 @@ class TelaLogin(TelaInterface):
         print('Testando bind!')
     
     def onContinuar(self):
-        self.gerenciador_de_janelas.alterar_para_a_tela(constants.TELA_MENU_PRINCIPAL)
+
+        if self.autenticar_login():
+            self.gerenciador_de_janelas.alterar_para_a_tela(constants.TELA_MENU_PRINCIPAL)
+            self.limpar_campos()
+        else:
+            tk.messagebox.showinfo("Usuário inválido", f"Login ou senha inválido(s).")
+            
+    def limpar_campos(self):
+        self.ent_usuario.delete(0, 'end')
+        self.ent_senha.delete(0, 'end')
+    
+    def autenticar_login(self):
+        login = self.ent_usuario.get()
+        senha = self.ent_senha.get()
+
+        if login == '' or senha == '':
+            return False
+
+        usuario = self.controle_usuarios.busca_usuario(login)
+
+        # Usuário não encontrado
+        if not usuario:
+            # tk.messagebox.showinfo("Quem é você?", f"Usuário não encontrado.")
+            return False
+
+        # Senha incorreta
+        if senha != usuario[0][2]:
+            # tk.messagebox.showinfo("Senha incorreta", f"Senha incorreta")
+            return False
+    
+        # Login válido
+        return True

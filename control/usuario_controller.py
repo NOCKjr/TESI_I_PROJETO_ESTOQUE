@@ -12,6 +12,10 @@ class UsuarioController:
         sql = f'SELECT * FROM usuario WHERE usu_login LIKE "%{login}%";'
         return self.model.get(sql)
 
+    def busca_usuario(self, login):
+        sql = f'SELECT * FROM usuario WHERE usu_login LIKE "{login}";'
+        return self.model.get(sql)
+
     def excluir_usuario(self, id):
         sql = f'DELETE FROM usuario WHERE usu_id = {id}'
         return self.model.delete(sql)
