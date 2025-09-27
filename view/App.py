@@ -34,12 +34,38 @@ class App(GerenciadorDeJanelasBase):
             constants.TELA_LISTAGEM_USUARIOS: TelaListagemUsuarios(self, self),       # Tela de listagem de usuários
             constants.TELA_EDITAR_USUARIO: TelaCadastrarUsuario(self, self),          # Tela de editar um usuário
         }
+
+        ### Menu superior
+        self.criar_barra_de_menu()
         
         # Inicia na tela de login
         self.alterar_para_a_tela(constants.TELA_LOGIN)
         # self.alterar_para_a_tela(constants.TELA_MENU_CADASTROS)
         # self.alterar_para_a_tela(constants.TELA_CONSULTAS)
     
+    def criar_barra_de_menu(self):
+        # Cria a barra de menu
+        self.barra_menu = tk.Menu(self.master)
+
+        # Menu "Movimentações"
+        self.barra_menu.add_command(label="Movimentações", command=lambda: self.alterar_para_a_tela(constants.TELA_MOVIMENTACOES))
+
+        # Menu "Usuários"
+        # self.menu_usuarios = tk.Menu(self.barra_menu)
+        # self.menu_usuarios.add_command()
+        self.barra_menu.add_command(label='Usuário', command=lambda: self.alterar_para_a_tela(constants.TELA_LISTAGEM_USUARIOS))
+
+        # Menu "Escolas"
+        self.barra_menu.add_command(label='Escolas', command=lambda: self.alterar_para_a_tela(constants.TELA_CADASTRAR_ESCOLA))
+
+        # Menu "Fornecedores"
+        self.barra_menu.add_command(label='Fornecedores', command=lambda: self.alterar_para_a_tela(constants.TELA_CADASTRAR_FORNECEDOR))
+
+        # Menu "Insumos"
+        self.barra_menu.add_command(label='Insumos', command=lambda: self.alterar_para_a_tela(constants.TELA_CADASTRAR_INSUMO))
+
+        # Adicionar o menu à janela
+        
     def get_tela(self, nome_tela: str):
         if nome_tela in self.telas:
             return self.telas[nome_tela]
@@ -59,4 +85,15 @@ class App(GerenciadorDeJanelasBase):
 
         # Abre o formulário para edição
         self.alterar_para_a_tela(constants.TELA_EDITAR_USUARIO)
+    
+    def atualizar_status_da_barra_de_menu(self):
+        """Desativa a barra de menu caso esteja na tela de login."""
+
+        if self.tela_atual == self.get_tela(constants.TELA_LOGIN):
+            self.master.config(menu=None)
+        else:
+            self.master.config(menu=self.barra_menu)
         
+    def alterar_para_a_tela(self, proxima_tela):
+        super().alterar_para_a_tela(proxima_tela)
+        self.atualizar_status_da_barra_de_menu()
