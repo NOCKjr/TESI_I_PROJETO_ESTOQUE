@@ -1,40 +1,58 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import ttk
 
-def novo():
-    messagebox.showinfo("Novo", "Novo arquivo criado!")
+class App(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.title("Menu Simulado com Frame")
+        self.geometry("400x300")
 
-def abrir():
-    messagebox.showinfo("Abrir", "Abrindo arquivo...")
+        # menu superior
+        self.menu_frame = tk.Frame(self, bg="#ddd")
+        self.menu_frame.pack(side="top", fill="x")
 
-def sair():
-    root.quit()
+        # área de conteúdo (onde as telas aparecem)
+        self.content_frame = tk.Frame(self, bg="white")
+        self.content_frame.pack(fill="both", expand=True)
 
-def sobre():
-    messagebox.showinfo("Sobre", "Exemplo de uso do Menu no Tkinter")
+        # dicionário de telas
+        self.frames = {
+            "Tela 1": self._criar_tela("Tela 1", "lightblue"),
+            "Tela 2": self._criar_tela("Tela 2", "lightgreen"),
+            "Tela 3": self._criar_tela("Tela 3", "lightyellow"),
+        }
 
-# janela principal
-root = tk.Tk()
-root.title("Exemplo Menu")
-root.geometry("400x300")
+        # botões do "menu"
+        self.botoes = {}
+        for nome in self.frames:
+            btn = ttk.Button(self.menu_frame, text=nome,
+                             command=lambda n=nome: self.mostrar_tela(n))
+            btn.pack(side="left", padx=2, pady=2)
+            self.botoes[nome] = btn
 
-# cria a barra de menu
-menubar = tk.Menu(root)
+        # mostrar tela inicial
+        self.mostrar_tela("Tela 1")
 
-# menu "Arquivo"
-menu_arquivo = tk.Menu(menubar, tearoff=0)   # tearoff=0 remove a linha tracejada no topo
-menu_arquivo.add_command(label="Novo", command=novo)
-menu_arquivo.add_command(label="Abrir", command=abrir)
-menu_arquivo.add_separator()  # linha separadora
-menu_arquivo.add_command(label="Sair", command=sair)
-menubar.add_cascade(label="Arquivo", menu=menu_arquivo)
+    def _criar_tela(self, nome, cor):
+        """Cria um frame de exemplo para cada tela"""
+        frame = tk.Frame(self.content_frame, bg=cor)
+        label = tk.Label(frame, text=nome, font=("Arial", 16), bg=cor)
+        label.pack(expand=True)
+        return frame
 
-# menu "Ajuda"
-menu_ajuda = tk.Menu(menubar, tearoff=0)
-menu_ajuda.add_command(label="Sobre", command=sobre)
-menubar.add_cascade(label="Ajuda", menu=menu_ajuda)
+    def mostrar_tela(self, nome):
+        """Exibe o frame selecionado e destaca o botão"""
+        # esconde todos os frames
+        for f in self.frames.values():
+            f.pack_forget()
+        # mostra o selecionado
+        self.frames[nome].pack(fill="both", expand=True)
 
-# aplica o menu na janela principal
-root.config(menu=menubar)
+        # reseta estilo dos botões
+        for b in self.botoes.values():
+            b.state(["!pressed"])
+        # destaca o botão ativo
+        self.botoes[nome].state(["pressed"])
 
-root.mainloop()
+if __name__ == "__main__":
+    App().mainloop()
