@@ -128,15 +128,21 @@ class TelaCadastrarUsuario(TelaInterface):
         # Reseta os valores dos campos do formulário
         self.limpar_campos()
         
-        # Volta para o menu de cadastros
-        self.gerenciador_de_janelas.alterar_para_a_tela(constants.TELA_MENU_CADASTROS)
+        # # Volta para o menu de cadastros
+        # self.gerenciador_de_janelas.alterar_para_a_tela(constants.TELA_MENU_CADASTROS)
+
+        # Volta para a tela de listagem
+        self.gerenciador_de_janelas.alterar_para_a_tela(constants.TELA_LISTAGEM_USUARIOS)
 
     def onCancelar(self):
         # Reseta os valores dos campos do formulário
         self.limpar_campos()
         
-        # Volta para o menu de cadastros
-        self.gerenciador_de_janelas.alterar_para_a_tela(constants.TELA_MENU_CADASTROS)
+        # # Volta para o menu de cadastros
+        # self.gerenciador_de_janelas.alterar_para_a_tela(constants.TELA_MENU_CADASTROS)
+        
+        # Volta para a tela de listagem
+        self.gerenciador_de_janelas.alterar_para_a_tela(constants.TELA_LISTAGEM_USUARIOS)
 
     def set_flag_edicao(self, valor_flag=True):
         self.flag_editar_usuario = valor_flag

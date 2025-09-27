@@ -3,6 +3,7 @@ from tkinter import ttk, messagebox
 import constants
 
 from view.telas.gerenciador_de_janelas import GerenciadorDeJanelasBase
+from view.telas.menus.menu_painel_de_opcoes_crud import MenuPainelDeOpcoesCRUD
 from view.telas.tela_interface import TelaInterface
 from control.usuario_controller import UsuarioController
 
@@ -23,6 +24,10 @@ class TelaListagemUsuarios(TelaInterface):
         ### Voltar ao menu
         self.btn_logoff = tk.Button(self, text="Voltar", command=lambda: self.alterar_para_a_tela(constants.TELA_CONSULTAS))
         self.btn_logoff.place(anchor='ne', x=largura - 5, y=5)
+
+        ### Painel de ações
+        self.painel_de_acoes = MenuPainelDeOpcoesCRUD(self, self)
+        self.painel_de_acoes.mostrar()
 
         # Criar e exibir a listagem de usuários
         self.criar_listagem_usuarios()
@@ -49,11 +54,41 @@ class TelaListagemUsuarios(TelaInterface):
         
         # Bind do botão direito para abrir o menu de contexto
         self.tvw_usuarios.bind("<Button-3>", self.abrir_menu_contexto)
+
+        self.tvw_usuarios.bind("<<TreeviewSelect>>", self.item_selecionado)
+
         
         self.tvw_usuarios.pack(pady=17, padx=10, fill='x', expand=False)
 
         # Criar menu de contexto
         self.criar_menu_contexto()
+    
+    def item_selecionado(self, event):
+        selecao = self.tvw_usuarios.selection()
+
+        # Só edita/exclui se houver apenas uma opção selecionada
+        # [adicionar selectmode="browse" no treeview pode ser uma opção]
+        if len(selecao) == 1:
+            self.habilitar_botao_de_editar()
+            self.habilitar_botao_de_excluir()
+        else:
+            self.desabilitar_botao_de_editar()
+            self.desabilitar_botao_de_excluir()
+        
+    # Botões do painel
+    def habilitar_botao_de_editar(self):
+        self.painel_de_acoes.btn_editar.config(state='normal')
+    
+    def desabilitar_botao_de_editar(self):
+        self.painel_de_acoes.btn_editar.config(state='disabled')
+    
+    def habilitar_botao_de_excluir(self):
+        self.painel_de_acoes.btn_excluir.config(state='normal')
+    
+    def desabilitar_botao_de_excluir(self):
+        self.painel_de_acoes.btn_excluir.config(state='disabled')
+    
+    ###
     
     def atualizar_listagem_usuarios(self):
         # Apaga os itens da treeview
@@ -124,3 +159,12 @@ class TelaListagemUsuarios(TelaInterface):
     
     def alterar_para_a_tela(self, tela):
         self.gerenciador_de_janelas.alterar_para_a_tela(tela)
+    
+    def adicionar(self):
+        self.alterar_para_a_tela(constants.TELA_CADASTRAR_USUARIO)
+    
+    def editar(self):
+        self.editar_usuario()
+    
+    def excluir(self):
+        self.excluir_usuario()
