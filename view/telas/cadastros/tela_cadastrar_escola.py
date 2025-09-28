@@ -2,12 +2,19 @@ import tkinter as tk
 import constants
 
 from tkinter import ttk
+from control.escola_controller import EscolaController
 from view.telas.gerenciador_de_janelas import GerenciadorDeJanelasBase
 from view.telas.tela_formulario_base import TelaFormularioBase
 
 class TelaCadastrarEscola(TelaFormularioBase):
-    def __init__(self, master, gerenciador_de_janelas: GerenciadorDeJanelasBase, largura=constants.LARGURA_JANELA, altura=constants.ALTURA_JANELA):
-        super().__init__(master, gerenciador_de_janelas)
+    def __init__(self, master, gerenciador_de_janelas: GerenciadorDeJanelasBase, modo_editar=False, largura=constants.LARGURA_JANELA, altura=constants.ALTURA_JANELA):
+        super().__init__(master, gerenciador_de_janelas, modo_editar)
+
+        # Se o formulário foi aberto como edição, define-se o id da escola editado
+        self.id_escola_editado = None
+
+        # Controlador de escolas
+        self.controle_escolas = EscolaController()
         
         # Nome
         self.lbl_nome = tk.Label(self.container_formulario, text="Nome da escola:", anchor='w', bg=constants.cores['cinza'])
@@ -47,3 +54,50 @@ class TelaCadastrarEscola(TelaFormularioBase):
         self.lbl_cep.grid(row=15, column=20, pady=(2,0), sticky='nsw')
         self.ent_cep = tk.Entry(self.container_formulario)
         self.ent_cep.grid(row=16, column=20, columnspan=10, sticky='nsew')
+
+    def onConfirmar(self):
+        # Captura os valores dos campos
+        nome = self.ent_nome.get()
+        endereco = self.ent_logradouro.get()
+        alunos = self.ent_numero_alunos.get()
+
+        if self.flag_editar:
+            id = self.id_escola_editado
+            # Chama o controller para atualizar o usuário
+            self.controle_escolas.atualizar_escola(id, nome, endereco, alunos)
+        else:
+            # Chama o controller para inserir novo usuário
+            self.controle_escolas.inserir_escola(nome, endereco, alunos)
+        
+        # Reseta os valores dos campos do formulário
+        self.limpar_campos()
+
+        # Volta para a tela de listagem
+        self.gerenciador_de_janelas.alterar_para_a_tela(constants.TELA_LISTAGEM_ESCOLAS)
+
+    def onCancelar(self):
+        
+        # Reseta os valores dos campos do formulário
+        self.limpar_campos()
+
+        # Volta para a tela de listagem
+        self.gerenciador_de_janelas.alterar_para_a_tela(constants.TELA_LISTAGEM_ESCOLAS)
+
+    def limpar_campos(self):
+        self.ent_nome.delete(0, 'end')
+        self.ent_logradouro.delete(0, 'end')
+        self.ent_bairro.delete(0, 'end')
+        self.ent_numero.delete(0, 'end')
+        self.ent_estado.delete(0, 'end')
+        self.ent_cep.delete(0, 'end')
+        self.ent_numero_alunos.delete(0, 'end')
+        self.flag_editar = False
+
+    def editar_escola(self, escola):
+        self.ent_nome.delete(0, 'end')
+        self.ent_nome.insert(0, escola['nome'])
+        self.ent_numero_alunos.delete(0, 'end')
+        self.ent_numero_alunos.insert(0, escola['alunos'])
+        self.id_escola_editado = escola['id']
+        self.flag_editar = True
+

@@ -2,51 +2,34 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 import constants
 
+from control.escola_controller import EscolaController
 from view.telas.gerenciador_de_janelas import GerenciadorDeJanelasBase
 from view.telas.menus.menu_painel_de_opcoes_crud import MenuPainelDeOpcoesCRUD
 from view.telas.tela_base import TelaBase
-from control.usuario_controller import UsuarioController
 
-class TelaListagemUsuarios(TelaBase):
+class TelaListagemBase(TelaBase):
     def __init__(self, master, gerenciador_de_janelas: GerenciadorDeJanelasBase, largura=constants.LARGURA_JANELA, altura=constants.ALTURA_JANELA):
         super().__init__(master, gerenciador_de_janelas)
         
         # Controlador de usuários
-        self.controle_usuarios = UsuarioController()
+        self.controle_usuarios = EscolaController()
 
         ### Painel de ações
         self.painel_de_acoes = MenuPainelDeOpcoesCRUD(self, self)
         self.painel_de_acoes.mostrar()
 
         # Criar e exibir a listagem de usuários
-        self.criar_listagem_usuarios()
+        self.criar_listagem()
 
-    def criar_listagem_usuarios(self):
-        colunas = ['ID', 'LOGIN', 'SENHA', 'TIPO']
+    def criar_listagem(self):
+        colunas = []
         self.tvw_usuarios = ttk.Treeview(self, height=5, columns=colunas, show='headings')
-        tuplas = self.controle_usuarios.listar_usuario()
 
-        self.tvw_usuarios.heading('ID', text='ID')
-        self.tvw_usuarios.column('ID', width=20, anchor='center')
-
-        self.tvw_usuarios.heading('LOGIN', text='LOGIN')
-        self.tvw_usuarios.column('LOGIN', width=200, anchor='center')
-
-        self.tvw_usuarios.heading('SENHA', text='SENHA')
-        self.tvw_usuarios.column('SENHA', width=200, anchor='center')
-
-        self.tvw_usuarios.heading('TIPO', text='TIPO')
-        self.tvw_usuarios.column('TIPO', width=20, anchor='center')
-
-        for item in tuplas:
-            self.tvw_usuarios.insert('', 'end', values=item)
-        
         # Bind do botão direito para abrir o menu de contexto
         self.tvw_usuarios.bind("<Button-3>", self.abrir_menu_contexto)
 
         self.tvw_usuarios.bind("<<TreeviewSelect>>", self.item_selecionado)
 
-        
         self.tvw_usuarios.pack(pady=17, padx=10, fill='x', expand=False)
 
         # Criar menu de contexto
@@ -113,7 +96,9 @@ class TelaListagemUsuarios(TelaBase):
             self.gerenciador_de_janelas.editar_usuario(valores)
             
             # Aqui você pode implementar uma janela de edição ou navegar para uma tela de edição
-            print(f"Editando usuário: ID={valores[0]}, LOGIN={valores[1]}")
+            print(f"Editando usuário: ID={valores[0]}, NOME={valores[1]}")
+            # Por enquanto, apenas mostra uma mensagem
+            # tk.messagebox.showinfo("Editar", f"Função de edição será implementada para o usuário: {valores[1]}")
 
     def excluir_usuario(self):
         """Exclui o usuário selecionado"""

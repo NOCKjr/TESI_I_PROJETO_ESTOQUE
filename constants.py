@@ -14,7 +14,13 @@ TELA_CADASTRAR_FORNECEDOR = "cadastrar-fornecedor"
 TELA_CADASTRAR_INSUMO = "cadastrar-insumo"
 TELA_CONSULTAS = "consultas"
 TELA_LISTAGEM_USUARIOS = "listagem-usuarios"
-TELA_EDITAR_USUARIO = "cadastrar-usuario"
+TELA_LISTAGEM_ESCOLAS = "listagem-escolas"
+TELA_LISTAGEM_FORNECEDORES = "listagem-fornecedores"
+TELA_LISTAGEM_INSUMOS = "listagem-insumos"
+TELA_EDITAR_USUARIO = "editar-usuario"
+TELA_EDITAR_ESCOLA = "editar-escola"
+TELA_EDITAR_FORNECEDOR = "editar-fornecedor"
+TELA_EDITAR_INSUMO = "editar-insumo"
 
 # Cores
 cores = {

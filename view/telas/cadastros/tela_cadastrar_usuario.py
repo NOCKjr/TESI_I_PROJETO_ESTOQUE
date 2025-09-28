@@ -8,10 +8,8 @@ from view.telas.tela_formulario_base import TelaFormularioBase
 
 class TelaCadastrarUsuario(TelaFormularioBase):    
     def __init__(self, master, gerenciador_de_janelas: GerenciadorDeJanelasBase, modo_editar=False, largura=constants.LARGURA_JANELA, altura=constants.ALTURA_JANELA):
-        super().__init__(master, gerenciador_de_janelas)
+        super().__init__(master, gerenciador_de_janelas, modo_editar)
 
-        # Para saber se o formulário foi aberto para inserir um novo usuário ou editar um existente
-        self.flag_editar_usuario = modo_editar
         # Se o formulário foi aberto como edição, define-se o id do usuário editado
         self.id_usuario_editado = None
 
@@ -55,18 +53,11 @@ class TelaCadastrarUsuario(TelaFormularioBase):
         self.cmb_tipo_usuario.grid(row=3, column=0, columnspan=14, sticky='nsew')
         self.cmb_tipo_usuario.set("Comum")  # Valor padrão
 
-        ### Botões Confirmar e Cancelar
-        self.btn_confirmar = tk.Button(self.container_formulario, text="Confirmar", bg=constants.cores['verde'], command=self.onConfirmar)
-        self.btn_confirmar.grid(row=8, column=0, sticky='nswe', pady=(10,0))
-
-        self.btn_cancelar = tk.Button(self.container_formulario, text="Cancelar", bg=constants.cores['vermelho'], command=self.onCancelar)
-        self.btn_cancelar.grid(row=8, column=2, columnspan=10, sticky='nswe', pady=(10,0))
-    
     def limpar_campos(self):
         self.ent_login_usuario.delete(0, 'end')
         self.ent_senha_usuario.delete(0, 'end')
         self.cmb_tipo_usuario.current(0)
-        self.flag_editar_usuario = False
+        self.flag_editar = False
     
     def editar_usuario(self, usuario):
         self.ent_login_usuario.delete(0, 'end')
@@ -76,7 +67,7 @@ class TelaCadastrarUsuario(TelaFormularioBase):
         self.cmb_tipo_usuario.current(0)
         self.cmb_tipo_usuario.current(0 if usuario['tipo'] == 'C' else 1)
         self.id_usuario_editado = usuario['id']
-        self.flag_editar_usuario = True
+        self.flag_editar = True
     
     def onConfirmar(self):
         # Captura os valores dos campos
@@ -87,7 +78,7 @@ class TelaCadastrarUsuario(TelaFormularioBase):
         # Converte o tipo de usuário para o código esperado pelo banco
         tipo_codigo = 'A' if tipo_usuario == "Administrador" else 'C'
         
-        if self.flag_editar_usuario:
+        if self.flag_editar:
             id = self.id_usuario_editado
             # Chama o controller para atualizar o usuário
             self.controle_usuarios.atualizar_usuario(id, login, senha, tipo_codigo)
@@ -98,9 +89,6 @@ class TelaCadastrarUsuario(TelaFormularioBase):
         # Reseta os valores dos campos do formulário
         self.limpar_campos()
         
-        # # Volta para o menu de cadastros
-        # self.gerenciador_de_janelas.alterar_para_a_tela(constants.TELA_MENU_CADASTROS)
-
         # Volta para a tela de listagem
         self.gerenciador_de_janelas.alterar_para_a_tela(constants.TELA_LISTAGEM_USUARIOS)
 
@@ -108,14 +96,11 @@ class TelaCadastrarUsuario(TelaFormularioBase):
         # Reseta os valores dos campos do formulário
         self.limpar_campos()
         
-        # # Volta para o menu de cadastros
-        # self.gerenciador_de_janelas.alterar_para_a_tela(constants.TELA_MENU_CADASTROS)
-        
         # Volta para a tela de listagem
         self.gerenciador_de_janelas.alterar_para_a_tela(constants.TELA_LISTAGEM_USUARIOS)
 
     def set_flag_edicao(self, valor_flag=True):
-        self.flag_editar_usuario = valor_flag
+        self.flag_editar = valor_flag
 
     def set_id_usuario_edicao(self, valor_id=None):
         self.id_usuario_editado = valor_id

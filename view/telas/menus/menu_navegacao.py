@@ -12,9 +12,9 @@ class MenuNavegacao(tk.Frame):
         self.abas = {
             "Movimentações": constants.TELA_MOVIMENTACOES,
             "Usuários": constants.TELA_LISTAGEM_USUARIOS,
-            "Escolas": constants.TELA_CADASTRAR_ESCOLA,
-            "Fornecedores": constants.TELA_CADASTRAR_FORNECEDOR,
-            "Insumos": constants.TELA_CADASTRAR_INSUMO
+            "Escolas": constants.TELA_LISTAGEM_ESCOLAS,
+            "Fornecedores": constants.TELA_LISTAGEM_FORNECEDORES,
+            "Insumos": constants.TELA_LISTAGEM_INSUMOS
         }
 
         # Botões do "menu"

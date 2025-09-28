@@ -6,8 +6,11 @@ from view.telas.gerenciador_de_janelas import GerenciadorDeJanelasBase
 from view.telas.tela_base import TelaBase
 
 class TelaFormularioBase(TelaBase):
-    def __init__(self, master, gerenciador_de_janelas: GerenciadorDeJanelasBase, largura=constants.LARGURA_JANELA, altura=constants.ALTURA_JANELA):
+    def __init__(self, master, gerenciador_de_janelas: GerenciadorDeJanelasBase, modo_editar=False, largura=constants.LARGURA_JANELA, altura=constants.ALTURA_JANELA):
         super().__init__(master, gerenciador_de_janelas)
+
+         # Para saber se o formulário foi aberto para inserir ou editar
+        self.flag_editar = modo_editar
 
         self.numero_colunas_formulario = 30
         
@@ -33,3 +36,5 @@ class TelaFormularioBase(TelaBase):
     def onCancelar(self):
         self.gerenciador_de_janelas.alterar_para_a_tela(constants.TELA_MENU_CADASTROS)
 
+    def limpar_campos(self):
+        pass

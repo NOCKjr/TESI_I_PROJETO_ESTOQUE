@@ -2,41 +2,41 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 import constants
 
+from control.escola_controller import EscolaController
 from view.telas.gerenciador_de_janelas import GerenciadorDeJanelasBase
 from view.telas.menus.menu_painel_de_opcoes_crud import MenuPainelDeOpcoesCRUD
 from view.telas.tela_base import TelaBase
-from control.usuario_controller import UsuarioController
 
-class TelaListagemUsuarios(TelaBase):
+class TelaListagemEscolas(TelaBase):
     def __init__(self, master, gerenciador_de_janelas: GerenciadorDeJanelasBase, largura=constants.LARGURA_JANELA, altura=constants.ALTURA_JANELA):
         super().__init__(master, gerenciador_de_janelas)
         
         # Controlador de usuários
-        self.controle_usuarios = UsuarioController()
+        self.controle_usuarios = EscolaController()
 
         ### Painel de ações
         self.painel_de_acoes = MenuPainelDeOpcoesCRUD(self, self)
         self.painel_de_acoes.mostrar()
 
         # Criar e exibir a listagem de usuários
-        self.criar_listagem_usuarios()
+        self.criar_listagem_escolas()
 
-    def criar_listagem_usuarios(self):
-        colunas = ['ID', 'LOGIN', 'SENHA', 'TIPO']
+    def criar_listagem_escolas(self):
+        colunas = ['ID', 'NOME', 'ENDEREÇO', 'ALUNOS']
         self.tvw_usuarios = ttk.Treeview(self, height=5, columns=colunas, show='headings')
-        tuplas = self.controle_usuarios.listar_usuario()
+        tuplas = self.controle_usuarios.listar_escola()
 
         self.tvw_usuarios.heading('ID', text='ID')
-        self.tvw_usuarios.column('ID', width=20, anchor='center')
+        self.tvw_usuarios.column('ID', width=10, anchor='center')
 
-        self.tvw_usuarios.heading('LOGIN', text='LOGIN')
-        self.tvw_usuarios.column('LOGIN', width=200, anchor='center')
+        self.tvw_usuarios.heading('NOME', text='NOME')
+        self.tvw_usuarios.column('NOME', width=150, anchor='center')
 
-        self.tvw_usuarios.heading('SENHA', text='SENHA')
-        self.tvw_usuarios.column('SENHA', width=200, anchor='center')
+        self.tvw_usuarios.heading('ENDEREÇO', text='ENDEREÇO')
+        self.tvw_usuarios.column('ENDEREÇO', width=200, anchor='center')
 
-        self.tvw_usuarios.heading('TIPO', text='TIPO')
-        self.tvw_usuarios.column('TIPO', width=20, anchor='center')
+        self.tvw_usuarios.heading('ALUNOS', text='ALUNOS')
+        self.tvw_usuarios.column('ALUNOS', width=20, anchor='center')
 
         for item in tuplas:
             self.tvw_usuarios.insert('', 'end', values=item)
@@ -45,7 +45,6 @@ class TelaListagemUsuarios(TelaBase):
         self.tvw_usuarios.bind("<Button-3>", self.abrir_menu_contexto)
 
         self.tvw_usuarios.bind("<<TreeviewSelect>>", self.item_selecionado)
-
         
         self.tvw_usuarios.pack(pady=17, padx=10, fill='x', expand=False)
 
@@ -79,20 +78,20 @@ class TelaListagemUsuarios(TelaBase):
     
     ###
     
-    def atualizar_listagem_usuarios(self):
+    def atualizar_listagem_escolas(self):
         # Apaga os itens da treeview
         self.tvw_usuarios.delete(*self.tvw_usuarios.get_children())
 
         # Atualiza a treeview com os dados do banco
-        tuplas = self.controle_usuarios.listar_usuario()
+        tuplas = self.controle_usuarios.listar_escola()
         for item in tuplas:
             self.tvw_usuarios.insert('', 'end', values=item)
 
     def criar_menu_contexto(self):
         """Cria o menu de contexto com opções de editar e excluir"""
         self.menu_contexto = tk.Menu(self, tearoff=0)
-        self.menu_contexto.add_command(label="Editar", command=self.editar_usuario)
-        self.menu_contexto.add_command(label="Excluir", command=self.excluir_usuario)
+        self.menu_contexto.add_command(label="Editar", command=self.editar_escola)
+        self.menu_contexto.add_command(label="Excluir", command=self.excluir_escola)
 
     def abrir_menu_contexto(self, event):
         """Abre o menu de contexto quando clica com botão direito"""
@@ -104,48 +103,48 @@ class TelaListagemUsuarios(TelaBase):
             # Mostra o menu de contexto na posição do mouse
             self.menu_contexto.post(event.x_root, event.y_root)
 
-    def editar_usuario(self):
-        """Edita o usuário selecionado"""
+    def editar_escola(self):
+        """Edita a escola selecionada"""
         item_selecionado = self.tvw_usuarios.selection()[0]
         valores = self.tvw_usuarios.item(item_selecionado, 'values')
         
         if valores:
-            self.gerenciador_de_janelas.editar_usuario(valores)
+            self.gerenciador_de_janelas.editar_escola(valores)
             
             # Aqui você pode implementar uma janela de edição ou navegar para uma tela de edição
-            print(f"Editando usuário: ID={valores[0]}, LOGIN={valores[1]}")
+            print(f"Editando escola: ID={valores[0]}, NOME={valores[1]}")
 
-    def excluir_usuario(self):
-        """Exclui o usuário selecionado"""
+    def excluir_escola(self):
+        """Exclui a escola selecionada"""
         item_selecionado = self.tvw_usuarios.selection()[0]
         valores = self.tvw_usuarios.item(item_selecionado, 'values')
         
         if valores:
             # Confirma a exclusão
             resposta = tk.messagebox.askyesno("Confirmar Exclusão", 
-                                            f"Tem certeza que deseja excluir o usuário '{valores[1]}'?")
+                                            f"Tem certeza que deseja excluir a escola '{valores[1]}'?")
             if resposta:
                 # Chama o controller para excluir
-                resultado = self.controle_usuarios.excluir_usuario(valores[0])
+                resultado = self.controle_usuarios.excluir_escola(valores[0])
                 if resultado:
                     # Remove o item da treeview
                     self.tvw_usuarios.delete(item_selecionado)
-                    tk.messagebox.showinfo("Sucesso", "Usuário excluído com sucesso!")
+                    tk.messagebox.showinfo("Sucesso", "Escola excluída com sucesso!")
                 else:
-                    tk.messagebox.showerror("Erro", "Erro ao excluir o usuário!")
+                    tk.messagebox.showerror("Erro", "Erro ao excluir a escola!")
 
     def mostrar(self):
         # Atualiza os dados
-        self.atualizar_listagem_usuarios()
+        self.atualizar_listagem_escolas()
 
         # Mostra o componente na tela
         self.pack(expand=True, fill='both', anchor='center')
     
     def adicionar(self):
-        self.alterar_para_a_tela(constants.TELA_CADASTRAR_USUARIO)
+        self.alterar_para_a_tela(constants.TELA_CADASTRAR_ESCOLA)
     
     def editar(self):
-        self.editar_usuario()
+        self.editar_escola()
     
     def excluir(self):
-        self.excluir_usuario()
+        self.excluir_escola()
