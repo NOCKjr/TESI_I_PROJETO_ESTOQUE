@@ -4,12 +4,11 @@ import abc
 
 from tkinter import ttk
 from view.telas.menus.menu_navegacao import MenuNavegacao
-from view.telas.tela_interface import TelaInterface
 
 class GerenciadorDeJanelasBase(tk.Frame, abc.ABC):
     def __init__(self, master):
         super().__init__(master)
-        self.tela_atual: TelaInterface | None = None
+        self.tela_atual = None
 
         ### Menu superior de navegação
         self.container_menu = tk.Frame(self)

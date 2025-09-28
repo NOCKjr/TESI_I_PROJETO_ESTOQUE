@@ -4,26 +4,15 @@ import constants
 
 from view.telas.gerenciador_de_janelas import GerenciadorDeJanelasBase
 from view.telas.menus.menu_painel_de_opcoes_crud import MenuPainelDeOpcoesCRUD
-from view.telas.tela_interface import TelaInterface
+from view.telas.tela_base import TelaBase
 from control.usuario_controller import UsuarioController
 
-class TelaListagemUsuarios(TelaInterface):
+class TelaListagemUsuarios(TelaBase):
     def __init__(self, master, gerenciador_de_janelas: GerenciadorDeJanelasBase, largura=constants.LARGURA_JANELA, altura=constants.ALTURA_JANELA):
-        super().__init__(master, width=largura, height=altura, bg='#ffffff')
-
-        # guarda qual objeto está gerenciando a troca entre janelas
-        self.gerenciador_de_janelas = gerenciador_de_janelas
-
+        super().__init__(master, gerenciador_de_janelas)
+        
         # Controlador de usuários
         self.controle_usuarios = UsuarioController()
-
-        ### Logo
-        self.lbl_sigeme = tk.Label(self, text='SIGEME', bg=self.cores['branco'])
-        self.lbl_sigeme.pack(side='top')
-
-        ### Voltar ao menu
-        self.btn_logoff = tk.Button(self, text="Voltar", command=lambda: self.alterar_para_a_tela(constants.TELA_CONSULTAS))
-        self.btn_logoff.place(anchor='ne', x=largura - 5, y=5)
 
         ### Painel de ações
         self.painel_de_acoes = MenuPainelDeOpcoesCRUD(self, self)
@@ -153,12 +142,6 @@ class TelaListagemUsuarios(TelaInterface):
 
         # Mostra o componente na tela
         self.pack(expand=True, fill='both', anchor='center')
-    
-    def esconder(self):
-        self.pack_forget()
-    
-    def alterar_para_a_tela(self, tela):
-        self.gerenciador_de_janelas.alterar_para_a_tela(tela)
     
     def adicionar(self):
         self.alterar_para_a_tela(constants.TELA_CADASTRAR_USUARIO)

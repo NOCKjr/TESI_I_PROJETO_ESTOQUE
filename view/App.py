@@ -9,7 +9,7 @@ from view.telas.cadastros.tela_cadastrar_usuario import TelaCadastrarUsuario
 from view.telas.historico.tela_historico import TelaHistorico
 from view.telas.menus.menu_navegacao import MenuNavegacao
 from view.telas.movimentacoes.tela_movimentacoes import TelaMovimentacoes
-from view.telas.tela_interface import TelaInterface
+from view.telas.tela_base import TelaBase
 from view.telas.tela_login import TelaLogin
 from view.telas.tela_menu_cadastros import TelaMenuCadastros
 from view.telas.tela_menu_principal import TelaMenuPrincipal
@@ -22,7 +22,7 @@ class App(GerenciadorDeJanelasBase):
         super().__init__(master)
 
         # Referências das telas usadas
-        self.telas: dict[str, TelaInterface] = {
+        self.telas: dict[str, TelaBase] = {
             constants.TELA_LOGIN: TelaLogin(self.content_frame, self),                              # Tela de login
             constants.TELA_MENU_PRINCIPAL: TelaMenuPrincipal(self.content_frame, self),             # Tela de menu principal
             constants.TELA_MENU_CADASTROS: TelaMenuCadastros(self.content_frame, self),             # Tela de menu de cadastros

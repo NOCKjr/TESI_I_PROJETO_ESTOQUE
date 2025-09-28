@@ -19,6 +19,8 @@ class MenuNavegacao(tk.Frame):
 
         # Botões do "menu"
         self.botoes = {}
+        self.botoes["logoff"] = tk.Button(self, text="Sair", command=lambda: self.gerenciador_de_janelas.alterar_para_a_tela(constants.TELA_LOGIN))
+        self.botoes["logoff"].pack(side='right')
         for aba in self.abas:
             btn = tk.Button(self, text=aba, command=lambda tela=aba: self.gerenciador_de_janelas.alterar_para_a_tela(self.abas[tela]))
             btn.pack(side="left", padx=1, pady=2)
