@@ -1,3 +1,5 @@
+from enum import Enum
+
 # Dimensões padrão da janela
 LARGURA_JANELA = 600
 ALTURA_JANELA = 338
@@ -22,11 +24,21 @@ TELA_EDITAR_ESCOLA = "editar-escola"
 TELA_EDITAR_FORNECEDOR = "editar-fornecedor"
 TELA_EDITAR_INSUMO = "editar-insumo"
 
+
+class Cores(Enum):
+    PRINCIPAL = '#075F8B'
+    SECUNDARIO = '#87C5FF'
+    CINZA = '#d9d9d9'
+    BRANCO = '#ffffff'
+    PRETO = '#000000'
+    VERDE = '#3AB800'
+    VERMELHO = '#FF0000'
+
 # Cores
 cores = {
     "principal": '#075F8B',
     "secundario": '#87C5FF',
-    "cinza": "#d9d9d9",
+    "cinza": '#d9d9d9',
     'branco': '#ffffff',
     'verde': '#3AB800',
     'vermelho': "#FF0000",
