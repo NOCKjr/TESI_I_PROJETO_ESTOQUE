@@ -9,10 +9,10 @@ class TelaMovimentacoes(TelaBase):
     def __init__(self, master, gerenciador_de_janelas: GerenciadorDeJanelasBase, largura=constants.LARGURA_JANELA, altura=constants.ALTURA_JANELA):
         super().__init__(master, gerenciador_de_janelas)
 
-        # guarda qual objeto está gerenciando a troca entre janelas
-        self.gerenciador_de_janelas = gerenciador_de_janelas
+        self.btn_adicionar = tk.Button(self, text="Nova Movimentação", command=lambda: self.onAdicionar())
+        self.btn_adicionar.pack()
+    
+    def onAdicionar(self):
+        self.gerenciador_de_janelas.alterar_para_a_tela(constants.TELA_FORMULARIO_MOVIMENTACOES)
 
-        ### Container com o formulário de movimentação
-        self.container_formulario = tk.Frame(self, bg='blue', padx=10, pady=20)
-        self.container_formulario.place(anchor='center', relx=0.5, rely=0.5)
 

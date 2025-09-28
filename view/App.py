@@ -11,6 +11,7 @@ from view.telas.listagem.tela_listagem_escolas import TelaListagemEscolas
 from view.telas.listagem.tela_listagem_fornecedores import TelaListagemFornecedores
 from view.telas.listagem.tela_listagem_insumos import TelaListagemInsumos
 from view.telas.menus.menu_navegacao import MenuNavegacao
+from view.telas.movimentacoes.tela_formulario_movimentacao import TelaFormularioMovimentacao
 from view.telas.movimentacoes.tela_movimentacoes import TelaMovimentacoes
 from view.telas.tela_base import TelaBase
 from view.telas.tela_login import TelaLogin
@@ -33,6 +34,7 @@ class App(GerenciadorDeJanelasBase):
             constants.TELA_CADASTRAR_ESCOLA:        TelaCadastrarEscola(self.content_frame, self),      # Tela cadsatro de escola
             constants.TELA_CADASTRAR_FORNECEDOR:    TelaCadastrarFornecedor(self.content_frame, self),  # Tela cadsatro de fornecedor
             constants.TELA_CADASTRAR_INSUMO:        TelaCadastrarInsumo(self.content_frame, self),      # Tela cadsatro de insumo
+            constants.TELA_FORMULARIO_MOVIMENTACOES:TelaFormularioMovimentacao(self.content_frame, self),        # Tela de inserir movimentações
             constants.TELA_MOVIMENTACOES:           TelaMovimentacoes(self.content_frame, self),        # Tela de movimentações
             constants.TELA_HISTORICO:               TelaHistorico(self.content_frame, self),            # Tela de histórico
             constants.TELA_CONSULTAS:               TelaConsultas(self.content_frame, self),            # Tela de consultas
