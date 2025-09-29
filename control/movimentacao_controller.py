@@ -9,13 +9,10 @@ class MovimentacaoController:
         return self.model.insert(sql)
 
     def listar_movimentacao(self, unidade=''):
-        sql = f'SELECT * FROM medida WHERE med_unidade LIKE "%{unidade}%";'
-        return self.model.get(sql)
+        pass
 
     def excluir_movimentacao(self, id):
-        sql = f'DELETE FROM medida WHERE med_id = {id}'
-        return self.model.delete(sql)
+        pass
 
     def atualizar_movimentacao(self, id, unidade):
-        sql = f"UPDATE medida SET med_unidade = '{unidade}' WHERE med_id = {id};"
-        return self.model.update(sql)
+        pass
