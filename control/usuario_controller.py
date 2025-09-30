@@ -13,7 +13,7 @@ class UsuarioController:
             "nick": 1,
             "email": 2,
             "senha": 3,
-            "tipo": 4
+            "tipo": 4,
         }
 
     def inserir_usuario(self, nick: str = '', email: str = '', senha: str = '', tipo: str = 'C') -> int:

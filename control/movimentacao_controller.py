@@ -13,7 +13,7 @@ class MovimentacaoController:
             "tipo": 2,
             "usuario_id": 3,
             "fornecedor_id": 4,
-            "escola_id": 5
+            "escola_id": 5,
         }
 
     def inserir_movimentacao(self, data: str, tipo: str, usuario_id: int, fornecedor_id: int, escola_id: int) -> int:
