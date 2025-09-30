@@ -21,10 +21,6 @@ class UsuarioController:
         email = self.model.get(sql)
         return (f"{nick}", f"{email}")
 
-    def busca_usuario_por_email(self, email=''):
-        sql = f'SELECT * FROM usuario WHERE usu_email LIKE "{email}";'
-        return self.model.get(sql)
-
     def excluir_usuario(self, id):
         sql = f'DELETE FROM usuario WHERE usu_id = {id}'
         return self.model.delete(sql)
