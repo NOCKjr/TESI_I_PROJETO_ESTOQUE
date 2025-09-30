@@ -104,7 +104,7 @@ class TelaLogin(TelaBase):
         smtp_server = 'smtp.gmail.com'
         smtp_port = 587
         usuario = 'sistema.sigeme@gmail.com'
-        senha = 'tbbu ufnz fzqu engl'
+        senha = 'tbbu ufnz fzqu engl' #senha de app gerada pelo google
 
         msg = MIMEText(corpo)
         msg['Subject'] = 'Código de verificação'
