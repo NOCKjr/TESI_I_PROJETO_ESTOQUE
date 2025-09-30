@@ -14,9 +14,12 @@ class UsuarioController:
         sql = f'SELECT * FROM usuario WHERE usu_nick LIKE "%{nick}%";'
         return self.model.get(sql)
 
-    def busca_usuario_por_nick(self, nick=''):
-        sql = f'SELECT * FROM usuario WHERE usu_nick LIKE "{nick}";'
-        return self.model.get(sql)
+    def busca_usuario(self, usuario=''):
+        sql = f'SELECT * FROM usuario WHERE usu_nick LIKE "{usuario}";'
+        nick = self.model.get(sql)
+        sql = f'SELECT * FROM usuario WHERE usu_email LIKE "{usuario}";'
+        email = self.model.get(sql)
+        return (f"{nick}", f"{email}")
 
     def busca_usuario_por_email(self, email=''):
         sql = f'SELECT * FROM usuario WHERE usu_email LIKE "{email}";'
