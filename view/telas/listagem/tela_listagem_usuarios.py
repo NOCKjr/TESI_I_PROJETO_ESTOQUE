@@ -22,21 +22,25 @@ class TelaListagemUsuarios(TelaBase):
         self.criar_listagem_usuarios()
 
     def criar_listagem_usuarios(self):
-        colunas = ['ID', 'LOGIN', 'SENHA', 'TIPO']
+
+        colunas = ['ID', 'LOGIN', 'EMAIL', 'SENHA', 'TIPO']
         self.tvw_usuarios = ttk.Treeview(self, height=5, columns=colunas, show='headings')
         tuplas = self.controle_usuarios.listar_usuario()
 
         self.tvw_usuarios.heading('ID', text='ID')
-        self.tvw_usuarios.column('ID', width=20, anchor='center')
+        self.tvw_usuarios.column('ID', width=25, anchor='center')
 
         self.tvw_usuarios.heading('LOGIN', text='LOGIN')
         self.tvw_usuarios.column('LOGIN', width=200, anchor='center')
+
+        self.tvw_usuarios.heading('EMAIL', text='EMAIL')
+        self.tvw_usuarios.column('EMAIL', width=200, anchor='center')
 
         self.tvw_usuarios.heading('SENHA', text='SENHA')
         self.tvw_usuarios.column('SENHA', width=200, anchor='center')
 
         self.tvw_usuarios.heading('TIPO', text='TIPO')
-        self.tvw_usuarios.column('TIPO', width=20, anchor='center')
+        self.tvw_usuarios.column('TIPO', width=35, anchor='center')
 
         for item in tuplas:
             self.tvw_usuarios.insert('', 'end', values=item)
@@ -110,7 +114,14 @@ class TelaListagemUsuarios(TelaBase):
         valores = self.tvw_usuarios.item(item_selecionado, 'values')
         
         if valores:
-            self.gerenciador_de_janelas.editar_usuario(valores)
+            usuario = {
+                'id': valores[0],
+                'login': valores[1],
+                'email': valores[2],
+                'senha': valores[3],
+                'tipo': valores[4]
+            }
+            self.gerenciador_de_janelas.editar_usuario(usuario)
             
             # Aqui você pode implementar uma janela de edição ou navegar para uma tela de edição
             print(f"Editando usuário: ID={valores[0]}, LOGIN={valores[1]}")
