@@ -15,20 +15,15 @@ class UsuarioController:
         return self.model.get(sql)
 
     def busca_usuario(self, usuario=''):
-        sql = f'SELECT * FROM usuario WHERE usu_nick LIKE "{usuario}";'
-        nick = self.model.get(sql)
-        sql = f'SELECT * FROM usuario WHERE usu_email LIKE "{usuario}";'
-        email = self.model.get(sql)
-        return (f"{nick}", f"{email}")
-
-    def busca_usuario_por_email(self, email=''):
-        sql = f'SELECT * FROM usuario WHERE usu_email LIKE "{email}";'
-        return self.model.get(sql)
+        sql = f'SELECT * FROM usuario WHERE usu_nick LIKE "{usuario}" or usu_email LIKE "{usuario}";'
+        resultado = self.model.get(sql)
+        return resultado
 
     def excluir_usuario(self, id):
         sql = f'DELETE FROM usuario WHERE usu_id = {id}'
         return self.model.delete(sql)
 
     def atualizar_usuario(self, id, nick, email, senha, tipo):
-        sql = f'UPDATE usuario SET usu_nick = "{nick}", usu_email = "{email}", usu_senha = "{senha}", usu_tipo = "{tipo}" WHERE usu_id = {id};'
+        hash = hashlib.sha256(senha.encode('utf-8')).hexdigest()
+        sql = f'UPDATE usuario SET usu_nick = "{nick}", usu_email = "{email}", usu_senha = "{hash}", usu_tipo = "{tipo}" WHERE usu_id = {id};'
         return self.model.update(sql)

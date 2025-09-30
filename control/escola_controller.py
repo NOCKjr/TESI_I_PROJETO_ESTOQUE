@@ -16,6 +16,6 @@ class EscolaController:
         sql = f'DELETE FROM escola WHERE esc_id = {id}'
         return self.model.delete(sql)
 
-    def atualizar_escola(self, id, nome, endereco, numero_alunos):
-        sql = f"UPDATE escola SET esc_nome = '{nome}', esc_endereco = '{endereco}', esc_numero_alunos = {numero_alunos} WHERE esc_id = {id};"
+    def atualizar_escola(self, id, nome, endereco_id, numero_alunos):
+        sql = f"UPDATE escola SET esc_nome = '{nome}', esc_end_id = {endereco_id}, esc_numero_alunos = {numero_alunos} WHERE esc_id = {id};"
         return self.model.update(sql)

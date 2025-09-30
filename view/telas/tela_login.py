@@ -1,5 +1,6 @@
 import tkinter as tk
 import constants
+import hashlib
 
 from tkinter import ttk
 from view.telas.tela_base import TelaBase
@@ -79,9 +80,12 @@ class TelaLogin(TelaBase):
         if not usuario:
             # tk.messagebox.showinfo("Quem é você?", f"Usuário não encontrado.")
             return False
+        
+        #Criptografa a senha digitada pelo usuário e compara com o hash salvo no banco de dados
+        hash = hashlib.sha256(senha.encode('utf-8')).hexdigest()
 
         # Senha incorreta
-        if senha != usuario[0][2]:
+        if hash != usuario[0][3]:
             # tk.messagebox.showinfo("Senha incorreta", f"Senha incorreta")
             return False
     
