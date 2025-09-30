@@ -9,7 +9,8 @@ class MovimentacaoController:
         return self.model.insert(sql)
 
     def listar_movimentacao(self, unidade=''):
-        pass
+        sql = f"SELECT * FROM movimentacao ORDER BY mov_data DESC"
+        return self.model.get(sql)
 
     def excluir_movimentacao(self, id):
         pass
