@@ -8,6 +8,7 @@ left to right direction
 class Usuario {
     -idUsuario: int
     -login: string
+    -email: string
     -senha: string
 
     +autenticar(): bool
@@ -46,18 +47,22 @@ class Fornecedor {
 }
 
 class Item {
+    - idItem: int
     - quantidade: int
 }
 
 class Insumo {
     -idInsumo: int
     -nome: string
-    -unidadeMedida: string
     -categoria: string
     -mediaConsumida: float
     -quantidadeEmEstoque: int 
 }
 
+class Medida {
+    -idMedida: int
+    -unidade: string
+}
 
 Usuario "1" -- "0..*" Movimentacao : Registra
 
@@ -68,5 +73,7 @@ Movimentacao "0..*" -- "1" Fornecedor : Contém
 Item "1..*" -- "1" Movimentacao: Pertence 
 
 Insumo "1" -- "0..*" Item
+
+Insumo "0..*" -- "1" Medida
 
 @enduml
