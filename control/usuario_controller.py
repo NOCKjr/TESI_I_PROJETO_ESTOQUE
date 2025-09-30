@@ -24,5 +24,6 @@ class UsuarioController:
         return self.model.delete(sql)
 
     def atualizar_usuario(self, id, nick, email, senha, tipo):
-        sql = f'UPDATE usuario SET usu_nick = "{nick}", usu_email = "{email}", usu_senha = "{senha}", usu_tipo = "{tipo}" WHERE usu_id = {id};'
+        hash = hashlib.sha256(senha.encode('utf-8')).hexdigest()
+        sql = f'UPDATE usuario SET usu_nick = "{nick}", usu_email = "{email}", usu_senha = "{hash}", usu_tipo = "{tipo}" WHERE usu_id = {id};'
         return self.model.update(sql)

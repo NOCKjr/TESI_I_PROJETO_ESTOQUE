@@ -1,6 +1,9 @@
 import tkinter as tk
 import constants
 import hashlib
+import smtplib
+import random
+from email.mime.text import MIMEText
 
 from tkinter import ttk
 from view.telas.tela_base import TelaBase
@@ -45,7 +48,7 @@ class TelaLogin(TelaBase):
         ### Esqueci a senha
         self.lbl_esqueciASenha = tk.Label(self.modal_login, text='Esqueceu a senha?', relief='flat', bg=constants.cores['cinza'])
         self.lbl_esqueciASenha.grid(row=4, column=2, columnspan=1, sticky='e')
-        self.lbl_esqueciASenha.bind('<Button-1>', self.test)
+        self.lbl_esqueciASenha.bind('<Button-1>', self.redefinir_senha)
 
         ### Botão continuar
         self.btn_continuar = tk.Button(self.modal_login, text='Continuar', bg=constants.cores['principal'], fg=constants.cores['branco'], command=self.onContinuar)
@@ -91,3 +94,24 @@ class TelaLogin(TelaBase):
     
         # Login válido
         return True
+    
+    #Este método subustitui 'test()' no bind
+    def redefinir_senha(self, event):
+        self.codigo_gerado = str(random.randint(100000, 999999))
+        corpo = f"Seu código de verificação é: {self.codigo_gerado}"
+
+        # Configurações do servidor SMTP
+        smtp_server = 'smtp.gmail.com'
+        smtp_port = 587
+        usuario = 'sistema.sigeme@gmail.com'
+        senha = 'tbbu ufnz fzqu engl'
+
+        msg = MIMEText(corpo)
+        msg['Subject'] = 'Código de verificação'
+        msg['From'] = usuario
+        msg['To'] = 'ramosemanueldesouza@gmail.com' #email do usuário aqui
+
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(usuario, senha)
+            server.send_message(msg)
