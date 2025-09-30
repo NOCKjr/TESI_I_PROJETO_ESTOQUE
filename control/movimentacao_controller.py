@@ -16,7 +16,7 @@ class MovimentacaoController:
             "escola_id": 5
         }
 
-    def inserir_movimentacao(self, data, tipo, usuario_id, fornecedor_id, escola_id) -> int:
+    def inserir_movimentacao(self, data: str, tipo: str, usuario_id: int, fornecedor_id: int, escola_id: int) -> int:
         """
         Insere uma movimentação no banco.
 
@@ -30,7 +30,10 @@ class MovimentacaoController:
         Returns:
             int: Número de linhas afetadas.
         """
-        sql = f"INSERT INTO movimentacao(mov_data, mov_tipo, fk_mov_usu_id, fk_mov_for_id, fk_mov_esc_id) VALUES ('{data}', '{tipo}', {usuario_id}, {fornecedor_id}, {escola_id});"
+        sql = (
+            "INSERT INTO movimentacao(mov_data, mov_tipo, fk_mov_usu_id, fk_mov_for_id, fk_mov_esc_id) "
+            f"VALUES ('{data}', '{tipo}', {usuario_id}, {fornecedor_id}, {escola_id});"
+        )
         return self.model.insert(sql)
 
     def listar_movimentacao(self) -> list[dict]:
@@ -44,7 +47,7 @@ class MovimentacaoController:
         resultado = self.model.get(sql)
         return [self.to_dict(m) for m in resultado] if resultado else []
 
-    def listar_movimentacao_por_fornecedor(self, fornecedor_id) -> list[dict]:
+    def listar_movimentacao_por_fornecedor(self, fornecedor_id: int) -> list[dict]:
         """
         Lista as movimentações filtradas por fornecedor.
 
@@ -58,7 +61,7 @@ class MovimentacaoController:
         resultado = self.model.get(sql)
         return [self.to_dict(m) for m in resultado] if resultado else []
 
-    def listar_movimentacao_por_escola(self, escola_id) -> list[dict]:
+    def listar_movimentacao_por_escola(self, escola_id: int) -> list[dict]:
         """
         Lista as movimentações filtradas por escola.
 
@@ -72,7 +75,7 @@ class MovimentacaoController:
         resultado = self.model.get(sql)
         return [self.to_dict(m) for m in resultado] if resultado else []
 
-    def listar_movimentacao_por_usuario(self, usuario_id) -> list[dict]:
+    def listar_movimentacao_por_usuario(self, usuario_id: int) -> list[dict]:
         """
         Lista as movimentações filtradas por usuário.
 
@@ -86,7 +89,7 @@ class MovimentacaoController:
         resultado = self.model.get(sql)
         return [self.to_dict(m) for m in resultado] if resultado else []
 
-    def excluir_movimentacao(self, id) -> int:
+    def excluir_movimentacao(self, id: int) -> int:
         """
         Exclui uma movimentação pelo ID.
 
@@ -99,7 +102,7 @@ class MovimentacaoController:
         sql = f"DELETE FROM movimentacao WHERE mov_id = {id};"
         return self.model.delete(sql)
 
-    def atualizar_movimentacao(self, id, data, tipo, usuario_id, fornecedor_id, escola_id) -> int:
+    def atualizar_movimentacao(self, id: int, data: str, tipo: str, usuario_id: int, fornecedor_id: int, escola_id: int) -> int:
         """
         Atualiza uma movimentação existente.
 
