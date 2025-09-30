@@ -4,22 +4,26 @@ class UsuarioController:
     def __init__(self):
         self.model = model_base.ModelBase()
 
-    def inserir_usuario(self, login='', senha='', tipo='C'):
-        sql = f"INSERT INTO usuario(usu_login, usu_senha, usu_tipo) VALUES ('{login}', '{senha}', '{tipo}');"
+    def inserir_usuario(self, nick='', email='', senha='', tipo='C'):
+        sql = f"INSERT INTO usuario(usu_nick, usu_email,usu_senha, usu_tipo) VALUES ('{nick}', '{email}', '{senha}', '{tipo}');"
         return self.model.insert(sql)
 
-    def listar_usuario(self, login=''):
-        sql = f'SELECT * FROM usuario WHERE usu_login LIKE "%{login}%";'
+    def listar_usuario(self, nick=''):
+        sql = f'SELECT * FROM usuario WHERE usu_nick LIKE "%{nick}%";'
         return self.model.get(sql)
 
-    def busca_usuario(self, login):
-        sql = f'SELECT * FROM usuario WHERE usu_login LIKE "{login}";'
+    def busca_usuario_por_nick(self, nick=''):
+        sql = f'SELECT * FROM usuario WHERE usu_nick LIKE "{nick}";'
+        return self.model.get(sql)
+
+    def busca_usuario_por_email(self, email=''):
+        sql = f'SELECT * FROM usuario WHERE usu_email LIKE "{email}";'
         return self.model.get(sql)
 
     def excluir_usuario(self, id):
         sql = f'DELETE FROM usuario WHERE usu_id = {id}'
         return self.model.delete(sql)
 
-    def atualizar_usuario(self, id, login, senha, tipo):
-        sql = f'UPDATE usuario SET usu_login = "{login}", usu_senha = "{senha}", usu_tipo = "{tipo}" WHERE usu_id = {id};'
+    def atualizar_usuario(self, id, nick, email, senha, tipo):
+        sql = f'UPDATE usuario SET usu_nick = "{nick}", usu_email = "{email}", usu_senha = "{senha}", usu_tipo = "{tipo}" WHERE usu_id = {id};'
         return self.model.update(sql)
