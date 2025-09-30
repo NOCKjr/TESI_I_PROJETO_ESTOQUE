@@ -1,11 +1,13 @@
 from model import model_base
+import hashlib
 
 class UsuarioController:
     def __init__(self):
         self.model = model_base.ModelBase()
 
     def inserir_usuario(self, nick='', email='', senha='', tipo='C'):
-        sql = f"INSERT INTO usuario(usu_nick, usu_email,usu_senha, usu_tipo) VALUES ('{nick}', '{email}', '{senha}', '{tipo}');"
+        hash = hashlib.md5(senha.encode('utf-8')).hexdigest()
+        sql = f"INSERT INTO usuario(usu_nick, usu_email,usu_senha, usu_tipo) VALUES ('{nick}', '{email}', '{hash}', '{tipo}');"
         return self.model.insert(sql)
 
     def listar_usuario(self, nick=''):
