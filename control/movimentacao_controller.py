@@ -20,6 +20,10 @@ class MovimentacaoController:
         sql = f"SELECT * FROM movimentacao WHERE fk_mov_esc_id = {escola_id} ORDER BY mov_data DESC;"
         return self.model.get(sql)
 
+    def listar_movimentacao_por_usuario(self, usuario_id):
+        sql = f"SELECT * FROM movimentacao WHERE fk_mov_usu_id = {usuario_id} ORDER BY mov_data DESC;"
+        return self.model.get(sql)
+
     def excluir_movimentacao(self, id):
         pass
 
@@ -27,4 +31,4 @@ class MovimentacaoController:
         pass
 
 #teste = MovimentacaoController()
-#print(teste.listar_movimentacao_por_escola(3))
+#print(teste.listar_movimentacao_por_usuario(11))
