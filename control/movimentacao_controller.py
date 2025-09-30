@@ -25,10 +25,14 @@ class MovimentacaoController:
         return self.model.get(sql)
 
     def excluir_movimentacao(self, id):
-        pass
+        sql = f"DELETE FROM movimentacao WHERE mov_id = {id};"
+        return self.model.delete(sql)
 
-    def atualizar_movimentacao(self, id, unidade):
-        pass
-
-#teste = MovimentacaoController()
-#print(teste.listar_movimentacao_por_usuario(11))
+    def atualizar_movimentacao(self, id, data, tipo, usuario_id, fornecedor_id, escola_id):
+        sql = f"""UPDATE movimentacao SET mov_data = '{data}', 
+        mov_tipo = '{tipo}', 
+        fk_mov_usu_id = {usuario_id},
+        fk_mov_for_id = {fornecedor_id},
+        fk_mov_esc_id = {escola_id}
+        WHERE mov_id = {id}"""
+        return self.model.update(sql)
