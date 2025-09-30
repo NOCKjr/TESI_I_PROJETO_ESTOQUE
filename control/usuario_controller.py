@@ -17,7 +17,6 @@ class UsuarioController:
     def busca_usuario(self, usuario=''):
         sql = f'SELECT * FROM usuario WHERE usu_nick LIKE "{usuario}" or usu_email LIKE "{usuario}";'
         resultado = self.model.get(sql)
-        print(resultado)
         return resultado
 
     def excluir_usuario(self, id):
