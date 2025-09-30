@@ -16,24 +16,27 @@ class UsuarioController:
             "tipo": 4
         }
 
-    def inserir_usuario(self, nick='', email='', senha='', tipo='C') -> int:
+    def inserir_usuario(self, nick: str = '', email: str = '', senha: str = '', tipo: str = 'C') -> int:
         """
-        Insere um usuário no banco de dados.
+        Insere um usuário no banco de dados. A senha é hashificada antes de ser salva.
 
         Args:
             nick (str): Apelido do usuário. Padrão ''.
             email (str): Email do usuário. Padrão ''.
-            senha (str): Senha do usuário. Padrão ''.
+            senha (str): Senha do usuário (texto simples). Padrão ''.
             tipo (str): Tipo de usuário. Padrão 'C'.
 
         Returns:
             int: Número de linhas afetadas.
         """
-        hash = hashlib.sha256(senha.encode('utf-8')).hexdigest()
-        sql = f"INSERT INTO usuario(usu_nick, usu_email, usu_senha, usu_tipo) VALUES ('{nick}', '{email}', '{hash}', '{tipo}');"
+        senha_hash = hashlib.sha256(senha.encode('utf-8')).hexdigest()
+        sql = (
+            "INSERT INTO usuario(usu_nick, usu_email, usu_senha, usu_tipo) "
+            f"VALUES ('{nick}', '{email}', '{senha_hash}', '{tipo}');"
+        )
         return self.model.insert(sql)
 
-    def listar_usuario(self, termo_busca='') -> list[dict] | None:
+    def listar_usuario(self, termo_busca: str = '') -> list[dict]:
         """
         Lista os usuários cujo nick contenha o termo de busca.
 
@@ -41,7 +44,7 @@ class UsuarioController:
             termo_busca (str): Termo procurado no nick. Padrão ''.
 
         Returns:
-            list[dict]: Lista de dicionários com os usuários correspondentes.
+            list[dict]: Lista de dicionários com os usuários correspondentes (vazia se nenhum).
         """
         sql = f'SELECT * FROM usuario WHERE usu_nick LIKE "%{termo_busca}%";'
         resultado = self.model.get(sql)
@@ -49,7 +52,7 @@ class UsuarioController:
             return []
         return [self.to_dict(u) for u in resultado]
 
-    def busca_usuario(self, nick_ou_email='') -> dict | None:
+    def busca_usuario(self, nick_ou_email: str = '') -> dict | None:
         """
         Retorna um usuário pelo nick ou email informado.
 
@@ -61,11 +64,9 @@ class UsuarioController:
         """
         sql = f'SELECT * FROM usuario WHERE usu_nick = "{nick_ou_email}" OR usu_email = "{nick_ou_email}";'
         resultado = self.model.get(sql)
-        if not resultado:
-            return None
-        return self.to_dict(resultado[0])
+        return self.to_dict(resultado[0]) if resultado else None
 
-    def excluir_usuario(self, id) -> int:
+    def excluir_usuario(self, id: int) -> int:
         """
         Exclui o usuário pelo id informado.
 
@@ -78,23 +79,32 @@ class UsuarioController:
         sql = f'DELETE FROM usuario WHERE usu_id = {id};'
         return self.model.delete(sql)
 
-    def atualizar_usuario(self, id, nick, email, senha, tipo) -> int:
+    def atualizar_usuario(self, id: int, nick: str, email: str, senha: str | None, tipo: str) -> int:
         """
         Atualiza as informações de um usuário.
+        A senha será hashificada e atualizada somente se um valor não vazio for fornecido.
 
         Args:
             id (int): ID do usuário a ser atualizado.
             nick (str): Novo apelido.
             email (str): Novo email.
-            senha (str): Nova senha (hashificada).
+            senha (str | None): Nova senha em texto simples. Se None ou '', a senha não é alterada.
             tipo (str): Novo tipo de usuário.
 
         Returns:
             int: Número de linhas afetadas.
         """
-        sql = f'UPDATE usuario SET usu_nick = "{nick}", usu_email = "{email}", usu_senha = "{senha}", usu_tipo = "{tipo}" WHERE usu_id = {id};'
-        return self.model.update(sql)
+        partes = [
+            f"usu_nick = '{nick}'",
+            f"usu_email = '{email}'",
+            f"usu_tipo = '{tipo}'"
+        ]
+        if senha is not None and senha != '':
+            senha_hash = hashlib.sha256(senha.encode('utf-8')).hexdigest()
+            partes.insert(2, f"usu_senha = '{senha_hash}'")  # mantemos ordem legível
 
+        sql = f"UPDATE usuario SET {', '.join(partes)} WHERE usu_id = {id};"
+        return self.model.update(sql)
 
     def to_dict(self, usuario: tuple) -> dict:
         """
