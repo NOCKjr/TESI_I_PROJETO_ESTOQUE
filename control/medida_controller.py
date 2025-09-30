@@ -14,23 +14,23 @@ class MedidaController:
 
     def inserir_medida(self, unidade: str) -> int:
         """
-        Insere uma nova medida no banco de dados.
+        Insere uma unidade de medida no banco.
 
         Args:
             unidade (str): Unidade de medida (ex: 'kg', 'litro').
 
         Returns:
-            int: Número de linhas afetadas no banco.
+            int: Número de linhas afetadas.
         """
         sql = f"INSERT INTO medida(med_unidade) VALUES ('{unidade}');"
         return self.model.insert(sql)
 
     def listar_medida(self, unidade: str = '') -> list[dict]:
         """
-        Lista medidas filtradas por unidade (se informado).
+        Lista as medidas que contenham a string informada.
 
         Args:
-            unidade (str): Termo para filtrar a unidade de medida. Padrão ''.
+            unidade (str): Termo de busca (parte do nome da unidade). Padrão ''.
 
         Returns:
             list[dict]: Lista de medidas como dicionários.
@@ -41,27 +41,27 @@ class MedidaController:
 
     def excluir_medida(self, id: int) -> int:
         """
-        Exclui uma medida pelo ID.
+        Exclui uma unidade de medida pelo ID.
 
         Args:
-            id (int): Identificador da medida.
+            id (int): ID da medida.
 
         Returns:
-            int: Número de linhas afetadas no banco.
+            int: Número de linhas afetadas.
         """
         sql = f'DELETE FROM medida WHERE med_id = {id};'
         return self.model.delete(sql)
 
     def atualizar_medida(self, id: int, unidade: str) -> int:
         """
-        Atualiza a unidade de medida.
+        Atualiza uma unidade de medida existente.
 
         Args:
-            id (int): Identificador da medida.
-            unidade (str): Nova unidade de medida.
+            id (int): ID da medida.
+            unidade (str): Novo nome da unidade.
 
         Returns:
-            int: Número de linhas afetadas no banco.
+            int: Número de linhas afetadas.
         """
         sql = f"UPDATE medida SET med_unidade = '{unidade}' WHERE med_id = {id};"
         return self.model.update(sql)
@@ -80,4 +80,3 @@ class MedidaController:
             "id": medida[self.indices_campos["id"]],
             "unidade": medida[self.indices_campos["unidade"]],
         }
-
