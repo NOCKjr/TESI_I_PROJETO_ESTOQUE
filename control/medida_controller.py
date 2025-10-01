@@ -9,7 +9,7 @@ class MedidaController:
         # Atenção: se a estrutura do banco mudar, atualize os índices neste dicionário.
         self.indices_campos = {
             "id": 0,
-            "unidade": 1
+            "unidade": 1,
         }
 
     def inserir_medida(self, unidade: str) -> int:
@@ -38,6 +38,22 @@ class MedidaController:
         sql = f'SELECT * FROM medida WHERE med_unidade LIKE "%{unidade}%";'
         resultado = self.model.get(sql)
         return [self.to_dict(m) for m in resultado] if resultado else []
+
+    def buscar_medida(self, id: int) -> dict | None:
+        """
+        Busca uma unidade de medida pelo ID.
+
+        Args:
+            id (int): ID da medida a ser buscada.
+
+        Returns:
+            dict | None: Dicionário com os dados da medida, ou None se não encontrada.
+        """
+        sql = f"SELECT * FROM medida WHERE med_id = {id};"
+        resultado = self.model.get(sql)
+        if resultado:
+            return self.to_dict(resultado[0])
+        return None
 
     def excluir_medida(self, id: int) -> int:
         """

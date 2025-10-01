@@ -3,6 +3,7 @@ from tkinter import ttk, messagebox
 import constants
 
 from control.insumo_controller import InsumoController
+from control.medida_controller import MedidaController
 from view.telas.gerenciador_de_janelas import GerenciadorDeJanelasBase
 from view.telas.menus.menu_painel_de_opcoes_crud import MenuPainelDeOpcoesCRUD
 from view.telas.tela_base import TelaBase
@@ -13,6 +14,7 @@ class TelaListagemInsumos(TelaBase):
         
         # Controlador de insumos
         self.controle_insumos = InsumoController()
+        self.controle_unidade_medida = MedidaController()
 
         ### Painel de ações
         self.painel_de_acoes = MenuPainelDeOpcoesCRUD(self, self)
@@ -41,8 +43,7 @@ class TelaListagemInsumos(TelaBase):
         self.tvw_insumos.heading('UNIDADE', text='UNIDADE')
         self.tvw_insumos.column('UNIDADE', width=20, anchor='center')
 
-        for item in tuplas:
-            self.tvw_insumos.insert('', 'end', values=item)
+        self.atualizar_listagem_insumos()
         
         # Bind do botão direito para abrir o menu de contexto
         self.tvw_insumos.bind("<Button-3>", self.abrir_menu_contexto)
@@ -86,8 +87,15 @@ class TelaListagemInsumos(TelaBase):
         self.tvw_insumos.delete(*self.tvw_insumos.get_children())
 
         # Atualiza a treeview com os dados do banco
-        tuplas = self.controle_insumos.listar_insumo()
-        for item in tuplas:
+        insumos = self.controle_insumos.listar_insumo()
+        for insumo in insumos:
+            item = (
+                insumo["id"],
+                insumo["nome"],
+                insumo["quantidade_estoque"],
+                insumo["media_consumida"],
+                self.controle_unidade_medida.buscar_medida(insumo["medida_id"])["unidade"],
+            )
             self.tvw_insumos.insert('', 'end', values=item)
 
     def criar_menu_contexto(self):

@@ -22,9 +22,9 @@ class TelaListagemUsuarios(TelaBase):
         self.criar_listagem_usuarios()
 
     def criar_listagem_usuarios(self):
-        colunas = ['ID', 'LOGIN', 'SENHA', 'TIPO']
+        colunas = ['ID', 'LOGIN', 'EMAIL', 'TIPO']
         self.tvw_usuarios = ttk.Treeview(self, height=5, columns=colunas, show='headings')
-        tuplas = self.controle_usuarios.listar_usuario()
+        usuarios = self.controle_usuarios.listar_usuario()
 
         self.tvw_usuarios.heading('ID', text='ID')
         self.tvw_usuarios.column('ID', width=20, anchor='center')
@@ -32,21 +32,19 @@ class TelaListagemUsuarios(TelaBase):
         self.tvw_usuarios.heading('LOGIN', text='LOGIN')
         self.tvw_usuarios.column('LOGIN', width=200, anchor='center')
 
-        self.tvw_usuarios.heading('SENHA', text='SENHA')
-        self.tvw_usuarios.column('SENHA', width=200, anchor='center')
+        self.tvw_usuarios.heading('EMAIL', text='EMAIL')
+        self.tvw_usuarios.column('EMAIL', width=200, anchor='center')
 
         self.tvw_usuarios.heading('TIPO', text='TIPO')
         self.tvw_usuarios.column('TIPO', width=20, anchor='center')
 
-        for item in tuplas:
-            self.tvw_usuarios.insert('', 'end', values=item)
+        self.atualizar_listagem_usuarios()
         
         # Bind do botão direito para abrir o menu de contexto
         self.tvw_usuarios.bind("<Button-3>", self.abrir_menu_contexto)
 
         self.tvw_usuarios.bind("<<TreeviewSelect>>", self.item_selecionado)
 
-        
         self.tvw_usuarios.pack(pady=17, padx=10, fill='x', expand=False)
 
         # Criar menu de contexto
@@ -84,8 +82,14 @@ class TelaListagemUsuarios(TelaBase):
         self.tvw_usuarios.delete(*self.tvw_usuarios.get_children())
 
         # Atualiza a treeview com os dados do banco
-        tuplas = self.controle_usuarios.listar_usuario()
-        for item in tuplas:
+        usuarios = self.controle_usuarios.listar_usuario()
+        for usuario in usuarios:
+            item = (
+                usuario["id"],
+                usuario["nick"],
+                usuario["email"],
+                usuario["tipo"],
+            )
             self.tvw_usuarios.insert('', 'end', values=item)
 
     def criar_menu_contexto(self):
@@ -108,12 +112,13 @@ class TelaListagemUsuarios(TelaBase):
         """Edita o usuário selecionado"""
         item_selecionado = self.tvw_usuarios.selection()[0]
         valores = self.tvw_usuarios.item(item_selecionado, 'values')
+        usuario = self.controle_usuarios.busca_usuario_por_id(valores[0])
         
-        if valores:
-            self.gerenciador_de_janelas.editar_usuario(valores)
+        if usuario:
+            self.gerenciador_de_janelas.editar_usuario(usuario)
             
             # Aqui você pode implementar uma janela de edição ou navegar para uma tela de edição
-            print(f"Editando usuário: ID={valores[0]}, LOGIN={valores[1]}")
+            print(f'Editando usuário: ID={usuario["id"]}, LOGIN={usuario["nick"]}')
 
     def excluir_usuario(self):
         """Exclui o usuário selecionado"""

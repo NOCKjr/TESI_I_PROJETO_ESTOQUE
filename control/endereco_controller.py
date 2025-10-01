@@ -117,3 +117,42 @@ class EnderecoController:
             "complemento": endereco[self.indices_campos["complemento"]],
             "ponto_referencia": endereco[self.indices_campos["ponto_referencia"]],
         }
+
+    def buscar_endereco_string(self, id: int) -> str | None:
+        """
+        Busca um endereço pelo ID e retorna como string formatada.
+
+        Args:
+            id (int): ID do endereço.
+
+        Returns:
+            str | None: Endereço completo como string ou None se não encontrado.
+        """
+        sql = f"SELECT * FROM endereco WHERE end_id = {id};"
+        resultado = self.model.get(sql)
+        if not resultado:
+            return None
+
+        endereco = resultado[0]  # pega a primeira tupla (id é único)
+        
+        # Monta a string do endereço
+        partes = [
+            f"{endereco[self.indices_campos['logradouro']]}, ",
+            f"Nº {endereco[self.indices_campos['numero']]} - ",
+            f"{endereco[self.indices_campos['bairro']]}. ",
+            f"{endereco[self.indices_campos['cidade']]} - ",
+            f"{endereco[self.indices_campos['estado']]}. ",
+            f"CEP {endereco[self.indices_campos['cep']]}. "
+        ]
+
+        # Complemento e ponto de referência opcionais
+        complemento = endereco[self.indices_campos['complemento']]
+        ponto_ref = endereco[self.indices_campos['ponto_referencia']]
+        if complemento:
+            partes.append(f"Complemento: {complemento}.")
+        if ponto_ref:
+            partes.append(f"Ponto de referência: {ponto_ref}.")
+
+        return "".join(partes)
+
+    

@@ -66,6 +66,20 @@ class UsuarioController:
         resultado = self.model.get(sql)
         return self.to_dict(resultado[0]) if resultado else None
 
+    def busca_usuario_por_id(self, id: int) -> dict | None:
+        """
+        Retorna um usuário pelo ID informado.
+
+        Args:
+            id (int): ID do usuário.
+
+        Returns:
+            dict | None: Usuário correspondente como dict, ou None se não encontrado.
+        """
+        sql = f'SELECT * FROM usuario WHERE usu_id = {id};'
+        resultado = self.model.get(sql)
+        return self.to_dict(resultado[0]) if resultado else None
+
     def excluir_usuario(self, id: int) -> int:
         """
         Exclui o usuário pelo id informado.
@@ -101,7 +115,7 @@ class UsuarioController:
         ]
         if senha is not None and senha != '':
             senha_hash = hashlib.sha256(senha.encode('utf-8')).hexdigest()
-            partes.insert(2, f"usu_senha = '{senha_hash}'")  # mantemos ordem legível
+            partes.insert(2, f"usu_senha = '{senha_hash}'")
 
         sql = f"UPDATE usuario SET {', '.join(partes)} WHERE usu_id = {id};"
         return self.model.update(sql)

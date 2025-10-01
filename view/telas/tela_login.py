@@ -85,7 +85,7 @@ class TelaLogin(TelaBase):
         hash = hashlib.sha256(senha.encode('utf-8')).hexdigest()
 
         # Senha incorreta
-        if hash != usuario[0][3]:
+        if hash != usuario["senha"]:
             # tk.messagebox.showinfo("Senha incorreta", f"Senha incorreta")
             return False
     
