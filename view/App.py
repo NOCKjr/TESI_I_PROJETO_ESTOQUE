@@ -2,24 +2,30 @@ import tkinter as tk
 import constants
 from tkinter import ttk
 
+from view.telas.gerenciador_de_janelas import GerenciadorDeJanelasBase
+
+from view.telas.tela_login import TelaLogin
+from view.telas.tela_base import TelaBase
+from view.telas.tela_menu_principal import TelaMenuPrincipal
+from view.telas.tela_menu_cadastros import TelaMenuCadastros
+from view.telas.tela_formulario_base import TelaFormularioBase
+
 from view.telas.cadastros.tela_cadastrar_escola import TelaCadastrarEscola
 from view.telas.cadastros.tela_cadastrar_fornecedor import TelaCadastrarFornecedor
 from view.telas.cadastros.tela_cadastrar_insumo import TelaCadastrarInsumo
 from view.telas.cadastros.tela_cadastrar_usuario import TelaCadastrarUsuario
-from view.telas.historico.tela_historico import TelaHistorico
+
 from view.telas.listagem.tela_listagem_escolas import TelaListagemEscolas
 from view.telas.listagem.tela_listagem_fornecedores import TelaListagemFornecedores
 from view.telas.listagem.tela_listagem_insumos import TelaListagemInsumos
-from view.telas.menus.menu_navegacao import MenuNavegacao
+from view.telas.listagem.tela_consultas import TelaConsultas
+from view.telas.listagem.tela_listagem_usuarios import TelaListagemUsuarios
+
 from view.telas.movimentacoes.tela_formulario_movimentacao import TelaFormularioMovimentacao
 from view.telas.movimentacoes.tela_movimentacoes import TelaMovimentacoes
-from view.telas.tela_base import TelaBase
-from view.telas.tela_login import TelaLogin
-from view.telas.tela_menu_cadastros import TelaMenuCadastros
-from view.telas.tela_menu_principal import TelaMenuPrincipal
-from view.telas.listagem.tela_consultas import TelaConsultas
-from view.telas.gerenciador_de_janelas import GerenciadorDeJanelasBase
-from view.telas.listagem.tela_listagem_usuarios import TelaListagemUsuarios
+
+from view.telas.historico.tela_historico import TelaHistorico
+from view.telas.menus.menu_navegacao import MenuNavegacao
 
 class App(GerenciadorDeJanelasBase):
     def __init__(self, master):
