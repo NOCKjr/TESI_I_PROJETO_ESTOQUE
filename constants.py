@@ -1,8 +1,8 @@
 from enum import Enum
 
 # Dimensões padrão da janela
-LARGURA_JANELA = 600
-ALTURA_JANELA = 338
+LARGURA_JANELA = 800
+ALTURA_JANELA = 450
 
 # Nome das telas
 TELA_LOGIN = "login"
