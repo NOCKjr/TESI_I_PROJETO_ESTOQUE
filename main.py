@@ -1,8 +1,18 @@
 import tkinter as tk
 from view.App import App
 import constants
+from model import init_db
+from control.usuario_controller import UsuarioController
 
 if __name__ == '__main__':
+
+    #cria o banco de dados ao instalar o executável
+    init_db.create_db()
+
+    #cria o usuário padrão de primeiro acesso (nome 'admin' e senha 'admin')
+    controle_usuario = UsuarioController()
+    controle_usuario.inserir_usuario(nick='admin', senha='admin', tipo='A') 
+    
     # janela principal
     root = tk.Tk()
     root.geometry(f'{constants.LARGURA_JANELA}x{constants.ALTURA_JANELA}')

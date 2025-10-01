@@ -25,6 +25,9 @@ TELA_EDITAR_ESCOLA = "editar-escola"
 TELA_EDITAR_FORNECEDOR = "editar-fornecedor"
 TELA_EDITAR_INSUMO = "editar-insumo"
 
+#Caminho onde ficará o banco de dados
+DB_PATH = "banco/banco.db"
+
 
 class Cores(Enum):
     PRINCIPAL = '#075F8B'
