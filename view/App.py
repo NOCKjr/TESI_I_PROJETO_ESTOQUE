@@ -2,6 +2,7 @@ import tkinter as tk
 import constants
 from tkinter import ttk
 
+from control.escola_controller import EscolaController
 from view.telas.cadastros.tela_cadastrar_escola import TelaCadastrarEscola
 from view.telas.cadastros.tela_cadastrar_fornecedor import TelaCadastrarFornecedor
 from view.telas.cadastros.tela_cadastrar_insumo import TelaCadastrarInsumo
@@ -49,9 +50,9 @@ class App(GerenciadorDeJanelasBase):
         }
         
         # Inicia na tela de login
-        # self.alterar_para_a_tela(constants.TELA_LOGIN)
+        self.alterar_para_a_tela(constants.TELA_LOGIN)
         # self.alterar_para_a_tela(constants.TELA_MENU_PRINCIPAL)
-        self.alterar_para_a_tela(constants.TELA_CADASTRAR_USUARIO)
+        # self.alterar_para_a_tela(constants.TELA_CADASTRAR_USUARIO)
         # self.alterar_para_a_tela(constants.TELA_CADASTRAR_INSUMO)
         # self.alterar_para_a_tela(constants.TELA_MENU_CADASTROS)
         # self.alterar_para_a_tela(constants.TELA_CONSULTAS)
@@ -102,14 +103,7 @@ class App(GerenciadorDeJanelasBase):
     
     def editar_escola(self, escola):
         tela_editar = self.get_tela(constants.TELA_EDITAR_ESCOLA)
-
-        if type(escola) == list or type(escola) == tuple:
-            escola = {
-                'id': escola[0],
-                'nome': escola[1],
-                'endereco': escola[2],
-                'alunos': escola[3]
-            }
+        
         # Configura o formulário para editar o escola informado
         tela_editar.editar_escola(escola)
 

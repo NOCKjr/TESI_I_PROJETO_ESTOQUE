@@ -76,6 +76,25 @@ class EscolaController:
                   WHERE esc_id = {id};"""
         return self.model.update(sql)
 
+    def buscar_escola_por_id(self, id: int) -> dict | None:
+        """
+        Busca uma escola pelo ID e retorna como dicionário.
+
+        Args:
+            id (int): ID da escola.
+
+        Returns:
+            dict | None: Escola no formato dicionário ou None se não encontrada.
+        """
+        sql = f"SELECT * FROM escola WHERE esc_id = {id};"
+        resultado = self.model.get(sql)
+        if not resultado:
+            return None
+
+        escola = resultado[0]  # pega a primeira tupla (id é único)
+        return self.to_dict(escola)
+
+
     def to_dict(self, escola: tuple) -> dict:
         """
         Converte uma tupla de escola em dicionário.

@@ -21,7 +21,7 @@ class EnderecoController:
 
     def inserir_endereco(self, logradouro: str, numero: str, bairro: str, cidade: str, estado: str, cep: str, complemento: str = '', ponto_referencia: str = '') -> int:
         """
-        Insere um endereço no banco.
+        Insere um endereço no banco e retorna o ID do registro inserido.
 
         Args:
             logradouro (str): Nome da rua.
@@ -34,7 +34,7 @@ class EnderecoController:
             ponto_referencia (str): Ponto de referência. Padrão ''.
 
         Returns:
-            int: Número de linhas afetadas.
+            int: ID do endereço inserido.
         """
         sql = (
             "INSERT INTO endereco(end_logradouro, end_numero, end_bairro, end_cidade, end_estado, end_cep, end_complemento, end_ponto_referencia) "
@@ -96,28 +96,6 @@ class EnderecoController:
                     WHERE end_id = {id};"""
         return self.model.update(sql)
 
-    def to_dict(self, endereco: tuple) -> dict:
-        """
-        Converte uma tupla de endereço em dicionário.
-
-        Args:
-            endereco (tuple): Tupla com os campos do endereço.
-
-        Returns:
-            dict: Endereço no formato dicionário.
-        """
-        return {
-            "id": endereco[self.indices_campos["id"]],
-            "logradouro": endereco[self.indices_campos["logradouro"]],
-            "numero": endereco[self.indices_campos["numero"]],
-            "bairro": endereco[self.indices_campos["bairro"]],
-            "cidade": endereco[self.indices_campos["cidade"]],
-            "estado": endereco[self.indices_campos["estado"]],
-            "cep": endereco[self.indices_campos["cep"]],
-            "complemento": endereco[self.indices_campos["complemento"]],
-            "ponto_referencia": endereco[self.indices_campos["ponto_referencia"]],
-        }
-
     def buscar_endereco_string(self, id: int) -> str | None:
         """
         Busca um endereço pelo ID e retorna como string formatada.
@@ -155,4 +133,45 @@ class EnderecoController:
 
         return "".join(partes)
 
+    def buscar_endereco_por_id(self, id: int) -> dict | None:
+        """
+        Busca um endereço pelo ID e retorna como dicionário.
+
+        Args:
+            id (int): ID do endereço.
+
+        Returns:
+            dict | None: Endereço no formato dicionário ou None se não encontrado.
+        """
+        sql = f"SELECT * FROM endereco WHERE end_id = {id};"
+        resultado = self.model.get(sql)
+        if not resultado:
+            return None
+
+        endereco = resultado[0]  # pega a primeira tupla (id é único)
+        return self.to_dict(endereco)
+
+    def to_dict(self, endereco: tuple) -> dict:
+        """
+        Converte uma tupla de endereço em dicionário.
+
+        Args:
+            endereco (tuple): Tupla com os campos do endereço.
+
+        Returns:
+            dict: Endereço no formato dicionário.
+        """
+        return {
+            "id": endereco[self.indices_campos["id"]],
+            "logradouro": endereco[self.indices_campos["logradouro"]],
+            "numero": endereco[self.indices_campos["numero"]],
+            "bairro": endereco[self.indices_campos["bairro"]],
+            "cidade": endereco[self.indices_campos["cidade"]],
+            "estado": endereco[self.indices_campos["estado"]],
+            "cep": endereco[self.indices_campos["cep"]],
+            "complemento": endereco[self.indices_campos["complemento"]],
+            "ponto_referencia": endereco[self.indices_campos["ponto_referencia"]],
+        }
+
+    
     

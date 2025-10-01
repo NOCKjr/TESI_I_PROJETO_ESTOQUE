@@ -2,6 +2,7 @@ import tkinter as tk
 import constants
 
 from tkinter import ttk
+from control.endereco_controller import EnderecoController
 from control.escola_controller import EscolaController
 from view.telas.gerenciador_de_janelas import GerenciadorDeJanelasBase
 from view.telas.tela_formulario_base import TelaFormularioBase
@@ -15,6 +16,9 @@ class TelaCadastrarEscola(TelaFormularioBase):
 
         # Controlador de escolas
         self.controle_escolas = EscolaController()
+        self.controle_endereco = EnderecoController()
+        
+        ## Escola
         
         # Nome
         self.lbl_nome = tk.Label(self.container_formulario, text="Nome da escola:", anchor='w', bg=constants.cores['cinza'])
@@ -58,16 +62,26 @@ class TelaCadastrarEscola(TelaFormularioBase):
     def onConfirmar(self):
         # Captura os valores dos campos
         nome = self.ent_nome.get()
-        endereco = self.ent_logradouro.get()
         alunos = self.ent_numero_alunos.get()
+        campos_endereco = self.obter_campos_endereco()
 
         if self.flag_editar:
-            id = self.id_escola_editado
-            # Chama o controller para atualizar o usuário
-            self.controle_escolas.atualizar_escola(id, nome, endereco, alunos)
+            # A escola já existe e já possui um endereço
+            id_escola = self.id_escola_editado
+            escola = self.controle_escolas.buscar_escola_por_id(id_escola)
+            endereco_id = escola["endereco_id"]
+            novo_endereco = (endereco_id, ) + campos_endereco
+
+            # Atualiza o endereço
+            self.controle_endereco.atualizar_endereco(*novo_endereco)
+
+            # Chama o controller para atualizar a escola
+            self.controle_escolas.atualizar_escola(id=id_escola, nome=nome, endereco_id=endereco_id, numero_alunos=alunos)
         else:
-            # Chama o controller para inserir novo usuário
-            self.controle_escolas.inserir_escola(nome, endereco, alunos)
+            # Chama o controller para inserir novo endereço
+            endereco_id = self.controle_endereco.inserir_endereco(*campos_endereco)
+            # Chama o controller para inserir nova escola
+            escola_id = self.controle_escolas.inserir_escola(nome=nome, endereco_id=endereco_id, numero_alunos=alunos)
         
         # Reseta os valores dos campos do formulário
         self.limpar_campos()
@@ -97,7 +111,40 @@ class TelaCadastrarEscola(TelaFormularioBase):
         self.ent_nome.delete(0, 'end')
         self.ent_nome.insert(0, escola['nome'])
         self.ent_numero_alunos.delete(0, 'end')
-        self.ent_numero_alunos.insert(0, escola['alunos'])
+        self.ent_numero_alunos.insert(0, escola['numero_alunos'])
         self.id_escola_editado = escola['id']
+        self.preencher_campos_endereco(escola["endereco_id"])
         self.flag_editar = True
+    
+    def preencher_campos_endereco(self, endereco_id):
+        endereco = self.controle_endereco.buscar_endereco_por_id(endereco_id)
+        self.ent_logradouro.delete(0, 'end')
+        self.ent_logradouro.insert(0, endereco['logradouro'])
+        self.ent_numero.delete(0, 'end')
+        self.ent_numero.insert(0, endereco['numero'])
+        self.ent_bairro.delete(0, 'end')
+        self.ent_bairro.insert(0, endereco['bairro'])
+        self.ent_estado.delete(0, 'end')
+        self.ent_estado.insert(0, endereco['estado'])
+        self.ent_cep.delete(0, 'end')
+        self.ent_cep.insert(0, endereco['cep'])
+    
+    def obter_campos_endereco(self) -> tuple:
+        """
+        Obtém os valores digitados nos campos do formulário de endereço e retorna em uma tupla.
 
+        Returns:
+            tuple: (logradouro, numero, bairro, cidade, estado, cep, complemento, ponto_referencia)
+        """
+        logradouro = self.ent_logradouro.get()
+        numero = self.ent_numero.get()
+        bairro = self.ent_bairro.get()
+        estado = self.ent_estado.get()
+        cep = self.ent_cep.get()
+
+        # TO-DO: adicionar ao formulário os seguintes campos
+        cidade = ''
+        complemento = ''
+        ponto_referencia = ''
+
+        return (logradouro, numero, bairro, cidade, estado, cep, complemento, ponto_referencia)
