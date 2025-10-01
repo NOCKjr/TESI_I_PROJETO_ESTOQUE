@@ -55,14 +55,36 @@ class TelaCadastrarUsuario(TelaFormularioBase):
         self.flag_editar = False
     
     def editar_usuario(self, usuario):
+        # Nick
         self.ent_nick_usuario.delete(0, 'end')
         self.ent_nick_usuario.insert(0, usuario['nick'])
+
+        # Senha (placeholder em vez da senha real)
         self.ent_senha_usuario.delete(0, 'end')
-        self.ent_senha_usuario.insert(0, usuario['senha'])
+        self.ent_senha_usuario.insert(0, "Digite a nova senha")
+        self.ent_senha_usuario.config(fg="grey")
+
+        def on_focus_in(event):
+            if self.ent_senha_usuario.get() == "Digite a nova senha":
+                self.ent_senha_usuario.delete(0, 'end')
+                self.ent_senha_usuario.config(fg="black", show="*")
+
+        def on_focus_out(event):
+            if self.ent_senha_usuario.get() == "":
+                self.ent_senha_usuario.insert(0, "Digite a nova senha")
+                self.ent_senha_usuario.config(fg="grey", show="")
+
+        self.ent_senha_usuario.bind("<FocusIn>", on_focus_in)
+        self.ent_senha_usuario.bind("<FocusOut>", on_focus_out)
+
+        # Email
         self.ent_email_usuario.delete(0, 'end')
         self.ent_email_usuario.insert(0, usuario['email'])
-        self.cmb_tipo_usuario.current(0)
+
+        # Tipo de usuário
         self.cmb_tipo_usuario.current(0 if usuario['tipo'] == 'C' else 1)
+
+        # Flags de edição
         self.id_usuario_editado = usuario['id']
         self.flag_editar = True
     

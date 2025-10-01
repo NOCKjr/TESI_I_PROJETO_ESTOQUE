@@ -117,9 +117,6 @@ class TelaListagemUsuarios(TelaBase):
         if usuario:
             self.gerenciador_de_janelas.editar_usuario(usuario)
             
-            # Aqui você pode implementar uma janela de edição ou navegar para uma tela de edição
-            print(f'Editando usuário: ID={usuario["id"]}, LOGIN={usuario["nick"]}')
-
     def excluir_usuario(self):
         """Exclui o usuário selecionado"""
         item_selecionado = self.tvw_usuarios.selection()[0]

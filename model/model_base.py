@@ -15,19 +15,24 @@ class ModelBase:
             return resultado
         except Error as er:
             print(er)
-
-    def insert(self, sql):
-        """Insere um registro no banco"""
+    
+    def insert(self, sql, params=None):
+        """Insere um registro no banco e retorna o ID do registro inserido"""
         try:
             con = self.con.get_conexao()
             cursor = con.cursor()
-            cursor.execute(sql)
-            if cursor.rowcount == 1:
-                con.commit()
+            if params:
+                cursor.execute(sql, params)
+            else:
+                cursor.execute(sql)
+            con.commit()
+            last_id = cursor.lastrowid
             con.close()
-            return cursor.rowcount
+            return last_id
         except Error as er:
             print(er)
+            return None
+
 
     def delete(self, sql):
         """Delete um registro do banco"""
