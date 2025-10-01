@@ -101,6 +101,8 @@ class TelaLogin(TelaBase):
         janela = tk.Toplevel(self.gerenciador_de_janelas.master)
         janela.title("Redefinir Senha")
         janela.geometry("300x150")
+        
+        self.update_idletasks() # Garante que a janela seja desenhada
         janela.grab_set()  # bloqueia interação com a janela principal
 
         tk.Label(janela, text="Digite seu nome de usuário:").pack(pady=10)
@@ -125,6 +127,8 @@ class TelaLogin(TelaBase):
         janela = tk.Toplevel(self.gerenciador_de_janelas.master)
         janela.title("Verificação de Código")
         janela.geometry("300x150")
+
+        self.update_idletasks() # Garante que a janela seja desenhada
         janela.grab_set()
 
         tk.Label(janela, text="Digite o código enviado para seu e-mail:").pack(pady=10)
