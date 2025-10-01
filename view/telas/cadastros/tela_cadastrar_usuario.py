@@ -17,16 +17,22 @@ class TelaCadastrarUsuario(TelaFormularioBase):
         self.controle_usuarios = UsuarioController()
         
         # Login do usuário
-        self.lbl_login_usuario = tk.Label(self.container_formulario, text="Login usuário:", anchor='w', bg=constants.cores['cinza'])
-        self.lbl_login_usuario.grid(row=0, column=0, pady=(2,0), sticky='nsw')
-        self.ent_login_usuario = tk.Entry(self.container_formulario)
-        self.ent_login_usuario.grid(row=1, column=0, columnspan=14, sticky='nsew')
+        self.lbl_nick_usuario = tk.Label(self.container_formulario, text="Login usuário:", anchor='w', bg=constants.cores['cinza'])
+        self.lbl_nick_usuario.grid(row=0, column=0, pady=(2,0), sticky='nsw')
+        self.ent_nick_usuario = tk.Entry(self.container_formulario)
+        self.ent_nick_usuario.grid(row=1, column=0, columnspan=14, sticky='nsew')
 
         # Senha do usuário
         self.lbl_senha_usuario = tk.Label(self.container_formulario, text="Senha usuário:", anchor='w', bg=constants.cores['cinza'])
         self.lbl_senha_usuario.grid(row=0, column=15, pady=(2,0), sticky='nsw')
         self.ent_senha_usuario = tk.Entry(self.container_formulario, show='*')
-        self.ent_senha_usuario.grid(row=1, column=15, columnspan=14, sticky='nsew')
+        self.ent_senha_usuario.grid(row=1, column=15, columnspan=15, sticky='nsew')
+
+        # Email do usuário
+        self.lbl_email_usuario = tk.Label(self.container_formulario, text="Email:", anchor='w', bg=constants.cores['cinza'])
+        self.lbl_email_usuario.grid(row=4, column=0, pady=(2,0), sticky='nsw')
+        self.ent_email_usuario = tk.Entry(self.container_formulario)
+        self.ent_email_usuario.grid(row=5, column=0, columnspan=30, sticky='nsew')
 
         # Email do usuário
         self.lbl_email_usuario = tk.Label(self.container_formulario, text="Email usuário:", anchor='w', bg=constants.cores['cinza'])
@@ -36,22 +42,21 @@ class TelaCadastrarUsuario(TelaFormularioBase):
 
         # Tipo de usuário (Administrador ou Comum)
         self.lbl_tipo_usuario = tk.Label(self.container_formulario, text="Tipo de usuário:", anchor='w', bg=constants.cores['cinza'])
-        self.lbl_tipo_usuario.grid(row=2, column=0, pady=(10,0), sticky='nsw')
+        self.lbl_tipo_usuario.grid(row=8, column=0, pady=(10,0), sticky='nsw')
         self.cmb_tipo_usuario = ttk.Combobox(self.container_formulario, values=["Comum", "Administrador"], state="readonly")
-        self.cmb_tipo_usuario.grid(row=3, column=0, columnspan=14, sticky='nsew')
+        self.cmb_tipo_usuario.grid(row=9, column=0, columnspan=15, sticky='nsew')
         self.cmb_tipo_usuario.set("Comum")  # Valor padrão
 
     def limpar_campos(self):
-        self.ent_login_usuario.delete(0, 'end')
+        self.ent_nick_usuario.delete(0, 'end')
         self.ent_senha_usuario.delete(0, 'end')
         self.ent_email_usuario.delete(0, 'end')
         self.cmb_tipo_usuario.current(0)
         self.flag_editar = False
     
     def editar_usuario(self, usuario):
-
-        self.ent_login_usuario.delete(0, 'end')
-        self.ent_login_usuario.insert(0, usuario['login'])
+        self.ent_nick_usuario.delete(0, 'end')
+        self.ent_nick_usuario.insert(0, usuario['nick'])
         self.ent_senha_usuario.delete(0, 'end')
         self.ent_senha_usuario.insert(0, usuario['senha'])
         self.ent_email_usuario.delete(0, 'end')
@@ -63,7 +68,7 @@ class TelaCadastrarUsuario(TelaFormularioBase):
     
     def onConfirmar(self):
         # Captura os valores dos campos
-        login = self.ent_login_usuario.get()
+        nick = self.ent_nick_usuario.get()
         senha = self.ent_senha_usuario.get()
         email = self.ent_email_usuario.get()
         tipo_usuario = self.cmb_tipo_usuario.get()
@@ -74,10 +79,10 @@ class TelaCadastrarUsuario(TelaFormularioBase):
         if self.flag_editar:
             id = self.id_usuario_editado
             # Chama o controller para atualizar o usuário
-            self.controle_usuarios.atualizar_usuario(id, login, email, senha, tipo_codigo)
+            self.controle_usuarios.atualizar_usuario(id, nick, email, senha, tipo_codigo)
         else:
             # Chama o controller para inserir novo usuário
-            self.controle_usuarios.inserir_usuario(login, email, senha, tipo_codigo)
+            self.controle_usuarios.inserir_usuario(nick, email, senha, tipo_codigo)
         
         # Reseta os valores dos campos do formulário
         self.limpar_campos()

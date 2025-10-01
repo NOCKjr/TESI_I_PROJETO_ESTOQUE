@@ -2,9 +2,11 @@ from model.conexao import Conexao
 from sqlite3 import Error
 class ModelBase:
     def __init__(self):
+        # Conexão com o banco de dados
         self.con = Conexao()
 
     def get(self, sql):
+        """Faz uma consulta no banco"""
         try:
             con = self.con.get_conexao()
             cursor = con.cursor()
@@ -15,6 +17,7 @@ class ModelBase:
             print(er)
 
     def insert(self, sql):
+        """Insere um registro no banco"""
         try:
             con = self.con.get_conexao()
             cursor = con.cursor()
@@ -27,6 +30,7 @@ class ModelBase:
             print(er)
 
     def delete(self, sql):
+        """Delete um registro do banco"""
         try:
             con = self.con.get_conexao()
             cursor = con.cursor()
@@ -39,6 +43,7 @@ class ModelBase:
             print(er)
 
     def update(self, sql):
+        """Atualiza um registro do banco"""
         try:
             con = self.con.get_conexao()
             cursor = con.cursor()

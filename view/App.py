@@ -49,7 +49,9 @@ class App(GerenciadorDeJanelasBase):
         }
         
         # Inicia na tela de login
-        self.alterar_para_a_tela(constants.TELA_LOGIN)
+        # self.alterar_para_a_tela(constants.TELA_LOGIN)
+        # self.alterar_para_a_tela(constants.TELA_MENU_PRINCIPAL)
+        self.alterar_para_a_tela(constants.TELA_CADASTRAR_USUARIO)
         # self.alterar_para_a_tela(constants.TELA_CADASTRAR_INSUMO)
         # self.alterar_para_a_tela(constants.TELA_MENU_CADASTROS)
         # self.alterar_para_a_tela(constants.TELA_CONSULTAS)

@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 import constants
 
+from control.endereco_controller import EnderecoController
 from control.escola_controller import EscolaController
 from view.telas.gerenciador_de_janelas import GerenciadorDeJanelasBase
 from view.telas.menus.menu_painel_de_opcoes_crud import MenuPainelDeOpcoesCRUD
@@ -13,6 +14,7 @@ class TelaListagemEscolas(TelaBase):
         
         # Controlador de usuários
         self.controle_usuarios = EscolaController()
+        self.controle_endereco = EnderecoController()
 
         ### Painel de ações
         self.painel_de_acoes = MenuPainelDeOpcoesCRUD(self, self)
@@ -38,8 +40,8 @@ class TelaListagemEscolas(TelaBase):
         self.tvw_usuarios.heading('ALUNOS', text='ALUNOS')
         self.tvw_usuarios.column('ALUNOS', width=20, anchor='center')
 
-        for item in tuplas:
-            self.tvw_usuarios.insert('', 'end', values=item)
+        # Insere os itens no treeview
+        self.atualizar_listagem_escolas()
         
         # Bind do botão direito para abrir o menu de contexto
         self.tvw_usuarios.bind("<Button-3>", self.abrir_menu_contexto)
@@ -79,12 +81,19 @@ class TelaListagemEscolas(TelaBase):
     ###
     
     def atualizar_listagem_escolas(self):
+        """Atualiza o treeview com as escolas cadastradas"""
         # Apaga os itens da treeview
         self.tvw_usuarios.delete(*self.tvw_usuarios.get_children())
 
         # Atualiza a treeview com os dados do banco
-        tuplas = self.controle_usuarios.listar_escola()
-        for item in tuplas:
+        escolas = self.controle_usuarios.listar_escola()
+        for escola in escolas:
+            item = (
+                escola["id"],
+                escola["nome"],
+                self.controle_endereco.buscar_endereco_string(escola["endereco_id"]),
+                escola["numero_alunos"],
+            )
             self.tvw_usuarios.insert('', 'end', values=item)
 
     def criar_menu_contexto(self):

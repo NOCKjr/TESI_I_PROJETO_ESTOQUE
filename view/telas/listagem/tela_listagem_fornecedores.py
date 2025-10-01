@@ -22,7 +22,7 @@ class TelaListagemFornecedores(TelaBase):
         self.criar_listagem_fornecedores()
 
     def criar_listagem_fornecedores(self):
-        colunas = ['ID', 'RAZÃO SOCIAL', 'TELEFONE']
+        colunas = ['ID', 'RAZÃO SOCIAL', 'CONTATO']
         self.tvw_fornecedores = ttk.Treeview(self, height=5, columns=colunas, show='headings')
         tuplas = self.controle_fornecedores.listar_fornecedor()
 
@@ -32,11 +32,11 @@ class TelaListagemFornecedores(TelaBase):
         self.tvw_fornecedores.heading('RAZÃO SOCIAL', text='RAZÃO SOCIAL')
         self.tvw_fornecedores.column('RAZÃO SOCIAL', width=200, anchor='center')
 
-        self.tvw_fornecedores.heading('TELEFONE', text='TELEFONE')
-        self.tvw_fornecedores.column('TELEFONE', width=200, anchor='center')
-
-        for item in tuplas:
-            self.tvw_fornecedores.insert('', 'end', values=item)
+        self.tvw_fornecedores.heading('CONTATO', text='CONTATO')
+        self.tvw_fornecedores.column('CONTATO', width=200, anchor='center')
+        
+        # Insere os fornecedores no treeview
+        self.atualizar_listagem_fornecedores()
         
         # Bind do botão direito para abrir o menu de contexto
         self.tvw_fornecedores.bind("<Button-3>", self.abrir_menu_contexto)
@@ -76,12 +76,18 @@ class TelaListagemFornecedores(TelaBase):
     ###
     
     def atualizar_listagem_fornecedores(self):
+        """Atualiza o treeview com os fornecedores cadastrados"""
         # Apaga os itens da treeview
         self.tvw_fornecedores.delete(*self.tvw_fornecedores.get_children())
 
         # Atualiza a treeview com os dados do banco
-        tuplas = self.controle_fornecedores.listar_fornecedor()
-        for item in tuplas:
+        fornecedores = self.controle_fornecedores.listar_fornecedor()
+        for fornecedor in fornecedores:
+            item = (
+                fornecedor["id"],
+                fornecedor["razao_social"],
+                fornecedor["contato"],
+            )
             self.tvw_fornecedores.insert('', 'end', values=item)
 
     def criar_menu_contexto(self):

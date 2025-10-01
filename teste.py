@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 
+from control.usuario_controller import UsuarioController
+
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -55,4 +57,12 @@ class App(tk.Tk):
         self.botoes[nome].state(["pressed"])
 
 if __name__ == "__main__":
-    App().mainloop()
+    # App().mainloop()
+
+    c = UsuarioController()
+    # c.excluir_usuario(5)
+    c.inserir_usuario('teste', 'teste_primeiro@gmail.com', 'teste', 'A')
+
+    # print(*c.listar_usuario(), sep='\n')
+    print(c.busca_usuario("teste"))
+    
