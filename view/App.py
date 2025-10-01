@@ -2,7 +2,6 @@ import tkinter as tk
 import constants
 from tkinter import ttk
 
-from control.escola_controller import EscolaController
 from view.telas.cadastros.tela_cadastrar_escola import TelaCadastrarEscola
 from view.telas.cadastros.tela_cadastrar_fornecedor import TelaCadastrarFornecedor
 from view.telas.cadastros.tela_cadastrar_insumo import TelaCadastrarInsumo
