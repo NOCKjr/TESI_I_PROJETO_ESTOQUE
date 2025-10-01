@@ -1,6 +1,10 @@
 import tkinter as tk
+from tkinter import messagebox
 import constants
 import hashlib
+import smtplib
+import random
+from email.mime.text import MIMEText
 
 from tkinter import ttk
 from view.telas.tela_base import TelaBase
@@ -10,6 +14,9 @@ from control.usuario_controller import UsuarioController
 class TelaLogin(TelaBase):
     def __init__(self, master, gerenciador_de_janelas: GerenciadorDeJanelasBase, largura=constants.LARGURA_JANELA, altura=constants.ALTURA_JANELA):
         super().__init__(master, gerenciador_de_janelas)
+
+        self.username = None
+        self.codigo_confirmado = False
 
         # Controlador de usuários
         self.controle_usuarios = UsuarioController()
@@ -45,14 +52,11 @@ class TelaLogin(TelaBase):
         ### Esqueci a senha
         self.lbl_esqueciASenha = tk.Label(self.modal_login, text='Esqueceu a senha?', relief='flat', bg=constants.cores['cinza'])
         self.lbl_esqueciASenha.grid(row=4, column=2, columnspan=1, sticky='e')
-        self.lbl_esqueciASenha.bind('<Button-1>', self.test)
+        self.lbl_esqueciASenha.bind('<Button-1>', self.redefinir_senha)
 
         ### Botão continuar
         self.btn_continuar = tk.Button(self.modal_login, text='Continuar', bg=constants.cores['principal'], fg=constants.cores['branco'], command=self.onContinuar)
         self.btn_continuar.grid(row=5, column=0, columnspan=3, sticky='nswe')
-    
-    def test(self, event):
-        print('Testando bind!')
     
     def onContinuar(self):
 
@@ -85,9 +89,101 @@ class TelaLogin(TelaBase):
         hash = hashlib.sha256(senha.encode('utf-8')).hexdigest()
 
         # Senha incorreta
-        if hash != usuario[0][3]:
+        if hash != usuario["senha"]:
             # tk.messagebox.showinfo("Senha incorreta", f"Senha incorreta")
             return False
     
         # Login válido
         return True
+    
+    def solicitar_usuario(self):
+        # Cria um Toplevel
+        janela = tk.Toplevel(self.gerenciador_de_janelas.master)
+        janela.title("Redefinir Senha")
+        janela.geometry("300x150")
+        janela.grab_set()  # bloqueia interação com a janela principal
+
+        tk.Label(janela, text="Digite seu nome de usuário:").pack(pady=10)
+        entrada = tk.Entry(janela)
+        entrada.pack(pady=5)
+
+        def continuar():
+            nome = entrada.get().strip()
+            if not nome:
+                messagebox.showerror("Erro", "Digite um nome de usuário!")
+                self.username = None
+                return
+            self.username = nome
+            janela.destroy()  # fecha a janela e libera o fluxo
+
+        tk.Button(janela, text="Continuar", command=continuar).pack(pady=10)
+
+        # Bloqueia o processo até a janela ser fechada
+        self.gerenciador_de_janelas.master.wait_window(janela)
+    
+    def solicitar_codigo(self):
+        janela = tk.Toplevel(self.gerenciador_de_janelas.master)
+        janela.title("Verificação de Código")
+        janela.geometry("300x150")
+        janela.grab_set()
+
+        tk.Label(janela, text="Digite o código enviado para seu e-mail:").pack(pady=10)
+        entrada = tk.Entry(janela)
+        entrada.pack(pady=5)
+
+        def confirmar():
+            codigo_digitado = entrada.get().strip()
+            if codigo_digitado == self.codigo_gerado:
+                messagebox.showinfo("Sucesso", "Código verificado com sucesso!")
+                self.codigo_confirmado = True
+                janela.destroy()
+            else:
+                messagebox.showerror("Erro", "Código incorreto!")
+                self.codigo_confirmado = False
+
+        tk.Button(janela, text="Confirmar", command=confirmar).pack(pady=10)
+
+        # Bloqueia até a janela ser fechada
+        self.gerenciador_de_janelas.master.wait_window(janela)
+
+
+    def redefinir_senha(self, event):
+        # Solicita o usuário antes de enviar o código
+        self.solicitar_usuario()
+
+        print(f"{self.username = }")
+        if not self.username:
+            return
+        print("usuario obtido")
+        
+        self.codigo_gerado = str(random.randint(100000, 999999))
+        corpo = f"Seu código de verificação é: {self.codigo_gerado}"
+
+        # Configurações do servidor SMTP
+        smtp_server = 'smtp.gmail.com'
+        smtp_port = 587
+        email_app = 'sistema.sigeme@gmail.com'
+        senha_app = 'tbbu ufnz fzqu engl' #senha de app gerada pelo google
+
+        usuario = self.controle_usuarios.busca_usuario(self.username)
+        email_usuario = usuario['email']
+
+        msg = MIMEText(corpo)
+        msg['Subject'] = 'SIGEME - Código de verificação'
+        msg['From'] = email_app
+        msg['To'] = email_usuario #email do usuário aqui
+
+        print("mandando email")
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(email_app, senha_app)
+            server.send_message(msg)
+        
+        print("mandou")
+        self.solicitar_codigo()
+
+        if self.codigo_confirmado:
+            messagebox.showinfo("Próxima etapa", "Agora você pode redefinir sua senha!")
+            self.gerenciador_de_janelas.editar_usuario(usuario)
+        else:
+            messagebox.showwarning("Aviso", "Verificação não concluída.")

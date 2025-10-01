@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 import constants
 
+from control.endereco_controller import EnderecoController
 from control.escola_controller import EscolaController
 from view.telas.gerenciador_de_janelas import GerenciadorDeJanelasBase
 from view.telas.menus.menu_painel_de_opcoes_crud import MenuPainelDeOpcoesCRUD
@@ -12,7 +13,8 @@ class TelaListagemEscolas(TelaBase):
         super().__init__(master, gerenciador_de_janelas)
         
         # Controlador de usuários
-        self.controle_usuarios = EscolaController()
+        self.controle_escolas = EscolaController()
+        self.controle_endereco = EnderecoController()
 
         ### Painel de ações
         self.painel_de_acoes = MenuPainelDeOpcoesCRUD(self, self)
@@ -24,7 +26,7 @@ class TelaListagemEscolas(TelaBase):
     def criar_listagem_escolas(self):
         colunas = ['ID', 'NOME', 'ENDEREÇO', 'ALUNOS']
         self.tvw_usuarios = ttk.Treeview(self, height=5, columns=colunas, show='headings')
-        tuplas = self.controle_usuarios.listar_escola()
+        tuplas = self.controle_escolas.listar_escola()
 
         self.tvw_usuarios.heading('ID', text='ID')
         self.tvw_usuarios.column('ID', width=10, anchor='center')
@@ -38,8 +40,8 @@ class TelaListagemEscolas(TelaBase):
         self.tvw_usuarios.heading('ALUNOS', text='ALUNOS')
         self.tvw_usuarios.column('ALUNOS', width=20, anchor='center')
 
-        for item in tuplas:
-            self.tvw_usuarios.insert('', 'end', values=item)
+        # Insere os itens no treeview
+        self.atualizar_listagem_escolas()
         
         # Bind do botão direito para abrir o menu de contexto
         self.tvw_usuarios.bind("<Button-3>", self.abrir_menu_contexto)
@@ -79,12 +81,19 @@ class TelaListagemEscolas(TelaBase):
     ###
     
     def atualizar_listagem_escolas(self):
+        """Atualiza o treeview com as escolas cadastradas"""
         # Apaga os itens da treeview
         self.tvw_usuarios.delete(*self.tvw_usuarios.get_children())
 
         # Atualiza a treeview com os dados do banco
-        tuplas = self.controle_usuarios.listar_escola()
-        for item in tuplas:
+        escolas = self.controle_escolas.listar_escola()
+        for escola in escolas:
+            item = (
+                escola["id"],
+                escola["nome"],
+                self.controle_endereco.buscar_endereco_string(escola["endereco_id"]),
+                escola["numero_alunos"],
+            )
             self.tvw_usuarios.insert('', 'end', values=item)
 
     def criar_menu_contexto(self):
@@ -107,12 +116,10 @@ class TelaListagemEscolas(TelaBase):
         """Edita a escola selecionada"""
         item_selecionado = self.tvw_usuarios.selection()[0]
         valores = self.tvw_usuarios.item(item_selecionado, 'values')
+        escola = self.controle_escolas.buscar_escola_por_id(valores[0])
         
-        if valores:
-            self.gerenciador_de_janelas.editar_escola(valores)
-            
-            # Aqui você pode implementar uma janela de edição ou navegar para uma tela de edição
-            print(f"Editando escola: ID={valores[0]}, NOME={valores[1]}")
+        if escola:
+            self.gerenciador_de_janelas.editar_escola(escola)
 
     def excluir_escola(self):
         """Exclui a escola selecionada"""
@@ -125,7 +132,7 @@ class TelaListagemEscolas(TelaBase):
                                             f"Tem certeza que deseja excluir a escola '{valores[1]}'?")
             if resposta:
                 # Chama o controller para excluir
-                resultado = self.controle_usuarios.excluir_escola(valores[0])
+                resultado = self.controle_escolas.excluir_escola(valores[0])
                 if resultado:
                     # Remove o item da treeview
                     self.tvw_usuarios.delete(item_selecionado)
