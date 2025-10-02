@@ -54,12 +54,12 @@ class TelaLogin(TelaBase):
         self.ent_senha.bind('<Return>', lambda event: self.onContinuar())
 
         ### Esqueci a senha
-        self.lbl_esqueciASenha = tk.Label(self.modal_login, text='Esqueceu a senha?', relief='flat', bg=constants.cores['cinza'])
-        self.lbl_esqueciASenha.grid(row=4, column=2, columnspan=1, sticky='e')
-        self.lbl_esqueciASenha.bind('<Button-1>', self.redefinir_senha)
+        self.lbl_esqueci_a_senha = tk.Label(self.modal_login, text='Esqueceu a senha?', relief='flat', bg=constants.cores['cinza'])
+        self.lbl_esqueci_a_senha.grid(row=4, column=2, columnspan=1, sticky='e')
+        self.lbl_esqueci_a_senha.bind('<Button-1>', self.redefinir_senha)
         # Melhorara a usabilidade adicionando um cursor de mãozinha ao passar o mouse sobre o label
-        self.lbl_esqueciASenha.bind('<Enter>', lambda event: self.lbl_esqueciASenha.config(cursor="hand2"))
-        self.lbl_esqueciASenha.bind('<Leave>', lambda event: self.lbl_esqueciASenha.config(cursor=""))
+        self.lbl_esqueci_a_senha.bind('<Enter>', lambda event: self.lbl_esqueci_a_senha.config(cursor="hand2"))
+        self.lbl_esqueci_a_senha.bind('<Leave>', lambda event: self.lbl_esqueci_a_senha.config(cursor=""))
 
         ### Botão continuar
         self.btn_continuar = tk.Button(self.modal_login, text='Continuar', bg=constants.cores['principal'], fg=constants.cores['branco'], command=self.onContinuar)
@@ -106,13 +106,17 @@ class TelaLogin(TelaBase):
         return True
     
     def solicitar_usuario(self):
+        root = self.gerenciador_de_janelas.master
+        
         # Cria um Toplevel
-        janela = tk.Toplevel(self.gerenciador_de_janelas.master)
+        janela = tk.Toplevel(root)
         janela.title("Redefinir Senha")
         janela.geometry("300x150")
         
         self.update_idletasks() # Garante que a janela seja desenhada
-        janela.grab_set()  # bloqueia interação com a janela principal
+        # janela.transient(root)  # Depende da janela principal (fica sempre por cima)
+        janela.grab_set()       # bloqueia interação com a janela principal
+        janela.focus_set()      # Alterar o foco do teclado para a janela aberta
 
         tk.Label(janela, text="Digite seu email ou nome de usuário:").pack(pady=10)
         entrada = tk.Entry(janela)
@@ -132,7 +136,7 @@ class TelaLogin(TelaBase):
         tk.Button(janela, text="Continuar", command=continuar).pack(pady=10)
 
         # Bloqueia o processo até a janela ser fechada
-        self.gerenciador_de_janelas.master.wait_window(janela)
+        root.wait_window(janela)
     
     def solicitar_codigo(self):
         janela = tk.Toplevel(self.gerenciador_de_janelas.master)

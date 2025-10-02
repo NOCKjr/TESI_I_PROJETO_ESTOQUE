@@ -1,6 +1,7 @@
 import sqlite3
 import os
 import constants
+from control.usuario_controller import UsuarioController
 
 def create_db():
 
@@ -69,10 +70,15 @@ def create_db():
                     
             CREATE TABLE usuario(
                 usu_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                usu_nick VARCHAR(64) NOT NULL,
-                usu_email VARCHAR(100) NOT NULL,
+                usu_nick VARCHAR(64) NOT NULL UNIQUE,
+                usu_email VARCHAR(100) NOT NULL UNIQUE,
                 usu_senha VARCHAR(64) NOT NULL,
                 usu_tipo CHAR(1) NOT NULL);
         ''')
+
+        # cria o usuário padrão de primeiro acesso (nome 'admin' e senha 'admin')
+        controle_usuario = UsuarioController()
+        controle_usuario.inserir_usuario(nick='admin', senha='admin', tipo='A') 
+        
         con.commit()
         con.close()

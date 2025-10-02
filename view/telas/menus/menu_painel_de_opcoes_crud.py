@@ -11,7 +11,7 @@ class MenuPainelDeOpcoesCRUD(tk.Frame):
         self.container_acoes.pack()
         
         # Adicionar
-        self.btn_adicionar = tk.Button(self.container_acoes, text="Adicionar", bg=constants.cores['secundario'], command=self.adicionar)
+        self.btn_adicionar = tk.Button(self.container_acoes, text="Adicionar", command=self.adicionar)
         self.btn_adicionar.pack(side='left')
 
         # Editar

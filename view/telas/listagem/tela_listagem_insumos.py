@@ -25,7 +25,7 @@ class TelaListagemInsumos(TelaBase):
 
     def criar_listagem_insumos(self):
         colunas = ['ID', 'NOME', 'ESTOQUE', 'MÉDIA CONSUMIDA', 'UNIDADE']
-        self.tvw_insumos = ttk.Treeview(self, height=5, columns=colunas, show='headings')
+        self.tvw_insumos = ttk.Treeview(self, height=20, columns=colunas, show='headings')
         tuplas = self.controle_insumos.listar_insumo()
 
         self.tvw_insumos.heading('ID', text='ID')

@@ -23,7 +23,7 @@ class TelaListagemUsuarios(TelaBase):
 
     def criar_listagem_usuarios(self):
         colunas = ['ID', 'LOGIN', 'EMAIL', 'TIPO']
-        self.tvw_usuarios = ttk.Treeview(self, height=5, columns=colunas, show='headings')
+        self.tvw_usuarios = ttk.Treeview(self, height=20, columns=colunas, show='headings')
         usuarios = self.controle_usuarios.listar_usuario()
 
         self.tvw_usuarios.heading('ID', text='ID')
