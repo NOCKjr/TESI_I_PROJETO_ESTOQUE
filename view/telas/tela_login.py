@@ -157,10 +157,17 @@ class TelaLogin(TelaBase):
         self.solicitar_usuario()
 
         print(f"{self.username = }")
-        if not self.username:
+
+        usuario = self.controle_usuarios.busca_usuario(self.username)
+
+        if not usuario:
+            messagebox.showerror("Erro", "Digite um email ou nome de usuário válido!")
             return
-        print("usuario obtido")
         
+        print("usuario obtido")
+
+        email_usuario = usuario['email']
+
         self.codigo_gerado = str(random.randint(100000, 999999))
         corpo = f"Seu código de verificação é: {self.codigo_gerado}"
 
