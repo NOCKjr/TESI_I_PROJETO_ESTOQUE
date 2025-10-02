@@ -1,4 +1,5 @@
 import tkinter as tk
+import ttkbootstrap as ttk
 from view.App import App
 import constants
 from model import init_db
@@ -14,7 +15,7 @@ if __name__ == '__main__':
     controle_usuario.inserir_usuario(nick='admin', senha='admin', tipo='A') 
     
     # janela principal
-    root = tk.Tk()
+    root = ttk.Window(themename="cosmo")
     root.geometry(f'{constants.LARGURA_JANELA}x{constants.ALTURA_JANELA}')
     root.minsize(width=constants.LARGURA_JANELA, height=constants.ALTURA_JANELA)
     root.resizable(width=False, height=False)
