@@ -195,6 +195,8 @@ class TelaLogin(TelaBase):
         msg['From'] = email_app
         msg['To'] = email_usuario #email do usuário aqui
 
+        messagebox.showinfo("Enviando email", f"Um código de verificação será enviado para {email_usuario}. Por favor, aguarde.")
+
         try:
             print("mandando email")
             with smtplib.SMTP(smtp_server, smtp_port) as server:
