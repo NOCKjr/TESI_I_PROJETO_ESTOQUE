@@ -198,6 +198,29 @@ class TelaLogin(TelaBase):
         
         if self.codigo_confirmado:
             messagebox.showinfo("Próxima etapa", "Agora você pode redefinir sua senha!")
-            self.gerenciador_de_janelas.editar_usuario(usuario)
+
+            janela = tk.Toplevel(self.gerenciador_de_janelas.master)
+            janela.title("Criação da nova senha")
+            janela.geometry("300x150")
+
+            self.update_idletasks()
+            janela.grab_set()
+
+            tk.Label(janela, text=f"Digite sua nova senha").pack(pady=10)
+            entrada = tk.Entry(janela)
+            entrada.pack(pady=5)
+
+            def continuar():
+
+                senha = entrada.get().strip() # o que faz esse strip? 
+                if not senha:
+                    messagebox.showerror("Erro", "Digite uma senha!")
+                    return
+                user = self.controle_usuarios.busca_usuario(self.username)
+                self.controle_usuarios.atualizar_usuario(user["id"], user["nick"], user["email"], senha, user["tipo"])
+                janela.destroy()  # fecha a janela e libera o fluxo
+
+            tk.Button(janela, text="Continuar", command=continuar).pack(pady=10)
+
         else:
             messagebox.showwarning("Aviso", "Verificação não concluída.")
