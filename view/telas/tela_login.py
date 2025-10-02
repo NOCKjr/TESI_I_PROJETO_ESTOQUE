@@ -144,6 +144,7 @@ class TelaLogin(TelaBase):
             else:
                 messagebox.showerror("Erro", "Código incorreto!")
                 self.codigo_confirmado = False
+                janela.destroy()
 
         tk.Button(janela, text="Confirmar", command=confirmar).pack(pady=10)
 
