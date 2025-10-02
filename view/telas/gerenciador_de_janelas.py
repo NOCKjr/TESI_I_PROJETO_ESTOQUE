@@ -1,32 +1,32 @@
-import tkinter as tk
+import ttkbootstrap as ttk
 import constants
 import abc
 
 from tkinter import ttk
 from view.telas.menus.menu_navegacao import MenuNavegacao
 
-class GerenciadorDeJanelasBase(tk.Frame, abc.ABC):
+class GerenciadorDeJanelasBase(ttk.Frame, abc.ABC):
     def __init__(self, master):
         super().__init__(master)
         self.tela_atual = None
 
         ### Menu superior de navegação
-        self.container_menu = tk.Frame(self)
+        self.container_menu = ttk.Frame(self)
         self.container_menu.pack(side='top', fill='x')
         self.menu_navegacao = MenuNavegacao(self.container_menu, self)
         self.menu_navegacao.exibir()
 
         # Scrollbar lateral
         self.scb_scroller = ttk.Scrollbar(self)
-        self.scb_scroller.pack(side='right')
+        self.scb_scroller.pack(side='right', fill='y')
 
         # Área de conteúdo da tela em exibição
-        self.content_frame = tk.Frame(self, bg=constants.cores['principal'])
+        self.content_frame = ttk.Frame(self)
         self.content_frame.pack(fill="both", expand=True)
     
     @abc.abstractmethod
-    def get_tela(self, nome_tela: str) -> tk.Frame:
-        """Deve retornar a referência de um tkinter.Frame."""
+    def get_tela(self, nome_tela: str) -> ttk.Frame:
+        """Deve retornar a referência de um ttk.Frame."""
         pass
     
     def alterar_para_a_tela(self, proxima_tela: str):

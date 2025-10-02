@@ -1,12 +1,12 @@
-import tkinter as tk
+import ttkbootstrap as ttk
 
 import constants
 from view.telas.gerenciador_de_janelas import GerenciadorDeJanelasBase
 
-class TelaBase(tk.Frame):
+class TelaBase(ttk.Frame):
     """Interface que todas as telas devem implementar"""
     def __init__(self, master, gerenciador_de_janelas: GerenciadorDeJanelasBase, largura=constants.LARGURA_JANELA, altura=constants.ALTURA_JANELA):
-        super().__init__(master, width=largura, height=altura, bg='#ffffff')
+        super().__init__(master, width=largura, height=altura)
         
         # guarda qual objeto está gerenciando a troca entre janelas
         self.gerenciador_de_janelas = gerenciador_de_janelas

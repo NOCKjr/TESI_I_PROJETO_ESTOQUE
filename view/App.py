@@ -1,6 +1,5 @@
-import tkinter as tk
+import ttkbootstrap as ttk
 import constants
-from tkinter import ttk
 
 from view.telas.gerenciador_de_janelas import GerenciadorDeJanelasBase
 
@@ -61,31 +60,8 @@ class App(GerenciadorDeJanelasBase):
         # self.alterar_para_a_tela(constants.TELA_CADASTRAR_INSUMO)
         # self.alterar_para_a_tela(constants.TELA_MENU_CADASTROS)
         # self.alterar_para_a_tela(constants.TELA_CONSULTAS)
-    
-    def criar_barra_de_menu(self):
-        # Cria a barra de menu
-        self.barra_menu = tk.Menu(self.master)
-        
-        # Variável para indicar qual aba está selecionada (movimentações, usuários, escolas, ...)
-        self.var_tela_ativa = tk.StringVar(value="")
-
-        # Menu "Movimentações"
-        self.barra_menu.add_command(label="Movimentações", command=lambda: self.alterar_para_a_tela(constants.TELA_MOVIMENTACOES))
-
-        # Menu "Usuários"
-        self.barra_menu.add_command(label='Usuários', command=lambda: self.alterar_para_a_tela(constants.TELA_LISTAGEM_USUARIOS))
-
-        # Menu "Escolas"
-        self.barra_menu.add_command(label='Escolas', command=lambda: self.alterar_para_a_tela(constants.TELA_CADASTRAR_ESCOLA))
-
-        # Menu "Fornecedores"
-        self.barra_menu.add_command(label='Fornecedores', command=lambda: self.alterar_para_a_tela(constants.TELA_CADASTRAR_FORNECEDOR))
-
-        # Menu "Insumos"
-        self.barra_menu.add_command(label='Insumos', command=lambda: self.alterar_para_a_tela(constants.TELA_CADASTRAR_INSUMO))
 
         # Adicionar o menu à janela
-        
     def get_tela(self, nome_tela: str):
         if nome_tela in self.telas:
             return self.telas[nome_tela]
