@@ -177,23 +177,25 @@ class TelaLogin(TelaBase):
         email_app = 'sistema.sigeme@gmail.com'
         senha_app = 'tbbu ufnz fzqu engl' #senha de app gerada pelo google
 
-        usuario = self.controle_usuarios.busca_usuario(self.username)
-        email_usuario = usuario['email']
-
         msg = MIMEText(corpo)
         msg['Subject'] = 'SIGEME - Código de verificação'
         msg['From'] = email_app
         msg['To'] = email_usuario #email do usuário aqui
 
-        print("mandando email")
-        with smtplib.SMTP(smtp_server, smtp_port) as server:
-            server.starttls()
-            server.login(email_app, senha_app)
-            server.send_message(msg)
-        
-        print("mandou")
-        self.solicitar_codigo()
+        try:
+            print("mandando email")
+            with smtplib.SMTP(smtp_server, smtp_port) as server:
+                server.starttls()
+                server.login(email_app, senha_app)
+                server.send_message(msg)
+            
+            print("mandou")
+            self.solicitar_codigo()
 
+        except Exception as e:
+            messagebox.showerror("Erro de Conexão", f"Não foi possível enviar o e-mail de verificação. Verifique sua conexão ou tente mais tarde.\nErro: {e}")
+            return # Interrompe o fluxo se não conseguir enviar
+        
         if self.codigo_confirmado:
             messagebox.showinfo("Próxima etapa", "Agora você pode redefinir sua senha!")
             self.gerenciador_de_janelas.editar_usuario(usuario)
