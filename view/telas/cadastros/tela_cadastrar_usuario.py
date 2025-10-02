@@ -34,12 +34,6 @@ class TelaCadastrarUsuario(TelaFormularioBase):
         self.ent_email_usuario = tk.Entry(self.container_formulario)
         self.ent_email_usuario.grid(row=5, column=0, columnspan=30, sticky='nsew')
 
-        # Email do usuário
-        self.lbl_email_usuario = tk.Label(self.container_formulario, text="Email usuário:", anchor='w', bg=constants.cores['cinza'])
-        self.lbl_email_usuario.grid(row=2, column=15, pady=(2,0), sticky='nsw')
-        self.ent_email_usuario = tk.Entry(self.container_formulario)
-        self.ent_email_usuario.grid(row=3, column=15, columnspan=14, sticky='nsew')
-
         # Tipo de usuário (Administrador ou Comum)
         self.lbl_tipo_usuario = tk.Label(self.container_formulario, text="Tipo de usuário:", anchor='w', bg=constants.cores['cinza'])
         self.lbl_tipo_usuario.grid(row=8, column=0, pady=(10,0), sticky='nsw')

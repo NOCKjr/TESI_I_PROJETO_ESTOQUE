@@ -105,7 +105,7 @@ class TelaLogin(TelaBase):
         self.update_idletasks() # Garante que a janela seja desenhada
         janela.grab_set()  # bloqueia interação com a janela principal
 
-        tk.Label(janela, text="Digite seu nome de usuário:").pack(pady=10)
+        tk.Label(janela, text="Digite seu email ou nome de usuário:").pack(pady=10)
         entrada = tk.Entry(janela)
         entrada.pack(pady=5)
 
@@ -144,6 +144,7 @@ class TelaLogin(TelaBase):
             else:
                 messagebox.showerror("Erro", "Código incorreto!")
                 self.codigo_confirmado = False
+                janela.destroy()
 
         tk.Button(janela, text="Confirmar", command=confirmar).pack(pady=10)
 
@@ -156,10 +157,17 @@ class TelaLogin(TelaBase):
         self.solicitar_usuario()
 
         print(f"{self.username = }")
-        if not self.username:
+
+        usuario = self.controle_usuarios.busca_usuario(self.username)
+
+        if not usuario:
+            messagebox.showerror("Erro", "Digite um email ou nome de usuário válido!")
             return
-        print("usuario obtido")
         
+        print("usuario obtido")
+
+        email_usuario = usuario['email']
+
         self.codigo_gerado = str(random.randint(100000, 999999))
         corpo = f"Seu código de verificação é: {self.codigo_gerado}"
 
@@ -169,25 +177,50 @@ class TelaLogin(TelaBase):
         email_app = 'sistema.sigeme@gmail.com'
         senha_app = 'tbbu ufnz fzqu engl' #senha de app gerada pelo google
 
-        usuario = self.controle_usuarios.busca_usuario(self.username)
-        email_usuario = usuario['email']
-
         msg = MIMEText(corpo)
         msg['Subject'] = 'SIGEME - Código de verificação'
         msg['From'] = email_app
         msg['To'] = email_usuario #email do usuário aqui
 
-        print("mandando email")
-        with smtplib.SMTP(smtp_server, smtp_port) as server:
-            server.starttls()
-            server.login(email_app, senha_app)
-            server.send_message(msg)
-        
-        print("mandou")
-        self.solicitar_codigo()
+        try:
+            print("mandando email")
+            with smtplib.SMTP(smtp_server, smtp_port) as server:
+                server.starttls()
+                server.login(email_app, senha_app)
+                server.send_message(msg)
+            
+            print("mandou")
+            self.solicitar_codigo()
 
+        except Exception as e:
+            messagebox.showerror("Erro de Conexão", f"Não foi possível enviar o e-mail de verificação. Verifique sua conexão ou tente mais tarde.\nErro: {e}")
+            return # Interrompe o fluxo se não conseguir enviar
+        
         if self.codigo_confirmado:
             messagebox.showinfo("Próxima etapa", "Agora você pode redefinir sua senha!")
-            self.gerenciador_de_janelas.editar_usuario(usuario)
+
+            janela = tk.Toplevel(self.gerenciador_de_janelas.master)
+            janela.title("Criação da nova senha")
+            janela.geometry("300x150")
+
+            self.update_idletasks()
+            janela.grab_set()
+
+            tk.Label(janela, text=f"Digite sua nova senha").pack(pady=10)
+            entrada = tk.Entry(janela)
+            entrada.pack(pady=5)
+
+            def continuar():
+
+                senha = entrada.get().strip() # o que faz esse strip? 
+                if not senha:
+                    messagebox.showerror("Erro", "Digite uma senha!")
+                    return
+                user = self.controle_usuarios.busca_usuario(self.username)
+                self.controle_usuarios.atualizar_usuario(user["id"], user["nick"], user["email"], senha, user["tipo"])
+                janela.destroy()  # fecha a janela e libera o fluxo
+
+            tk.Button(janela, text="Continuar", command=continuar).pack(pady=10)
+
         else:
             messagebox.showwarning("Aviso", "Verificação não concluída.")
