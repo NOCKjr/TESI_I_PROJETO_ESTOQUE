@@ -105,7 +105,7 @@ class TelaLogin(TelaBase):
         self.update_idletasks() # Garante que a janela seja desenhada
         janela.grab_set()  # bloqueia interação com a janela principal
 
-        tk.Label(janela, text="Digite seu nome de usuário:").pack(pady=10)
+        tk.Label(janela, text="Digite seu email ou nome de usuário:").pack(pady=10)
         entrada = tk.Entry(janela)
         entrada.pack(pady=5)
 
