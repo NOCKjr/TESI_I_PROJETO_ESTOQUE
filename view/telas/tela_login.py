@@ -21,7 +21,7 @@ class TelaLogin(TelaBase):
         # Controlador de usuários
         self.controle_usuarios = UsuarioController()
 
-        ### Container com o título da aplicação e' os campos de login
+        ### Container com o título da aplicação e os campos de login
         self.container_visual = tk.Frame(self, bg=constants.cores['branco'], padx=30, pady=20)
         self.container_visual.place(anchor='center', relx=0.5, rely=0.45)
 
@@ -40,6 +40,8 @@ class TelaLogin(TelaBase):
         self.lbl_usuario.pack(anchor='w', fill='y')
         self.ent_usuario = tk.Entry(self.container_usuario)
         self.ent_usuario.pack(anchor='w')
+        # Ao clicar em "Enter" com o campo usuário selecionado self.onContinuar() será chamado
+        self.ent_usuario.bind('<Return>', lambda event: self.onContinuar())
 
         ### Campo senha
         self.container_senha = tk.Frame(self.modal_login, bg=constants.cores['cinza'])
@@ -48,15 +50,22 @@ class TelaLogin(TelaBase):
         self.lbl_senha.pack(anchor='w')
         self.ent_senha = tk.Entry(self.container_senha, show='*')
         self.ent_senha.pack(anchor='w')
+        # Ao clicar em "Enter" com o campo senha selecionado self.onContinuar() será chamado
+        self.ent_senha.bind('<Return>', lambda event: self.onContinuar())
 
         ### Esqueci a senha
         self.lbl_esqueciASenha = tk.Label(self.modal_login, text='Esqueceu a senha?', relief='flat', bg=constants.cores['cinza'])
         self.lbl_esqueciASenha.grid(row=4, column=2, columnspan=1, sticky='e')
         self.lbl_esqueciASenha.bind('<Button-1>', self.redefinir_senha)
+        # Melhorara a usabilidade adicionando um cursor de mãozinha ao passar o mouse sobre o label
+        self.lbl_esqueciASenha.bind('<Enter>', lambda event: self.lbl_esqueciASenha.config(cursor="hand2"))
+        self.lbl_esqueciASenha.bind('<Leave>', lambda event: self.lbl_esqueciASenha.config(cursor=""))
 
         ### Botão continuar
         self.btn_continuar = tk.Button(self.modal_login, text='Continuar', bg=constants.cores['principal'], fg=constants.cores['branco'], command=self.onContinuar)
         self.btn_continuar.grid(row=5, column=0, columnspan=3, sticky='nswe')
+        # Ao clicar em "Enter" com o botão selecionado self.onContinuar() será chamado
+        self.btn_continuar.bind('<Return>', lambda event: self.onContinuar())
     
     def onContinuar(self):
 
@@ -108,6 +117,8 @@ class TelaLogin(TelaBase):
         tk.Label(janela, text="Digite seu email ou nome de usuário:").pack(pady=10)
         entrada = tk.Entry(janela)
         entrada.pack(pady=5)
+        # Ao clicar em "Enter" com o campo entrada selecionado continuar() será chamado
+        entrada.bind('<Return>', lambda event: continuar())
 
         def continuar():
             nome = entrada.get().strip()
@@ -134,6 +145,8 @@ class TelaLogin(TelaBase):
         tk.Label(janela, text="Digite o código enviado para seu e-mail:").pack(pady=10)
         entrada = tk.Entry(janela)
         entrada.pack(pady=5)
+        # Ao clicar em "Enter" com o campo entrada selecionado confirmar() será chamado
+        entrada.bind('<Return>', lambda event: confirmar())
 
         def confirmar():
             codigo_digitado = entrada.get().strip()
@@ -207,12 +220,14 @@ class TelaLogin(TelaBase):
             janela.grab_set()
 
             tk.Label(janela, text=f"Digite sua nova senha").pack(pady=10)
-            entrada = tk.Entry(janela)
+            entrada = tk.Entry(janela, show="*")
             entrada.pack(pady=5)
+            # Ao clicar em "Enter" com o campo entrada selecionado continuar() será chamado
+            entrada.bind('<Return>', lambda event: continuar())
 
             def continuar():
 
-                senha = entrada.get().strip() # o que faz esse strip? 
+                senha = entrada.get().strip() 
                 if not senha:
                     messagebox.showerror("Erro", "Digite uma senha!")
                     return
