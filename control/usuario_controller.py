@@ -31,8 +31,8 @@ class UsuarioController:
 
         Returns:
             ResponseQuery: 
-                - `retorno`: ID do usuário inserido (int) em caso de sucesso.
-                - `erros`: lista de erros caso ocorra falha (ex: duplicidade).
+                - `retorno`: ID do usuário inserido (int).
+                - `erros`: lista de erros caso ocorra falha.
         """
         senha_hash = hashlib.sha256(senha.encode('utf-8')).hexdigest()
         sql = (
@@ -53,7 +53,7 @@ class UsuarioController:
         
         return resp
 
-    def listar_usuario(self, termo_busca: str = '') -> list[dict]:
+    def listar_usuario(self, termo_busca: str = '') -> ResponseQuery:
         """
         Lista os usuários cujo `nick` contenha o termo de busca.
 
@@ -61,16 +61,17 @@ class UsuarioController:
             termo_busca (str): Termo procurado no nick. Padrão ''.
 
         Returns:
-            list[dict]: Lista de dicionários com os usuários encontrados, 
-                        ou lista vazia caso não haja correspondência.
+            ResponseQuery:
+                - `retorno`: lista de usuários como dicionários.
+                - `erros`: lista de erros em caso de falha.
         """
         sql = f'SELECT * FROM usuario WHERE usu_nick LIKE "%{termo_busca}%";'
         resp = self.model.get(sql)
-        if not resp.ok() or not resp.retorno:
-            return []
-        return [self.to_dict(u) for u in resp.retorno]
+        if resp.ok():
+            resp.retorno = [self.to_dict(u) for u in resp.retorno]
+        return resp
 
-    def busca_usuario(self, nick_ou_email: str = '') -> dict | None:
+    def busca_usuario(self, nick_ou_email: str = '') -> ResponseQuery:
         """
         Retorna um usuário pelo nick OU email informado.
 
@@ -78,16 +79,17 @@ class UsuarioController:
             nick_ou_email (str): Nick ou email do usuário.
 
         Returns:
-            dict | None: Usuário correspondente em formato dicionário,
-                         ou None se não encontrado.
+            ResponseQuery:
+                - `retorno`: dicionário do usuário ou None.
+                - `erros`: lista de erros em caso de falha.
         """
         sql = f'SELECT * FROM usuario WHERE usu_nick = "{nick_ou_email}" OR usu_email = "{nick_ou_email}";'
         resp = self.model.get(sql)
-        if not resp.ok() or not resp.retorno:
-            return None
-        return self.to_dict(resp.retorno[0])
+        if resp.ok():
+            resp.retorno = self.to_dict(resp.retorno[0]) if resp.retorno else None
+        return resp
 
-    def busca_usuario_por_id(self, id: int) -> dict | None:
+    def busca_usuario_por_id(self, id: int) -> ResponseQuery:
         """
         Retorna um usuário pelo ID.
 
@@ -95,25 +97,26 @@ class UsuarioController:
             id (int): ID do usuário.
 
         Returns:
-            dict | None: Usuário correspondente em formato dicionário,
-                         ou None se não encontrado.
+            ResponseQuery:
+                - `retorno`: dicionário do usuário ou None.
+                - `erros`: lista de erros em caso de falha.
         """
         sql = f'SELECT * FROM usuario WHERE usu_id = {id};'
         resp = self.model.get(sql)
-        if not resp.ok() or not resp.retorno:
-            return None
-        return self.to_dict(resp.retorno[0])
+        if resp.ok():
+            resp.retorno = self.to_dict(resp.retorno[0]) if resp.retorno else None
+        return resp
 
     def excluir_usuario(self, id: int) -> ResponseQuery:
         """
         Exclui um usuário do banco pelo seu ID.
 
         Args:
-            id (int): Identificador do usuário a ser excluído.
+            id (int): Identificador do usuário.
 
         Returns:
             ResponseQuery:
-                - `retorno`: número de linhas afetadas (int).
+                - `retorno`: número de linhas afetadas.
                 - `erros`: lista de erros em caso de falha.
         """
         sql = f'DELETE FROM usuario WHERE usu_id = {id};'
@@ -125,16 +128,15 @@ class UsuarioController:
         A senha será atualizada apenas se fornecida e não vazia.
 
         Args:
-            id (int): ID do usuário a ser atualizado.
+            id (int): ID do usuário.
             nick (str): Novo apelido.
             email (str): Novo email.
-            senha (str | None): Nova senha em texto simples. 
-                                Se None ou '', não será alterada.
+            senha (str | None): Nova senha em texto simples. Se None ou '', não será alterada.
             tipo (str): Novo tipo de usuário.
 
         Returns:
             ResponseQuery:
-                - `retorno`: número de linhas afetadas (int).
+                - `retorno`: número de linhas afetadas.
                 - `erros`: lista de erros em caso de falha.
         """
         partes = [
@@ -142,7 +144,7 @@ class UsuarioController:
             f"usu_email = '{email}'",
             f"usu_tipo = '{tipo}'"
         ]
-        if senha is not None and senha != '':
+        if senha:
             senha_hash = hashlib.sha256(senha.encode('utf-8')).hexdigest()
             partes.insert(2, f"usu_senha = '{senha_hash}'")
 
@@ -151,11 +153,10 @@ class UsuarioController:
 
     def to_dict(self, usuario: tuple) -> dict:
         """
-        Converte uma tupla de usuário em dicionário com chaves nomeadas.
+        Converte uma tupla de usuário em dicionário.
 
         Args:
-            usuario (tuple): Tupla retornada pelo banco no formato:
-                             (id, nick, email, senha, tipo).
+            usuario (tuple): Tupla retornada pelo banco.
 
         Returns:
             dict: Representação do usuário no formato dicionário.
