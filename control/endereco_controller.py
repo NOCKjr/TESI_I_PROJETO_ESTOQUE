@@ -1,12 +1,11 @@
 from model import model_base
+from model.model_base import ResponseQuery
 
 class EnderecoController:
     def __init__(self):
         self.model = model_base.ModelBase()
 
         # Mapeamento dos campos da tupla de endereço para seus índices.
-        # Tupla: (id, logradouro, numero, bairro, cidade, estado, cep, complemento, ponto_referencia)
-        # Atenção: se a estrutura do banco mudar, atualize os índices neste dicionário.
         self.indices_campos = {
             "id": 0,
             "logradouro": 1,
@@ -19,9 +18,9 @@ class EnderecoController:
             "ponto_referencia": 8,
         }
 
-    def inserir_endereco(self, logradouro: str, numero: str, bairro: str, cidade: str, estado: str, cep: str, complemento: str = '', ponto_referencia: str = '') -> int:
+    def inserir_endereco(self, logradouro: str, numero: str, bairro: str, cidade: str, estado: str, cep: str, complemento: str = '', ponto_referencia: str = '') -> ResponseQuery:
         """
-        Insere um endereço no banco e retorna o ID do registro inserido.
+        Insere um endereço no banco.
 
         Args:
             logradouro (str): Nome da rua.
@@ -34,7 +33,9 @@ class EnderecoController:
             ponto_referencia (str): Ponto de referência. Padrão ''.
 
         Returns:
-            int: ID do endereço inserido.
+            ResponseQuery:
+                - `retorno`: ID do endereço inserido.
+                - `erros`: lista de erros em caso de falha.
         """
         sql = (
             "INSERT INTO endereco(end_logradouro, end_numero, end_bairro, end_cidade, end_estado, end_cep, end_complemento, end_ponto_referencia) "
@@ -42,18 +43,23 @@ class EnderecoController:
         )
         return self.model.insert(sql)
 
-    def listar_endereco(self) -> list[dict]:
+    def listar_endereco(self) -> ResponseQuery:
         """
         Lista todos os endereços.
 
         Returns:
-            list[dict]: Lista de endereços como dicionários.
+            ResponseQuery:
+                - `retorno`: lista de endereços como dicionários.
+                - `erros`: lista de erros em caso de falha.
         """
         sql = 'SELECT * FROM endereco;'
-        resultado = self.model.get(sql)
-        return [self.to_dict(e) for e in resultado] if resultado else []
+        resp = self.model.get(sql)
+        if not resp.ok():
+            return resp
+        resp.retorno = [self.to_dict(e) for e in resp.retorno]
+        return resp
 
-    def excluir_endereco(self, id: int) -> int:
+    def excluir_endereco(self, id: int) -> ResponseQuery:
         """
         Exclui um endereço pelo ID.
 
@@ -61,12 +67,14 @@ class EnderecoController:
             id (int): ID do endereço.
 
         Returns:
-            int: Número de linhas afetadas.
+            ResponseQuery:
+                - `retorno`: número de linhas afetadas.
+                - `erros`: lista de erros em caso de falha.
         """
         sql = f'DELETE FROM endereco WHERE end_id = {id};'
         return self.model.delete(sql)
 
-    def atualizar_endereco(self, id: int, logradouro: str, numero: str, bairro: str, cidade: str, estado: str, cep: str, complemento: str = '', ponto_referencia: str = '') -> int:
+    def atualizar_endereco(self, id: int, logradouro: str, numero: str, bairro: str, cidade: str, estado: str, cep: str, complemento: str = '', ponto_referencia: str = '') -> ResponseQuery:
         """
         Atualiza os dados de um endereço.
 
@@ -82,7 +90,9 @@ class EnderecoController:
             ponto_referencia (str): Novo ponto de referência. Padrão ''.
 
         Returns:
-            int: Número de linhas afetadas.
+            ResponseQuery:
+                - `retorno`: número de linhas afetadas.
+                - `erros`: lista de erros em caso de falha.
         """
         sql = f"""UPDATE endereco 
                     SET end_logradouro = '{logradouro}', 
@@ -96,7 +106,7 @@ class EnderecoController:
                     WHERE end_id = {id};"""
         return self.model.update(sql)
 
-    def buscar_endereco_string(self, id: int) -> str | None:
+    def buscar_endereco_string(self, id: int) -> ResponseQuery:
         """
         Busca um endereço pelo ID e retorna como string formatada.
 
@@ -104,16 +114,19 @@ class EnderecoController:
             id (int): ID do endereço.
 
         Returns:
-            str | None: Endereço completo como string ou None se não encontrado.
+            ResponseQuery:
+                - `retorno`: string do endereço ou None se não encontrado.
+                - `erros`: lista de erros em caso de falha.
         """
         sql = f"SELECT * FROM endereco WHERE end_id = {id};"
-        resultado = self.model.get(sql)
-        if not resultado:
-            return None
+        resp = self.model.get(sql)
+        if not resp.ok():
+            return resp
+        if not resp.retorno:
+            resp.retorno = None
+            return resp
 
-        endereco = resultado[0]  # pega a primeira tupla (id é único)
-        
-        # Monta a string do endereço
+        endereco = resp.retorno[0]
         partes = [
             f"{endereco[self.indices_campos['logradouro']]}, ",
             f"Nº {endereco[self.indices_campos['numero']]} - ",
@@ -122,18 +135,16 @@ class EnderecoController:
             f"{endereco[self.indices_campos['estado']]}. ",
             f"CEP {endereco[self.indices_campos['cep']]}. "
         ]
-
-        # Complemento e ponto de referência opcionais
         complemento = endereco[self.indices_campos['complemento']]
         ponto_ref = endereco[self.indices_campos['ponto_referencia']]
         if complemento:
             partes.append(f"Complemento: {complemento}.")
         if ponto_ref:
             partes.append(f"Ponto de referência: {ponto_ref}.")
+        resp.retorno = "".join(partes)
+        return resp
 
-        return "".join(partes)
-
-    def buscar_endereco_por_id(self, id: int) -> dict | None:
+    def buscar_endereco_por_id(self, id: int) -> ResponseQuery:
         """
         Busca um endereço pelo ID e retorna como dicionário.
 
@@ -141,26 +152,19 @@ class EnderecoController:
             id (int): ID do endereço.
 
         Returns:
-            dict | None: Endereço no formato dicionário ou None se não encontrado.
+            ResponseQuery:
+                - `retorno`: dicionário do endereço ou None se não encontrado.
+                - `erros`: lista de erros em caso de falha.
         """
         sql = f"SELECT * FROM endereco WHERE end_id = {id};"
-        resultado = self.model.get(sql)
-        if not resultado:
-            return None
-
-        endereco = resultado[0]  # pega a primeira tupla (id é único)
-        return self.to_dict(endereco)
+        resp = self.model.get(sql)
+        if not resp.ok():
+            return resp
+        resp.retorno = self.to_dict(resp.retorno[0]) if resp.retorno else None
+        return resp
 
     def to_dict(self, endereco: tuple) -> dict:
-        """
-        Converte uma tupla de endereço em dicionário.
-
-        Args:
-            endereco (tuple): Tupla com os campos do endereço.
-
-        Returns:
-            dict: Endereço no formato dicionário.
-        """
+        """Converte uma tupla de endereço em dicionário."""
         return {
             "id": endereco[self.indices_campos["id"]],
             "logradouro": endereco[self.indices_campos["logradouro"]],
@@ -172,6 +176,3 @@ class EnderecoController:
             "complemento": endereco[self.indices_campos["complemento"]],
             "ponto_referencia": endereco[self.indices_campos["ponto_referencia"]],
         }
-
-    
-    
