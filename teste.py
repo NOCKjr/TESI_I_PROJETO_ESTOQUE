@@ -34,13 +34,21 @@ pos: ({pos_x}, {pos_y})
 
 
 # Excluir os usuários admin repetidos por causa de um bug
-controle = UsuarioController()
-admins = controle.listar_usuario('admin')
+# controle = UsuarioController()
+# admins = controle.listar_usuario('admin')
 
-print(*admins, sep='\n')
+# print(*admins, sep='\n')
 
-for adm in admins:
-    if adm['id'] != 7:
-        controle.excluir_usuario(adm['id'])
-admins = controle.listar_usuario('admin')
-print(*admins, sep='\n')
+# for adm in admins:
+#     if adm['id'] != 7:
+#         controle.excluir_usuario(adm['id'])
+# admins = controle.listar_usuario('admin')
+# print(*admins, sep='\n')
+
+
+
+uc = UsuarioController()
+# uc.inserir_usuario(nick='alonso', senha='admin', email='alonso', tipo='A')
+
+
+print(*uc.listar_usuario(), sep='\n')

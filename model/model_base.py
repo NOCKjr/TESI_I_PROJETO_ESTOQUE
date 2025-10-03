@@ -1,23 +1,43 @@
 from model.conexao import Conexao
-from sqlite3 import Error
+from sqlite3 import Error, IntegrityError
+
+class ResponseQuery:
+    def __init__(self, retorno=None, erros=None):
+        # Retorno esperado da consulta (lista, id, linhas afetadas etc.)
+        self.retorno = retorno
+        
+        # Lista de erros (objetos ou strings)
+        self.erros = erros or []
+
+    def add_erro(self, erro):
+        """Adiciona um erro à lista (pode ser string ou Exception)"""
+        self.erros.append(erro)
+
+    def ok(self) -> bool:
+        """Retorna True se não houve erros"""
+        return len(self.erros) == 0
+
+
 class ModelBase:
     def __init__(self):
-        # Conexão com o banco de dados
         self.con = Conexao()
 
     def get(self, sql):
         """Faz uma consulta no banco"""
+        resp = ResponseQuery()
         try:
             con = self.con.get_conexao()
             cursor = con.cursor()
             resultado = cursor.execute(sql).fetchall()
             con.close()
-            return resultado
+            resp.retorno = resultado
         except Error as er:
-            print(er)
-    
+            resp.add_erro(er)
+        return resp
+
     def insert(self, sql, params=None):
-        """Insere um registro no banco e retorna o ID do registro inserido"""
+        """Insere um registro no banco e retorna o ID"""
+        resp = ResponseQuery()
         try:
             con = self.con.get_conexao()
             cursor = con.cursor()
@@ -26,37 +46,36 @@ class ModelBase:
             else:
                 cursor.execute(sql)
             con.commit()
-            last_id = cursor.lastrowid
+            resp.retorno = cursor.lastrowid
             con.close()
-            return last_id
-        except Error as er:
-            print(er)
-            return None
-
+        except (IntegrityError, Error) as er:
+            resp.add_erro(er)
+        return resp
 
     def delete(self, sql):
-        """Delete um registro do banco"""
+        """Deleta um registro"""
+        resp = ResponseQuery()
         try:
             con = self.con.get_conexao()
             cursor = con.cursor()
             cursor.execute(sql)
-            if cursor.rowcount == 1:
-                con.commit()
+            con.commit()
+            resp.retorno = cursor.rowcount
             con.close()
-            return cursor.rowcount
         except Error as er:
-            print(er)
+            resp.add_erro(er)
+        return resp
 
     def update(self, sql):
-        """Atualiza um registro do banco"""
+        """Atualiza um registro"""
+        resp = ResponseQuery()
         try:
             con = self.con.get_conexao()
             cursor = con.cursor()
             cursor.execute(sql)
-            if cursor.rowcount == 1:
-                con.commit()
+            con.commit()
+            resp.retorno = cursor.rowcount
             con.close()
-            return cursor.rowcount
         except Error as er:
-            print(er)
-
+            resp.add_erro(er)
+        return resp
