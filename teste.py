@@ -1,5 +1,7 @@
 import tkinter as tk
 
+from control.usuario_controller import UsuarioController
+
 def iniciar_janela():
     root = tk.Tk()
 
@@ -27,5 +29,18 @@ pos: ({pos_x}, {pos_y})
 
     root.title("Janela com escala dinâmica")
     root.mainloop()
+# 
+# iniciar_janela()
 
-iniciar_janela()
+
+# Excluir os usuários admin repetidos por causa de um bug
+controle = UsuarioController()
+admins = controle.listar_usuario('admin')
+
+print(*admins, sep='\n')
+
+for adm in admins:
+    if adm['id'] != 7:
+        controle.excluir_usuario(adm['id'])
+admins = controle.listar_usuario('admin')
+print(*admins, sep='\n')
