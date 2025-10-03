@@ -1,9 +1,12 @@
-from model import model_base
+from control.controller_base import ControllerBase
 from model.model_base import ResponseQuery
 
-class EscolaController:
+class EscolaController(ControllerBase):
     def __init__(self):
-        self.model = model_base.ModelBase()
+        """
+        Controller responsável por intermediar operações entre a aplicação e o banco
+        de dados para a entidade 'escola'.
+        """
         
         # Mapeamento dos campos da tupla de endereço para seus índices.
         self.indices_campos = {
@@ -12,6 +15,15 @@ class EscolaController:
             "numero_alunos": 2,
             "endereco_id": 3,
         }
+
+        # Funções de callback para operações CRUD 
+        self.funcao_inserir_item = self.inserir_escola
+        self.funcao_listar_item = self.listar_escola
+        # self.funcao_buscar_item = self.buscar_escola
+        self.funcao_buscar_item_por_id = self.buscar_escola_por_id
+        self.funcao_excluir_item = self.excluir_escola
+        self.funcao_atualizar_item = self.atualizar_escola
+        # self.funcao_to_dict = self.to_dict_escola
 
     def inserir_escola(self, nome: str, endereco_id: int, numero_alunos: int = 0) -> ResponseQuery:
         """

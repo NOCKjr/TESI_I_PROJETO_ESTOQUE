@@ -1,12 +1,12 @@
-from model import model_base
+from control.controller_base import ControllerBase
 from model.model_base import ResponseQuery
 
-class ItemController:
+class ItemController(ControllerBase):
     def __init__(self):
         """
-        Controller responsável pelas operações de item no banco.
+        Controller responsável por intermediar operações entre a aplicação e o banco
+        de dados para a entidade 'item'.
         """
-        self.model = model_base.ModelBase()
 
         # Mapeamento dos campos da tupla de item para seus índices.
         self.indices_campos = {
@@ -15,6 +15,15 @@ class ItemController:
             "insumo_id": 2,
             "movimentacao_id": 3,
         }
+
+        # Funções de callback para operações CRUD 
+        self.funcao_inserir_item = self.inserir_item
+        self.funcao_listar_item = self.listar_item
+        # self.funcao_buscar_item = self.buscar_item
+        # self.funcao_buscar_item_por_id = self.buscar_item_por_id
+        self.funcao_excluir_item = self.excluir_item
+        self.funcao_atualizar_item = self.atualizar_item
+        # self.funcao_to_dict = self.to_dict_item
 
     def inserir_item(self, quantidade: float, insumo_id: int, movimentacao_id: int) -> ResponseQuery:
         """

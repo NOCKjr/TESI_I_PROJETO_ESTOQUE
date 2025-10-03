@@ -1,12 +1,12 @@
-from model.model_base import ModelBase, ResponseQuery
+from control.controller_base import ControllerBase
+from model.model_base import ResponseQuery
 
-class InsumoController:
+class InsumoController(ControllerBase):
     def __init__(self):
         """
         Controller responsável por intermediar operações entre a aplicação e o banco
         de dados para a entidade 'insumo'.
         """
-        self.model = ModelBase()
 
         # Mapeamento dos campos da tupla de fornecedor para seus índices.
         self.indices_campos = {
@@ -16,6 +16,15 @@ class InsumoController:
             "quantidade_estoque": 3,
             "medida_id": 4,
         }
+
+        # Funções de callback para operações CRUD 
+        self.funcao_inserir_item = self.inserir_insumo
+        self.funcao_listar_item = self.listar_insumo
+        # self.funcao_buscar_item = self.buscar_insumo
+        # self.funcao_buscar_item_por_id = self.buscar_insumo_por_id
+        self.funcao_excluir_item = self.excluir_insumo
+        self.funcao_atualizar_item = self.atualizar_insumo
+        # self.funcao_to_dict = self.to_dict_insumo
 
     def inserir_insumo(self, nome: str, media_consumida: float, quantidade_estoque: float, medida_id: int) -> ResponseQuery:
         """Insere um insumo no banco."""

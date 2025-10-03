@@ -66,6 +66,19 @@ class App(GerenciadorDeJanelasBase):
         if nome_tela in self.telas:
             return self.telas[nome_tela]
     
+    def editar(self, item, tipo_entidade):
+        match tipo_entidade:
+            case constants.ENTIDADE_USUARIO:
+                self.editar_usuario(item)
+            case constants.ENTIDADE_ESCOLA:
+                self.editar_escola(item)
+            case constants.ENTIDADE_FORNECEDOR:
+                self.editar_fornecedor(item)
+            case constants.ENTIDADE_INSUMO:
+                self.editar_insumo(item)
+            case _:
+                pass
+    
     def editar_usuario(self, usuario):
         tela_editar = self.get_tela(constants.TELA_EDITAR_USUARIO)
 

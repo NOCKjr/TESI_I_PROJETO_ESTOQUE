@@ -1,12 +1,11 @@
-from model import model_base
 from model.model_base import ResponseQuery
 
 class MovimentacaoController:
     def __init__(self):
         """
-        Controller responsável pelas operações de movimentação no banco.
+        Controller responsável por intermediar operações entre a aplicação e o banco
+        de dados para a entidade 'movimentacao'.
         """
-        self.model = model_base.ModelBase()
 
         # Mapeamento dos campos da tupla de movimentação para seus índices.
         self.indices_campos = {
@@ -17,6 +16,15 @@ class MovimentacaoController:
             "fornecedor_id": 4,
             "escola_id": 5,
         }
+
+        # Funções de callback para operações CRUD 
+        self.funcao_inserir_item = self.inserir_movimentacao
+        self.funcao_listar_item = self.listar_movimentacao
+        # self.funcao_buscar_item = self.buscar_movimentacao
+        # self.funcao_buscar_item_por_id = self.buscar_movimentacao_por_id
+        self.funcao_excluir_item = self.excluir_movimentacao
+        self.funcao_atualizar_item = self.atualizar_movimentacao
+        # self.funcao_to_dict = self.to_dict_movimentacao
 
     def inserir_movimentacao(self, data: str, tipo: str, usuario_id: int, fornecedor_id: int, escola_id: int) -> ResponseQuery:
         """

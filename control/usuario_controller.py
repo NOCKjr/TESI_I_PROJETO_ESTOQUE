@@ -1,13 +1,13 @@
 import hashlib
-from model.model_base import ModelBase, ResponseQuery
+from control.controller_base import ControllerBase
+from model.model_base import ResponseQuery
 
-class UsuarioController:
+class UsuarioController(ControllerBase):
     def __init__(self):
         """
         Controller responsável por intermediar operações entre a aplicação e o banco
         de dados para a entidade 'usuario'.
         """
-        self.model = ModelBase()
 
         # Mapeamento dos campos da tupla de usuário para seus índices.
         self.indices_campos = {
@@ -17,6 +17,15 @@ class UsuarioController:
             "senha": 3,
             "tipo": 4,
         }
+
+        # Funções de callback para operações CRUD 
+        self.funcao_inserir_item = self.inserir_usuario
+        self.funcao_listar_item = self.listar_usuario
+        self.funcao_buscar_item = self.buscar_usuario
+        self.funcao_buscar_item_por_id = self.buscar_usuario_por_id
+        self.funcao_excluir_item = self.excluir_usuario
+        self.funcao_atualizar_item = self.atualizar_usuario
+        # self.funcao_to_dict = self.to_dict_usuario
 
     def inserir_usuario(self, nick: str = '', email: str = '', senha: str = '', tipo: str = 'C') -> ResponseQuery:
         """
@@ -71,7 +80,7 @@ class UsuarioController:
             resp.retorno = [self.to_dict(u) for u in resp.retorno]
         return resp
 
-    def busca_usuario(self, nick_ou_email: str = '') -> ResponseQuery:
+    def buscar_usuario(self, nick_ou_email: str = '') -> ResponseQuery:
         """
         Retorna um usuário pelo nick OU email informado.
 
@@ -89,7 +98,7 @@ class UsuarioController:
             resp.retorno = self.to_dict(resp.retorno[0]) if resp.retorno else None
         return resp
 
-    def busca_usuario_por_id(self, id: int) -> ResponseQuery:
+    def buscar_usuario_por_id(self, id: int) -> ResponseQuery:
         """
         Retorna um usuário pelo ID.
 

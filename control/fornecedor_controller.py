@@ -1,9 +1,12 @@
-from model import model_base
+from control.controller_base import ControllerBase
 from model.model_base import ResponseQuery
 
-class FornecedorController:
+class FornecedorController(ControllerBase):
     def __init__(self):
-        self.model = model_base.ModelBase()
+        """
+        Controller responsável por intermediar operações entre a aplicação e o banco
+        de dados para a entidade 'fornecedor'.
+        """
 
         # Mapeamento dos campos da tupla de fornecedor para seus índices.
         self.indices_campos = {
@@ -11,6 +14,15 @@ class FornecedorController:
             "razao_social": 1,
             "contato": 2,
         }
+
+        # Funções de callback para operações CRUD 
+        self.funcao_inserir_item = self.inserir_fornecedor
+        self.funcao_listar_item = self.listar_fornecedor
+        # self.funcao_buscar_item = self.buscar_fornecedor
+        # self.funcao_buscar_item_por_id = self.buscar_fornecedor_por_id
+        self.funcao_excluir_item = self.excluir_fornecedor
+        self.funcao_atualizar_item = self.atualizar_fornecedor
+        # self.funcao_to_dict = self.to_dict_fornecedor
 
     def inserir_fornecedor(self, razao_social: str, contato: str = '') -> ResponseQuery:
         """Insere um fornecedor no banco."""

@@ -8,38 +8,51 @@ from view.telas.menus.menu_painel_de_opcoes_crud import MenuPainelDeOpcoesCRUD
 from view.telas.tela_base import TelaBase
 
 class TelaListagemBase(TelaBase):
-    def __init__(self, master, gerenciador_de_janelas: GerenciadorDeJanelasBase, largura=constants.LARGURA_JANELA, altura=constants.ALTURA_JANELA):
+    def __init__(self, master, gerenciador_de_janelas: GerenciadorDeJanelasBase, tipo_entidade, controle_entidade , largura=constants.LARGURA_JANELA, altura=constants.ALTURA_JANELA):
         super().__init__(master, gerenciador_de_janelas)
-        
-        # Controlador de usuários
-        self.controle_usuarios = EscolaController()
 
+        #Tipo de entidade manipulada (Usuario, Escola, Fornecedor ou Insumo)
+        self.tipo_entidade = tipo_entidade
+        
+        # Controlador da entidade
+        self.controle = controle_entidade
+
+        # Informações do treeview
+        self.linhas_treeview = 20 # Número de linhas visíveis
+        self.colunas = [] # Cabeçalhos das colunas
+        self.dados = [] # Dados que preencherão a tabela
+        
         ### Painel de ações
         self.painel_de_acoes = MenuPainelDeOpcoesCRUD(self, self)
         self.painel_de_acoes.mostrar()
 
         # Criar e exibir a listagem de usuários
         self.criar_listagem()
+    
+    def get_descricao_entidade(self):
+        match self.tipo_entidade:
+            case constants.ENTIDADE_USUARIO:
+                return "o", "usuário"
+            case constants.ENTIDADE_ESCOLA:
+                return "a", "escola"
+            case constants.ENTIDADE_FORNECEDOR:
+                return "o", "fornecedor"
+            case constants.ENTIDADE_INSUMO:
+                return "o", "insumo"
+            case _:
+                return "", ""
 
     def criar_listagem(self):
-        colunas = []
-        self.tvw_usuarios = ttk.Treeview(self, height=5, columns=colunas, show='headings')
+        self.tvw_tabela = ttk.Treeview(self, height=self.linhas_treeview, columns=self.colunas, show='headings')
 
-        # Bind do botão direito para abrir o menu de contexto
-        self.tvw_usuarios.bind("<Button-3>", self.abrir_menu_contexto)
+        self.tvw_tabela.bind("<<TreeviewSelect>>", self.item_selecionado)
 
-        self.tvw_usuarios.bind("<<TreeviewSelect>>", self.item_selecionado)
+        self.tvw_tabela.pack(pady=17, padx=10, fill='x', expand=False)
 
-        self.tvw_usuarios.pack(pady=17, padx=10, fill='x', expand=False)
-
-        # Criar menu de contexto
-        self.criar_menu_contexto()
-    
     def item_selecionado(self, event):
-        selecao = self.tvw_usuarios.selection()
+        selecao = self.tvw_tabela.selection()
 
         # Só edita/exclui se houver apenas uma opção selecionada
-        # [adicionar selectmode="browse" no treeview pode ser uma opção]
         if len(selecao) == 1:
             self.habilitar_botao_de_editar()
             self.habilitar_botao_de_excluir()
@@ -61,76 +74,71 @@ class TelaListagemBase(TelaBase):
         self.painel_de_acoes.btn_excluir.config(state='disabled')
     
     ###
-    
-    def atualizar_listagem_usuarios(self):
+
+    def buscar_tuplas(self):
+        # adicionar o listar do controller respectivo
+        # self.controle.listar()
+        return []
+
+    def atualizar_listagem(self):
         # Apaga os itens da treeview
-        self.tvw_usuarios.delete(*self.tvw_usuarios.get_children())
+        self.tvw_tabela.delete(*self.tvw_tabela.get_children())
 
         # Atualiza a treeview com os dados do banco
-        tuplas = self.controle_usuarios.listar_usuario()
+        tuplas = self.buscar_tuplas()
         for item in tuplas:
-            self.tvw_usuarios.insert('', 'end', values=item)
+            self.tvw_tabela.insert('', 'end', values=item)
 
-    def criar_menu_contexto(self):
-        """Cria o menu de contexto com opções de editar e excluir"""
-        self.menu_contexto = tk.Menu(self, tearoff=0)
-        self.menu_contexto.add_command(label="Editar", command=self.editar_usuario)
-        self.menu_contexto.add_command(label="Excluir", command=self.excluir_usuario)
-
-    def abrir_menu_contexto(self, event):
-        """Abre o menu de contexto quando clica com botão direito"""
-        # Seleciona o item clicado
-        item = self.tvw_usuarios.identify_row(event.y)
-        if item:
-            self.tvw_usuarios.selection_set(item)
-            self.tvw_usuarios.focus(item)
-            # Mostra o menu de contexto na posição do mouse
-            self.menu_contexto.post(event.x_root, event.y_root)
-
-    def editar_usuario(self):
-        """Edita o usuário selecionado"""
-        item_selecionado = self.tvw_usuarios.selection()[0]
-        valores = self.tvw_usuarios.item(item_selecionado, 'values')
+    def editar_item(self):
+        """Edita o item selecionado"""
+        item_selecionado = self.tvw_tabela.selection()[0]
+        valores = self.tvw_tabela.item(item_selecionado, 'values')
+        item = self.controle.buscar_por_id(valores[0])
         
-        if valores:
-            self.gerenciador_de_janelas.editar_usuario(valores)
-            
-            # Aqui você pode implementar uma janela de edição ou navegar para uma tela de edição
-            print(f"Editando usuário: ID={valores[0]}, NOME={valores[1]}")
-            # Por enquanto, apenas mostra uma mensagem
-            # tk.messagebox.showinfo("Editar", f"Função de edição será implementada para o usuário: {valores[1]}")
+        if item:
+            self.gerenciador_de_janelas.editar(item, self.tipo_entidade)
 
-    def excluir_usuario(self):
-        """Exclui o usuário selecionado"""
-        item_selecionado = self.tvw_usuarios.selection()[0]
-        valores = self.tvw_usuarios.item(item_selecionado, 'values')
+    def excluir_item(self):
+        """Exclui o item selecionado"""
+        item_selecionado = self.tvw_tabela.selection()[0]
+        valores = self.tvw_tabela.item(item_selecionado, 'values')
         
         if valores:
             # Confirma a exclusão
             resposta = tk.messagebox.askyesno("Confirmar Exclusão", 
-                                            f"Tem certeza que deseja excluir o usuário '{valores[1]}'?")
+                                            f"Tem certeza que deseja excluir {(lambda e: f"{e[0]} {e[1]}")(self.get_descricao_entidade())} '{valores[1]}'?")
             if resposta:
                 # Chama o controller para excluir
-                resultado = self.controle_usuarios.excluir_usuario(valores[0])
+                resultado = self.controle.excluir(valores[0])
                 if resultado:
                     # Remove o item da treeview
-                    self.tvw_usuarios.delete(item_selecionado)
-                    tk.messagebox.showinfo("Sucesso", "Usuário excluído com sucesso!")
+                    self.tvw_tabela.delete(item_selecionado)
+                    tk.messagebox.showinfo("Sucesso",(
+                                           f"{(lambda e: f'{e[1].capitalize()} excluíd{e[0]}')(self.get_descricao_entidade())}"
+                                           " com sucesso!"))
                 else:
-                    tk.messagebox.showerror("Erro", "Erro ao excluir o usuário!")
+                    tk.messagebox.showerror("Erro", f"Erro ao excluir {(lambda e: f"{e[0]} {e[1]}")(self.get_descricao_entidade())}!")
 
     def mostrar(self):
         # Atualiza os dados
-        self.atualizar_listagem_usuarios()
+        self.atualizar_listagem()
 
         # Mostra o componente na tela
         self.pack(expand=True, fill='both', anchor='center')
     
     def adicionar(self):
-        self.alterar_para_a_tela(constants.TELA_CADASTRAR_USUARIO)
+        # Chama a tela de cadastro correspondente à entidade manipulada
+        tela_cadastro = f"cadastrar-{self.tipo_entidade}"
+        self.alterar_para_a_tela(tela_cadastro)
     
     def editar(self):
-        self.editar_usuario()
+        """Edita o item selecionado"""
+        item_selecionado = self.tvw_tabela.selection()[0]
+        valores = self.tvw_tabela.item(item_selecionado, 'values')
+        item = self.controle.buscar_por_id(valores[0])
+        
+        if item:
+            self.gerenciador_de_janelas.editar(item)
     
     def excluir(self):
-        self.excluir_usuario()
+        pass

@@ -1,9 +1,12 @@
-from model import model_base
+from control.controller_base import ControllerBase
 from model.model_base import ResponseQuery
 
-class EnderecoController:
+class EnderecoController(ControllerBase):
     def __init__(self):
-        self.model = model_base.ModelBase()
+        """
+        Controller responsável por intermediar operações entre a aplicação e o banco
+        de dados para a entidade 'endereco'.
+        """
 
         # Mapeamento dos campos da tupla de endereço para seus índices.
         self.indices_campos = {
@@ -17,6 +20,15 @@ class EnderecoController:
             "complemento": 7,
             "ponto_referencia": 8,
         }
+
+        # Funções de callback para operações CRUD 
+        self.funcao_inserir_item = self.inserir_endereco
+        self.funcao_listar_item = self.listar_endereco
+        # self.funcao_buscar_item = self.buscar_endereco
+        self.funcao_buscar_item_por_id = self.buscar_endereco_por_id
+        self.funcao_excluir_item = self.excluir_endereco
+        self.funcao_atualizar_item = self.atualizar_endereco
+        # self.funcao_to_dict = self.to_dict_endereco
 
     def inserir_endereco(self, logradouro: str, numero: str, bairro: str, cidade: str, estado: str, cep: str, complemento: str = '', ponto_referencia: str = '') -> ResponseQuery:
         """

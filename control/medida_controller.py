@@ -1,18 +1,27 @@
-from model import model_base
+from control.controller_base import ControllerBase
 from model.model_base import ResponseQuery
 
-class MedidaController:
+class MedidaController(ControllerBase):
     def __init__(self):
         """
-        Controller responsável pelas operações de medida no banco.
+        Controller responsável por intermediar operações entre a aplicação e o banco
+        de dados para a entidade 'medida'.
         """
-        self.model = model_base.ModelBase()
 
         # Mapeamento dos campos da tupla de medida para seus índices.
         self.indices_campos = {
             "id": 0,
             "unidade": 1,
         }
+
+        # Funções de callback para operações CRUD 
+        self.funcao_inserir_item = self.inserir_medida
+        self.funcao_listar_item = self.listar_medida
+        # self.funcao_buscar_item = self.buscar_medida
+        # self.funcao_buscar_item_por_id = self.buscar_medida_por_id
+        self.funcao_excluir_item = self.excluir_medida
+        self.funcao_atualizar_item = self.atualizar_medida
+        # self.funcao_to_dict = self.to_dict_medida
 
     def inserir_medida(self, unidade: str) -> ResponseQuery:
         """
