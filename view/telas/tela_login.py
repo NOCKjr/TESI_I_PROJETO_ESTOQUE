@@ -86,25 +86,20 @@ class TelaLogin(TelaBase):
         login = self.ent_usuario.get()
         senha = self.ent_senha.get()
 
-        # print(login, senha)
-
         if login == '' or senha == '':
             return False
 
-        # Conferir se o login existe
         usuario = self.controle_usuarios.busca_usuario(login)
-
-        # print(f"{usuario = }")
 
         # Usuário não encontrado
         if not usuario:
             # Messagebox.show_info("Usuário não encontrado.", title="Quem é você?")
             return False
         
-        #Criptografa a senha digitada pelo usuário e compara com o hash salvo no banco de dados
+        # Criptografa a senha digitada pelo usuário 
         hash = hashlib.sha256(senha.encode('utf-8')).hexdigest()
 
-        # Senha incorreta
+        # A senha é diferente da encontrada no banco de dados
         if hash != usuario["senha"]:
             # Messagebox.show_info("Senha incorreta", title="Senha incorreta")
             return False
