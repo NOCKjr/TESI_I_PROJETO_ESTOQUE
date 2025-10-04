@@ -107,143 +107,116 @@ class TelaLogin(TelaBase):
         # Login válido
         return True
     
-    def solicitar_usuario(self):
+    def redefinir_senha(self, event):
         root = self.gerenciador_de_janelas.master
-        
-        # Cria um Toplevel
         janela = tk.Toplevel(root)
         janela.title("Redefinir Senha")
         janela.geometry("300x150")
+
+        # janela.transient(root) # Depende da janela principal (fica sempre por cima)
+        def impede_interacao(): 
+            janela.update_idletasks() # Garante que a janela seja desenhada
+            janela.grab_set() # Bloqueia interações com outras janelas
+            janela.focus_set()
         
-        self.update_idletasks() # Garante que a janela seja desenhada
-        # janela.transient(root)  # Depende da janela principal (fica sempre por cima)
-        janela.grab_set()       # bloqueia interação com a janela principal
-        janela.focus_set()      # Alterar o foco do teclado para a janela aberta
+        impede_interacao()
 
-        ttk.Label(janela, text="Digite seu email ou nome de usuário:").pack(pady=10)
-        entrada = ttk.Entry(janela)
-        entrada.pack(pady=5)
-        # Ao clicar em "Enter" com o campo entrada selecionado continuar() será chamado
-        entrada.bind('<Return>', lambda event: continuar())
+        container = ttk.Frame(janela)
+        container.pack(pady=3, padx=3, fill="both", expand=True)
 
-        def continuar():
-            nome = entrada.get().strip()
-            if not nome:
-                Messagebox.show_error("Digite um nome de usuário!", title="Erro")
-                self.username = None
-                return
-            self.username = nome
-            janela.destroy()  # fecha a janela e libera o fluxo
+        def limpar_container():
+            for widget in container.winfo_children():
+                widget.destroy()
 
-        ttk.Button(janela, text="Continuar", command=continuar).pack(pady=10)
-
-        # Bloqueia o processo até a janela ser fechada
-        root.wait_window(janela)
-    
-    def solicitar_codigo(self):
-        janela = tk.Toplevel(self.gerenciador_de_janelas.master)
-        janela.title("Verificação de Código")
-        janela.geometry("300x150")
-
-        self.update_idletasks() # Garante que a janela seja desenhada
-        janela.grab_set()
-
-        ttk.Label(janela, text="Digite o código enviado para seu e-mail:").pack(pady=10)
-        entrada = ttk.Entry(janela)
-        entrada.pack(pady=5)
-        # Ao clicar em "Enter" com o campo entrada selecionado confirmar() será chamado
-        entrada.bind('<Return>', lambda event: confirmar())
-
-        def confirmar():
-            codigo_digitado = entrada.get().strip()
-            if codigo_digitado == self.codigo_gerado:
-                Messagebox.show_info("Código verificado com sucesso!", title="Sucesso")
-                self.codigo_confirmado = True
-                janela.destroy()
-            else:
-                Messagebox.show_error("Código incorreto!", title="Erro")
-                self.codigo_confirmado = False
-
-
-        ttk.Button(janela, text="Confirmar", command=confirmar).pack(pady=10)
-
-        # Bloqueia até a janela ser fechada
-        self.gerenciador_de_janelas.master.wait_window(janela)
-
-
-    def redefinir_senha(self, event):
-        # Solicita o usuário antes de enviar o código
-        self.solicitar_usuario()
-
-        print(f"{self.username = }")
-
-        usuario = self.controle_usuarios.busca_usuario(self.username)
-
-        if not usuario:
-            Messagebox.show_error("Digite um email ou nome de usuário válido!", title="Erro")
-            return
-        
-        print("usuario obtido")
-
-        email_usuario = usuario['email']
-
-        self.codigo_gerado = str(random.randint(100000, 999999))
-        corpo = f"Seu código de verificação é: {self.codigo_gerado}"
-
-        # Configurações do servidor SMTP
-        smtp_server = 'smtp.gmail.com'
-        smtp_port = 587
-        email_app = 'sistema.sigeme@gmail.com'
-        senha_app = 'tbbu ufnz fzqu engl' #senha de app gerada pelo google
-
-        msg = MIMEText(corpo)
-        msg['Subject'] = 'SIGEME - Código de verificação'
-        msg['From'] = email_app
-        msg['To'] = email_usuario #email do usuário aqui
-
-        Messagebox.show_info(f"Um código de verificação será enviado para {email_usuario}. Por favor, aguarde.", title="Enviando email")
-
-        try:
-            print("mandando email")
-            with smtplib.SMTP(smtp_server, smtp_port) as server:
-                server.starttls()
-                server.login(email_app, senha_app)
-                server.sendmail(email_app, email_usuario, msg.as_string())
-            
-            print("mandou")
-            self.solicitar_codigo()
-
-        except Exception as e:
-            Messagebox.show_error(f"Não foi possível enviar o e-mail de verificação. Verifique sua conexão ou tente mais tarde.\nErro: {e}", title="Erro de Conexão")
-            return # Interrompe o fluxo se não conseguir enviar
-        
-        if self.codigo_confirmado:
-            Messagebox.show_info("Agora você pode redefinir sua senha!", title="Próxima etapa")
-
-            janela = tk.Toplevel(self.gerenciador_de_janelas.master)
-            janela.title("Criação da nova senha")
-            janela.geometry("300x150")
-
-            self.update_idletasks()
-            janela.grab_set()
-
-            ttk.Label(janela, text=f"Digite sua nova senha").pack(pady=10)
-            entrada = ttk.Entry(janela, show="*")
+        def mostrar_etapa_usuario():
+            limpar_container()
+            ttk.Label(container, text="Digite seu email ou nome de usuário:").pack(pady=10)
+            entrada = ttk.Entry(container)
             entrada.pack(pady=5)
-            # Ao clicar em "Enter" com o campo entrada selecionado continuar() será chamado
-            entrada.bind('<Return>', lambda event: continuar())
+            entrada.focus_set()
+            entrada.bind('<Return>', lambda e: continuar_usuario(entrada.get().strip()))
 
-            def continuar():
+            def continuar_usuario(nome):
+                if not nome:
+                    Messagebox.show_error("Digite um nome de usuário!", title="Erro", parent=janela)
+                    impede_interacao()
+                    return
+                
+                usuario = self.controle_usuarios.busca_usuario(nome)
+                if not usuario:
+                    Messagebox.show_error("Digite um email ou nome de usuário válido!", title="Erro", parent=janela)
+                    impede_interacao()
+                    return
+                
+                self.username = nome
+                etapa_envio_codigo(usuario['email'])
 
-                senha = entrada.get().strip() 
+            ttk.Button(container, text="Continuar", command=lambda: continuar_usuario(entrada.get().strip())).pack(pady=10)
+
+        def etapa_envio_codigo(email_usuario):
+
+            self.codigo_gerado = str(random.randint(100000, 999999))
+            corpo = f"Seu código de verificação é: {self.codigo_gerado}"
+
+            smtp_server, smtp_port = 'smtp.gmail.com', 587
+            email_app, senha_app = 'sistema.sigeme@gmail.com', 'tbbu ufnz fzqu engl'
+
+            msg = MIMEText(corpo)
+            msg['Subject'], msg['From'], msg['To'] = 'SIGEME - Código de verificação', email_app, email_usuario
+
+            Messagebox.show_info(f"Um código de verificação será enviado para {email_usuario}. Por favor, aguarde.", title="Enviando email", parent=janela)
+            impede_interacao()
+
+            try:
+                with smtplib.SMTP(smtp_server, smtp_port) as server:
+                    server.starttls()
+                    server.login(email_app, senha_app)
+                    server.sendmail(email_app, email_usuario, msg.as_string())
+                mostrar_etapa_codigo()
+            except Exception as e:
+                Messagebox.show_error(f"Não foi possível enviar o e-mail. Verifique sua conexão.\nErro: {e}", title="Erro de Conexão", parent=janela)
+                janela.destroy()
+
+        def mostrar_etapa_codigo():
+            impede_interacao()
+            limpar_container()
+            ttk.Label(container, text="Digite o código enviado para seu e-mail:").pack(pady=10)
+            entrada = ttk.Entry(container)
+            entrada.pack(pady=5)
+            entrada.focus_set()
+            entrada.bind('<Return>', lambda e: confirmar_codigo(entrada.get().strip()))
+
+            def confirmar_codigo(codigo_digitado):
+                if codigo_digitado == self.codigo_gerado:
+                    Messagebox.show_info("Código verificado com sucesso!", title="Sucesso", parent=janela)
+                    mostrar_etapa_nova_senha()
+                else:
+                    Messagebox.show_error("Código incorreto!", title="Erro", parent=janela)
+                    impede_interacao()
+
+            ttk.Button(container, text="Confirmar", command=lambda: confirmar_codigo(entrada.get().strip())).pack(pady=10)
+
+        def mostrar_etapa_nova_senha():
+            impede_interacao()
+            limpar_container()
+            janela.title("Criação da nova senha")
+            ttk.Label(container, text="Digite sua nova senha:").pack(pady=10)
+            entrada = ttk.Entry(container, show="*")
+            entrada.pack(pady=5)
+            entrada.focus_set()
+            entrada.bind('<Return>', lambda e: salvar_nova_senha(entrada.get().strip()))
+
+            def salvar_nova_senha(senha):
                 if not senha:
-                    Messagebox.show_error(title="Erro", message="Digite uma senha!")
+                    Messagebox.show_error("Digite uma senha!", title="Erro", parent=janela)
+                    impede_interacao()
                     return
                 user = self.controle_usuarios.busca_usuario(self.username)
                 self.controle_usuarios.atualizar_usuario(user["id"], user["nick"], user["email"], senha, user["tipo"])
-                janela.destroy()  # fecha a janela e libera o fluxo
+                Messagebox.show_info("Senha redefinida com sucesso!", title="Sucesso", parent=janela)
+                janela.destroy()
 
-            ttk.Button(janela, text="Continuar", command=continuar).pack(pady=10)
+            ttk.Button(container, text="Salvar", command=lambda: salvar_nova_senha(entrada.get().strip())).pack(pady=10)
 
-        else:
-            Messagebox.show_warning("Verificação não concluída.", title="Aviso")
+        mostrar_etapa_usuario()
+        self.master.wait_window(janela)
