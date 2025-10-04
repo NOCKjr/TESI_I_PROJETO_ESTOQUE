@@ -153,8 +153,6 @@ class TelaLogin(TelaBase):
                     return
                 
                 self.username = nome
-                self.codigo_gerado = '123'
-                # etapa_envio_codigo(usuario['email'])
                 mostrar_etapa_codigo()
 
             ttk.Button(container, text="Continuar", command=lambda: continuar_usuario(entrada.get().strip())).pack(pady=10)
