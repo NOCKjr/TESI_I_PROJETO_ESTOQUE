@@ -164,10 +164,10 @@ class TelaLogin(TelaBase):
             smtp_server, smtp_port = 'smtp.gmail.com', 587
             email_app, senha_app = 'sistema.sigeme@gmail.com', 'tbbu ufnz fzqu engl'
 
-        msg = MIMEText(corpo)
-        msg['Subject'] = 'SIGEME - Código de verificação'
-        msg['From'] = email_app
-        msg['To'] = email_usuario
+            msg = MIMEText(corpo)
+            msg['Subject'] = 'SIGEME - Código de verificação'
+            msg['From'] = email_app
+            msg['To'] = email_usuario
 
             Messagebox.show_info(f"Um código de verificação será enviado para {email_usuario}. Por favor, aguarde.", title="Enviando email", parent=janela)
             impede_interacao()
