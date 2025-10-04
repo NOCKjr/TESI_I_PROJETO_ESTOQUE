@@ -152,8 +152,8 @@ class TelaLogin(TelaBase):
                     impede_interacao()
                     return
                 
-                self.username = nome
-                mostrar_etapa_codigo()
+                self.username = usuario['nick']
+                etapa_envio_codigo(usuario['email'])
 
             ttk.Button(container, text="Continuar", command=lambda: continuar_usuario(entrada.get().strip())).pack(pady=10)
 
@@ -194,7 +194,6 @@ class TelaLogin(TelaBase):
 
 
             def confirmar_codigo(codigo_digitado):
-                print(f'{codigo_digitado = }')
                 if codigo_digitado == self.codigo_gerado:
                     Messagebox.show_info("Código verificado com sucesso!", title="Sucesso", parent=janela)
                     mostrar_etapa_nova_senha()
