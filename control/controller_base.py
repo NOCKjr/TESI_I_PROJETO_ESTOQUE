@@ -1,4 +1,4 @@
-from model.model_base import ResponseQuery
+from model.model_base import ModelBase, ResponseQuery
 
 class ControllerBase:
     def __init__(self):
@@ -6,6 +6,8 @@ class ControllerBase:
         Base para controller responsável por intermediar operações 
         entre a aplicação e o banco de dados.
         """
+        
+        self.model = ModelBase()
 
         # Mapeamento dos campos da tupla de usuário para seus índices.
         self.indices_campos = dict()
@@ -18,7 +20,7 @@ class ControllerBase:
         self.funcao_buscar_item_por_id = None
         self.funcao_excluir_item = None
         self.funcao_atualizar_item = None
-        self.funcao_to_dict = None
+        self.funcao_to_dict_item = None
 
     def inserir(self, *args, **kwargs) -> ResponseQuery:
         """

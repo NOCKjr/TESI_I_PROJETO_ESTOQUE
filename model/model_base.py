@@ -17,7 +17,6 @@ class ResponseQuery:
         """Retorna True se não houve erros"""
         return len(self.erros) == 0
 
-
 class ModelBase:
     def __init__(self):
         self.con = Conexao()
@@ -32,7 +31,7 @@ class ModelBase:
             con.close()
             resp.retorno = resultado
         except Error as er:
-            resp.add_erro(er)
+            resp.add_erro(str(er))
         return resp
 
     def insert(self, sql, params=None):
@@ -49,7 +48,7 @@ class ModelBase:
             resp.retorno = cursor.lastrowid
             con.close()
         except (IntegrityError, Error) as er:
-            resp.add_erro(er)
+            resp.add_erro(str(er))
         return resp
 
     def delete(self, sql):
@@ -63,7 +62,7 @@ class ModelBase:
             resp.retorno = cursor.rowcount
             con.close()
         except Error as er:
-            resp.add_erro(er)
+            resp.add_erro(str(er))
         return resp
 
     def update(self, sql):
@@ -77,5 +76,5 @@ class ModelBase:
             resp.retorno = cursor.rowcount
             con.close()
         except Error as er:
-            resp.add_erro(er)
+            resp.add_erro(str(er))
         return resp

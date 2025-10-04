@@ -4,6 +4,7 @@ from model.model_base import ResponseQuery
 
 class UsuarioController(ControllerBase):
     def __init__(self):
+        super().__init__()
         """
         Controller responsável por intermediar operações entre a aplicação e o banco
         de dados para a entidade 'usuario'.

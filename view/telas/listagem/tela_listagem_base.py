@@ -2,13 +2,13 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 import constants
 
-from control.escola_controller import EscolaController
+from control.controller_base import ControllerBase
 from view.telas.gerenciador_de_janelas import GerenciadorDeJanelasBase
 from view.telas.menus.menu_painel_de_opcoes_crud import MenuPainelDeOpcoesCRUD
 from view.telas.tela_base import TelaBase
 
 class TelaListagemBase(TelaBase):
-    def __init__(self, master, gerenciador_de_janelas: GerenciadorDeJanelasBase, tipo_entidade, controle_entidade , largura=constants.LARGURA_JANELA, altura=constants.ALTURA_JANELA):
+    def __init__(self, master, gerenciador_de_janelas: GerenciadorDeJanelasBase, tipo_entidade: str, controle_entidade: ControllerBase , cabecalho: list[str], chaves_dict: list[str], largura=constants.LARGURA_JANELA, altura=constants.ALTURA_JANELA):
         super().__init__(master, gerenciador_de_janelas)
 
         #Tipo de entidade manipulada (Usuario, Escola, Fornecedor ou Insumo)
@@ -18,9 +18,10 @@ class TelaListagemBase(TelaBase):
         self.controle = controle_entidade
 
         # Informações do treeview
-        self.linhas_treeview = 20 # Número de linhas visíveis
-        self.colunas = [] # Cabeçalhos das colunas
-        self.dados = [] # Dados que preencherão a tabela
+        self.linhas_treeview: int = 20 # Número de linhas visíveis
+        self.cabecalho: list[str] = cabecalho # Cabeçalhos das colunas
+        self.chaves_dict: list[str] = chaves_dict # Chaves de acesso aos campos do dict
+        self.tvw_tabela: ttk.Treeview = None
         
         ### Painel de ações
         self.painel_de_acoes = MenuPainelDeOpcoesCRUD(self, self)
@@ -39,11 +40,21 @@ class TelaListagemBase(TelaBase):
                 return "o", "fornecedor"
             case constants.ENTIDADE_INSUMO:
                 return "o", "insumo"
+            case constants.ENTIDADE_ENDERECO:
+                return "o", "endereco"
+            case constants.ENTIDADE_ITEM:
+                return "o", "item"
             case _:
                 return "", ""
 
     def criar_listagem(self):
-        self.tvw_tabela = ttk.Treeview(self, height=self.linhas_treeview, columns=self.colunas, show='headings')
+        self.tvw_tabela = ttk.Treeview(self, height=self.linhas_treeview, columns=self.cabecalho, show='headings')
+
+        for coluna in self.cabecalho:
+            self.tvw_tabela.heading(coluna, text=coluna)
+            self.tvw_tabela.column(coluna, anchor='center')
+            if coluna == 'ID':
+                self.tvw_tabela.column(coluna, width=25)
 
         self.tvw_tabela.bind("<<TreeviewSelect>>", self.item_selecionado)
 
@@ -72,52 +83,6 @@ class TelaListagemBase(TelaBase):
     
     def desabilitar_botao_de_excluir(self):
         self.painel_de_acoes.btn_excluir.config(state='disabled')
-    
-    ###
-
-    def buscar_tuplas(self):
-        # adicionar o listar do controller respectivo
-        # self.controle.listar()
-        return []
-
-    def atualizar_listagem(self):
-        # Apaga os itens da treeview
-        self.tvw_tabela.delete(*self.tvw_tabela.get_children())
-
-        # Atualiza a treeview com os dados do banco
-        tuplas = self.buscar_tuplas()
-        for item in tuplas:
-            self.tvw_tabela.insert('', 'end', values=item)
-
-    def editar_item(self):
-        """Edita o item selecionado"""
-        item_selecionado = self.tvw_tabela.selection()[0]
-        valores = self.tvw_tabela.item(item_selecionado, 'values')
-        item = self.controle.buscar_por_id(valores[0])
-        
-        if item:
-            self.gerenciador_de_janelas.editar(item, self.tipo_entidade)
-
-    def excluir_item(self):
-        """Exclui o item selecionado"""
-        item_selecionado = self.tvw_tabela.selection()[0]
-        valores = self.tvw_tabela.item(item_selecionado, 'values')
-        
-        if valores:
-            # Confirma a exclusão
-            resposta = tk.messagebox.askyesno("Confirmar Exclusão", 
-                                            f"Tem certeza que deseja excluir {(lambda e: f"{e[0]} {e[1]}")(self.get_descricao_entidade())} '{valores[1]}'?")
-            if resposta:
-                # Chama o controller para excluir
-                resultado = self.controle.excluir(valores[0])
-                if resultado:
-                    # Remove o item da treeview
-                    self.tvw_tabela.delete(item_selecionado)
-                    tk.messagebox.showinfo("Sucesso",(
-                                           f"{(lambda e: f'{e[1].capitalize()} excluíd{e[0]}')(self.get_descricao_entidade())}"
-                                           " com sucesso!"))
-                else:
-                    tk.messagebox.showerror("Erro", f"Erro ao excluir {(lambda e: f"{e[0]} {e[1]}")(self.get_descricao_entidade())}!")
 
     def mostrar(self):
         # Atualiza os dados
@@ -126,19 +91,57 @@ class TelaListagemBase(TelaBase):
         # Mostra o componente na tela
         self.pack(expand=True, fill='both', anchor='center')
     
+    ### Controller
+
+    def atualizar_listagem(self):
+        # Apaga os itens da treeview
+        self.tvw_tabela.delete(*self.tvw_tabela.get_children())
+
+        # Atualiza a treeview com os dados do banco
+        resp = self.controle.listar()
+        tuplas = resp.retorno if resp.ok() else []
+
+        print(f'resposta: {resp}')
+        print(f'tuplas: {tuplas}')
+        for item in tuplas:
+            print(f'item: {item}')
+            # Obtém os valores das colunas correspondentes
+            value = tuple(item[campo] for campo in self.chaves_dict)
+            print(f'value: {value}')
+            self.tvw_tabela.insert('', 'end', values=value)
+    
     def adicionar(self):
         # Chama a tela de cadastro correspondente à entidade manipulada
-        tela_cadastro = f"cadastrar-{self.tipo_entidade}"
-        self.alterar_para_a_tela(tela_cadastro)
+        self.alterar_para_a_tela(f"cadastrar-{self.tipo_entidade}")
     
     def editar(self):
         """Edita o item selecionado"""
         item_selecionado = self.tvw_tabela.selection()[0]
         valores = self.tvw_tabela.item(item_selecionado, 'values')
-        item = self.controle.buscar_por_id(valores[0])
+        item = self.controle.buscar_por_id(valores[0]).retorno
         
         if item:
             self.gerenciador_de_janelas.editar(item)
-    
+
     def excluir(self):
-        pass
+        """Exclui o item selecionado"""
+        item_selecionado = self.tvw_tabela.selection()[0]
+        valores = self.tvw_tabela.item(item_selecionado, 'values')
+        
+        if valores:
+            # Confirma a exclusão
+            resposta = messagebox.askyesno("Confirmar Exclusão", 
+                                            f"Tem certeza que deseja excluir {(lambda e: f"{e[0]} {e[1]}")(self.get_descricao_entidade())} '{valores[1]}'?")
+            if resposta:
+                # Chama o controller para excluir
+                resp = self.controle.excluir(valores[0])
+                if resp.ok():
+                    # Remove o item da treeview
+                    self.tvw_tabela.delete(item_selecionado)
+                    messagebox.showinfo(title="Sucesso",
+                                        message=(f"{(lambda e: f'{e[1].capitalize()} excluíd{e[0]}')(self.get_descricao_entidade())}"
+                                                 " com sucesso!"))
+                else:
+                    messagebox.showerror(title="Erro", 
+                                         message=f"Erro ao excluir {(lambda e: f"{e[0]} {e[1]}")(self.get_descricao_entidade())}!",
+                                         detail=f"{'\n'.join(resp.erros)}")

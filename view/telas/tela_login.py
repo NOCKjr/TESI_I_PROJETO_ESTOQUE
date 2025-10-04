@@ -73,7 +73,7 @@ class TelaLogin(TelaBase):
             self.gerenciador_de_janelas.alterar_para_a_tela(constants.TELA_MENU_PRINCIPAL)
             self.limpar_campos()
         else:
-            tk.messagebox.showinfo("Usuário inválido", f"Login ou senha inválido(s).")
+            messagebox.showinfo("Usuário inválido", f"Login ou senha inválido(s).")
             
     def limpar_campos(self):
         self.ent_usuario.delete(0, 'end')
@@ -87,11 +87,12 @@ class TelaLogin(TelaBase):
             return False
 
         # Conferir se o login existe
-        usuario = self.controle_usuarios.busca_usuario(login)
+        resp = self.controle_usuarios.buscar(login)
+        usuario = resp.retorno
 
         # Usuário não encontrado
         if not usuario:
-            # tk.messagebox.showinfo("Quem é você?", f"Usuário não encontrado.")
+            # messagebox.showinfo("Quem é você?", f"Usuário não encontrado.")
             return False
         
         #Criptografa a senha digitada pelo usuário e compara com o hash salvo no banco de dados
@@ -99,9 +100,9 @@ class TelaLogin(TelaBase):
 
         # Senha incorreta
         if hash != usuario["senha"]:
-            # tk.messagebox.showinfo("Senha incorreta", f"Senha incorreta")
+            # messagebox.showinfo("Senha incorreta", f"Senha incorreta")
             return False
-    
+
         # Login válido
         return True
     
@@ -175,14 +176,13 @@ class TelaLogin(TelaBase):
 
         print(f"{self.username = }")
 
-        usuario = self.controle_usuarios.busca_usuario(self.username)
+        resp = self.controle_usuarios.buscar(self.username)
+        usuario = resp.retorno
 
         if not usuario:
             messagebox.showerror("Erro", "Digite um email ou nome de usuário válido!")
             return
         
-        print("usuario obtido")
-
         email_usuario = usuario['email']
 
         self.codigo_gerado = str(random.randint(100000, 999999))
@@ -197,18 +197,16 @@ class TelaLogin(TelaBase):
         msg = MIMEText(corpo)
         msg['Subject'] = 'SIGEME - Código de verificação'
         msg['From'] = email_app
-        msg['To'] = email_usuario #email do usuário aqui
+        msg['To'] = email_usuario
 
         messagebox.showinfo("Enviando email", f"Um código de verificação será enviado para {email_usuario}. Por favor, aguarde.")
 
         try:
-            print("mandando email")
             with smtplib.SMTP(smtp_server, smtp_port) as server:
                 server.starttls()
                 server.login(email_app, senha_app)
                 server.send_message(msg)
             
-            print("mandou")
             self.solicitar_codigo()
 
         except Exception as e:
@@ -225,8 +223,8 @@ class TelaLogin(TelaBase):
             self.update_idletasks()
             janela.grab_set()
 
-            tk.Label(janela, text=f"Digite sua nova senha").pack(pady=10)
-            entrada = tk.Entry(janela, show="*")
+            ttk.Label(janela, text=f"Digite sua nova senha").pack(pady=10)
+            entrada = ttk.Entry(janela, show="*")
             entrada.pack(pady=5)
             # Ao clicar em "Enter" com o campo entrada selecionado continuar() será chamado
             entrada.bind('<Return>', lambda event: continuar())
@@ -241,7 +239,7 @@ class TelaLogin(TelaBase):
                 self.controle_usuarios.atualizar_usuario(user["id"], user["nick"], user["email"], senha, user["tipo"])
                 janela.destroy()  # fecha a janela e libera o fluxo
 
-            tk.Button(janela, text="Continuar", command=continuar).pack(pady=10)
+            ttk.Button(janela, text="Continuar", command=continuar).pack(pady=10)
 
         else:
             messagebox.showwarning("Aviso", "Verificação não concluída.")
