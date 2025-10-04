@@ -1,12 +1,15 @@
-from model import model_base
+from control.controller_base import ControllerBase
+from model.model_base import ResponseQuery
 
-class ItemController:
+class ItemController(ControllerBase):
     def __init__(self):
-        self.model = model_base.ModelBase()
+        super().__init__()
+        """
+        Controller responsável por intermediar operações entre a aplicação e o banco
+        de dados para a entidade 'item'.
+        """
 
         # Mapeamento dos campos da tupla de item para seus índices.
-        # Tupla: (id, quantidade, fk_itm_ins_id, fk_itm_mov_id)
-        # Atenção: se a estrutura do banco mudar, atualize os índices neste dicionário.
         self.indices_campos = {
             "id": 0,
             "quantidade": 1,
@@ -14,7 +17,16 @@ class ItemController:
             "movimentacao_id": 3,
         }
 
-    def inserir_item(self, quantidade: float, insumo_id: int, movimentacao_id: int) -> int:
+        # Funções de callback para operações CRUD 
+        self.funcao_inserir_item = self.inserir_item
+        self.funcao_listar_item = self.listar_item
+        # self.funcao_buscar_item = self.buscar_item
+        # self.funcao_buscar_item_por_id = self.buscar_item_por_id
+        self.funcao_excluir_item = self.excluir_item
+        self.funcao_atualizar_item = self.atualizar_item
+        # self.funcao_to_dict = self.to_dict_item
+
+    def inserir_item(self, quantidade: float, insumo_id: int, movimentacao_id: int) -> ResponseQuery:
         """
         Insere um item associado a uma movimentação.
 
@@ -24,7 +36,9 @@ class ItemController:
             movimentacao_id (int): ID da movimentação.
 
         Returns:
-            int: Número de linhas afetadas.
+            ResponseQuery:
+                - `retorno`: ID do item inserido.
+                - `erros`: lista de erros em caso de falha.
         """
         sql = (
             "INSERT INTO item(itm_quantidade, fk_itm_ins_id, fk_itm_mov_id) "
@@ -32,7 +46,7 @@ class ItemController:
         )
         return self.model.insert(sql)
 
-    def listar_item(self, movimentacao_id: int) -> list[dict]:
+    def listar_item(self, movimentacao_id: int) -> ResponseQuery:
         """
         Lista os itens de uma movimentação.
 
@@ -40,13 +54,18 @@ class ItemController:
             movimentacao_id (int): ID da movimentação.
 
         Returns:
-            list[dict]: Lista de itens como dicionários.
+            ResponseQuery:
+                - `retorno`: lista de itens como dicionários.
+                - `erros`: lista de erros em caso de falha.
         """
         sql = f'SELECT * FROM item WHERE fk_itm_mov_id = {movimentacao_id};'
-        resultado = self.model.get(sql)
-        return [self.to_dict(i) for i in resultado] if resultado else []
+        resp = self.model.get(sql)
+        if not resp.ok():
+            return resp
+        resp.retorno = [self.to_dict(i) for i in resp.retorno]
+        return resp
 
-    def excluir_item(self, id: int) -> int:
+    def excluir_item(self, id: int) -> ResponseQuery:
         """
         Exclui um item pelo ID.
 
@@ -54,12 +73,14 @@ class ItemController:
             id (int): ID do item.
 
         Returns:
-            int: Número de linhas afetadas.
+            ResponseQuery:
+                - `retorno`: número de linhas afetadas.
+                - `erros`: lista de erros em caso de falha.
         """
         sql = f'DELETE FROM item WHERE itm_id = {id};'
         return self.model.delete(sql)
 
-    def atualizar_item(self, id: int, quantidade: float, insumo_id: int, movimentacao_id: int) -> int:
+    def atualizar_item(self, id: int, quantidade: float, insumo_id: int, movimentacao_id: int) -> ResponseQuery:
         """
         Atualiza os dados de um item existente.
 
@@ -70,7 +91,9 @@ class ItemController:
             movimentacao_id (int): Novo ID da movimentação.
 
         Returns:
-            int: Número de linhas afetadas.
+            ResponseQuery:
+                - `retorno`: número de linhas afetadas.
+                - `erros`: lista de erros em caso de falha.
         """
         sql = (
             "UPDATE item SET "

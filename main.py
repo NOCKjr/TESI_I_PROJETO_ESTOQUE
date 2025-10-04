@@ -1,7 +1,7 @@
 import tkinter as tk
 import ttkbootstrap as ttk
-from view.App import App
 import constants
+from view.App import App
 from model import init_db
 from control.usuario_controller import UsuarioController
 

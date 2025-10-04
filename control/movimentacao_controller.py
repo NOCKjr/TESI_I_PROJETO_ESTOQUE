@@ -1,12 +1,14 @@
-from model import model_base
+from model.model_base import ResponseQuery
 
 class MovimentacaoController:
     def __init__(self):
-        self.model = model_base.ModelBase()
+        super().__init__()
+        """
+        Controller responsável por intermediar operações entre a aplicação e o banco
+        de dados para a entidade 'movimentacao'.
+        """
 
         # Mapeamento dos campos da tupla de movimentação para seus índices.
-        # Tupla: (id, data, tipo, fk_mov_usu_id, fk_mov_for_id, fk_mov_esc_id)
-        # Atenção: se a estrutura do banco mudar, atualize os índices neste dicionário.
         self.indices_campos = {
             "id": 0,
             "data": 1,
@@ -16,7 +18,16 @@ class MovimentacaoController:
             "escola_id": 5,
         }
 
-    def inserir_movimentacao(self, data: str, tipo: str, usuario_id: int, fornecedor_id: int, escola_id: int) -> int:
+        # Funções de callback para operações CRUD 
+        self.funcao_inserir_item = self.inserir_movimentacao
+        self.funcao_listar_item = self.listar_movimentacao
+        # self.funcao_buscar_item = self.buscar_movimentacao
+        # self.funcao_buscar_item_por_id = self.buscar_movimentacao_por_id
+        self.funcao_excluir_item = self.excluir_movimentacao
+        self.funcao_atualizar_item = self.atualizar_movimentacao
+        # self.funcao_to_dict = self.to_dict_movimentacao
+
+    def inserir_movimentacao(self, data: str, tipo: str, usuario_id: int, fornecedor_id: int, escola_id: int) -> ResponseQuery:
         """
         Insere uma movimentação no banco.
 
@@ -28,7 +39,9 @@ class MovimentacaoController:
             escola_id (int): ID da escola.
 
         Returns:
-            int: Número de linhas afetadas.
+            ResponseQuery: 
+                - `retorno`: ID da movimentação inserida.
+                - `erros`: lista de erros em caso de falha.
         """
         sql = (
             "INSERT INTO movimentacao(mov_data, mov_tipo, fk_mov_usu_id, fk_mov_for_id, fk_mov_esc_id) "
@@ -36,60 +49,80 @@ class MovimentacaoController:
         )
         return self.model.insert(sql)
 
-    def listar_movimentacao(self) -> list[dict]:
+    def listar_movimentacao(self) -> ResponseQuery:
         """
         Lista todas as movimentações ordenadas por data decrescente.
 
         Returns:
-            list[dict]: Lista de movimentações como dicionários.
+            ResponseQuery:
+                - `retorno`: lista de movimentações como dicionários.
+                - `erros`: lista de erros em caso de falha.
         """
         sql = "SELECT * FROM movimentacao ORDER BY mov_data DESC;"
-        resultado = self.model.get(sql)
-        return [self.to_dict(m) for m in resultado] if resultado else []
+        resp = self.model.get(sql)
+        if not resp.ok():
+            return resp
+        resp.retorno = [self.to_dict(m) for m in resp.retorno]
+        return resp
 
-    def listar_movimentacao_por_fornecedor(self, fornecedor_id: int) -> list[dict]:
+    def listar_movimentacao_por_fornecedor(self, fornecedor_id: int) -> ResponseQuery:
         """
-        Lista as movimentações filtradas por fornecedor.
+        Lista movimentações filtradas por fornecedor.
 
         Args:
             fornecedor_id (int): ID do fornecedor.
 
         Returns:
-            list[dict]: Lista de movimentações como dicionários.
+            ResponseQuery:
+                - `retorno`: lista de movimentações como dicionários.
+                - `erros`: lista de erros em caso de falha.
         """
         sql = f"SELECT * FROM movimentacao WHERE fk_mov_for_id = {fornecedor_id} ORDER BY mov_data DESC;"
-        resultado = self.model.get(sql)
-        return [self.to_dict(m) for m in resultado] if resultado else []
+        resp = self.model.get(sql)
+        if not resp.ok():
+            return resp
+        resp.retorno = [self.to_dict(m) for m in resp.retorno]
+        return resp
 
-    def listar_movimentacao_por_escola(self, escola_id: int) -> list[dict]:
+    def listar_movimentacao_por_escola(self, escola_id: int) -> ResponseQuery:
         """
-        Lista as movimentações filtradas por escola.
+        Lista movimentações filtradas por escola.
 
         Args:
             escola_id (int): ID da escola.
 
         Returns:
-            list[dict]: Lista de movimentações como dicionários.
+            ResponseQuery:
+                - `retorno`: lista de movimentações como dicionários.
+                - `erros`: lista de erros em caso de falha.
         """
         sql = f"SELECT * FROM movimentacao WHERE fk_mov_esc_id = {escola_id} ORDER BY mov_data DESC;"
-        resultado = self.model.get(sql)
-        return [self.to_dict(m) for m in resultado] if resultado else []
+        resp = self.model.get(sql)
+        if not resp.ok():
+            return resp
+        resp.retorno = [self.to_dict(m) for m in resp.retorno]
+        return resp
 
-    def listar_movimentacao_por_usuario(self, usuario_id: int) -> list[dict]:
+    def listar_movimentacao_por_usuario(self, usuario_id: int) -> ResponseQuery:
         """
-        Lista as movimentações filtradas por usuário.
+        Lista movimentações filtradas por usuário.
 
         Args:
             usuario_id (int): ID do usuário.
 
         Returns:
-            list[dict]: Lista de movimentações como dicionários.
+            ResponseQuery:
+                - `retorno`: lista de movimentações como dicionários.
+                - `erros`: lista de erros em caso de falha.
         """
         sql = f"SELECT * FROM movimentacao WHERE fk_mov_usu_id = {usuario_id} ORDER BY mov_data DESC;"
-        resultado = self.model.get(sql)
-        return [self.to_dict(m) for m in resultado] if resultado else []
+        resp = self.model.get(sql)
+        if not resp.ok():
+            return resp
+        resp.retorno = [self.to_dict(m) for m in resp.retorno]
+        return resp
 
-    def excluir_movimentacao(self, id: int) -> int:
+    def excluir_movimentacao(self, id: int) -> ResponseQuery:
         """
         Exclui uma movimentação pelo ID.
 
@@ -97,12 +130,14 @@ class MovimentacaoController:
             id (int): ID da movimentação.
 
         Returns:
-            int: Número de linhas afetadas.
+            ResponseQuery:
+                - `retorno`: número de linhas afetadas.
+                - `erros`: lista de erros em caso de falha.
         """
         sql = f"DELETE FROM movimentacao WHERE mov_id = {id};"
         return self.model.delete(sql)
 
-    def atualizar_movimentacao(self, id: int, data: str, tipo: str, usuario_id: int, fornecedor_id: int, escola_id: int) -> int:
+    def atualizar_movimentacao(self, id: int, data: str, tipo: str, usuario_id: int, fornecedor_id: int, escola_id: int) -> ResponseQuery:
         """
         Atualiza uma movimentação existente.
 
@@ -115,7 +150,9 @@ class MovimentacaoController:
             escola_id (int): ID da escola.
 
         Returns:
-            int: Número de linhas afetadas.
+            ResponseQuery:
+                - `retorno`: número de linhas afetadas.
+                - `erros`: lista de erros em caso de falha.
         """
         sql = f"""UPDATE movimentacao SET mov_data = '{data}', 
                   mov_tipo = '{tipo}', 

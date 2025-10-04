@@ -28,6 +28,13 @@ TELA_EDITAR_INSUMO = "editar-insumo"
 #Caminho onde ficará o banco de dados
 DB_PATH = "banco/banco.db"
 
+#Tipos de entidades
+ENTIDADE_USUARIO = "usuario"
+ENTIDADE_ESCOLA = "escola"
+ENTIDADE_FORNECEDOR = "fornecedor"
+ENTIDADE_INSUMO = "insumo"
+ENTIDADE_ENDERECO = "endereco"
+ENTIDADE_ITEM = "item"
 
 class Cores(Enum):
     PRINCIPAL = '#075F8B'

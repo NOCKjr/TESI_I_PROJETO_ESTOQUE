@@ -89,7 +89,9 @@ class TelaLogin(TelaBase):
         if login == '' or senha == '':
             return False
 
-        usuario = self.controle_usuarios.busca_usuario(login)
+        # Conferir se o login existe
+        resp = self.controle_usuarios.buscar(login)
+        usuario = resp.retorno
 
         # Usuário não encontrado
         if not usuario:
@@ -103,7 +105,7 @@ class TelaLogin(TelaBase):
         if hash != usuario["senha"]:
             # Messagebox.show_info("Senha incorreta", title="Senha incorreta")
             return False
-    
+
         # Login válido
         return True
     
@@ -141,8 +143,9 @@ class TelaLogin(TelaBase):
                     Messagebox.show_error("Digite um nome de usuário!", title="Erro", parent=janela)
                     impede_interacao()
                     return
-                
-                usuario = self.controle_usuarios.busca_usuario(nome)
+                resp = self.controle_usuarios.buscar(self.username)
+                usuario = resp.retorno
+
                 if not usuario:
                     Messagebox.show_error("Digite um email ou nome de usuário válido!", title="Erro", parent=janela)
                     impede_interacao()
@@ -161,8 +164,10 @@ class TelaLogin(TelaBase):
             smtp_server, smtp_port = 'smtp.gmail.com', 587
             email_app, senha_app = 'sistema.sigeme@gmail.com', 'tbbu ufnz fzqu engl'
 
-            msg = MIMEText(corpo)
-            msg['Subject'], msg['From'], msg['To'] = 'SIGEME - Código de verificação', email_app, email_usuario
+        msg = MIMEText(corpo)
+        msg['Subject'] = 'SIGEME - Código de verificação'
+        msg['From'] = email_app
+        msg['To'] = email_usuario
 
             Messagebox.show_info(f"Um código de verificação será enviado para {email_usuario}. Por favor, aguarde.", title="Enviando email", parent=janela)
             impede_interacao()
