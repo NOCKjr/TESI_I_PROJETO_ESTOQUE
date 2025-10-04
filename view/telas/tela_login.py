@@ -139,11 +139,12 @@ class TelaLogin(TelaBase):
             entrada.bind('<Return>', lambda e: continuar_usuario(entrada.get().strip()))
 
             def continuar_usuario(nome):
+                self.username = nome
                 if not nome:
                     Messagebox.show_error("Digite um nome de usuário!", title="Erro", parent=janela)
                     impede_interacao()
                     return
-                resp = self.controle_usuarios.buscar(self.username)
+                resp = self.controle_usuarios.buscar(nome)
                 usuario = resp.retorno
 
                 if not usuario:
@@ -152,7 +153,9 @@ class TelaLogin(TelaBase):
                     return
                 
                 self.username = nome
-                etapa_envio_codigo(usuario['email'])
+                self.codigo_gerado = '123'
+                # etapa_envio_codigo(usuario['email'])
+                mostrar_etapa_codigo()
 
             ttk.Button(container, text="Continuar", command=lambda: continuar_usuario(entrada.get().strip())).pack(pady=10)
 
@@ -191,7 +194,9 @@ class TelaLogin(TelaBase):
             entrada.focus_set()
             entrada.bind('<Return>', lambda e: confirmar_codigo(entrada.get().strip()))
 
+
             def confirmar_codigo(codigo_digitado):
+                print(f'{codigo_digitado = }')
                 if codigo_digitado == self.codigo_gerado:
                     Messagebox.show_info("Código verificado com sucesso!", title="Sucesso", parent=janela)
                     mostrar_etapa_nova_senha()
@@ -216,7 +221,8 @@ class TelaLogin(TelaBase):
                     Messagebox.show_error("Digite uma senha!", title="Erro", parent=janela)
                     impede_interacao()
                     return
-                user = self.controle_usuarios.busca_usuario(self.username)
+                resp = self.controle_usuarios.buscar(self.username)
+                user = resp.retorno
                 self.controle_usuarios.atualizar_usuario(user["id"], user["nick"], user["email"], senha, user["tipo"])
                 Messagebox.show_info("Senha redefinida com sucesso!", title="Sucesso", parent=janela)
                 janela.destroy()

@@ -52,6 +52,14 @@ class App(GerenciadorDeJanelasBase):
             constants.TELA_EDITAR_FORNECEDOR:       TelaCadastrarFornecedor(self.content_frame, self),  # Tela de editar um fornecedor
             constants.TELA_EDITAR_INSUMO:           TelaCadastrarInsumo(self.content_frame, self),      # Tela de editar um insumo
         }
+
+        # Escala inicial
+        self.escala = 1.0
+
+        # Bind dos atalhos
+        self.bind_all("<Control-plus>", self.aumentar_escala)
+        self.bind_all("<Control-minus>", self.diminuir_escala)
+        self.bind_all("<Control-=>", self.aumentar_escala)
         
         # Inicia na tela de login
         self.alterar_para_a_tela(constants.TELA_LOGIN)
@@ -60,8 +68,20 @@ class App(GerenciadorDeJanelasBase):
         # self.alterar_para_a_tela(constants.TELA_CADASTRAR_INSUMO)
         # self.alterar_para_a_tela(constants.TELA_MENU_CADASTROS)
         # self.alterar_para_a_tela(constants.TELA_CONSULTAS)
+    
+    def aplicar_escala(self):
+        """Aplica o fator de escala atual à interface."""
+        style = ttk.Style()
+        style.configure('.', font=('Arial', int(12 * self.escala)))
 
-        # Adicionar o menu à janela
+    def aumentar_escala(self, event=None):
+        self.escala = min(round(self.escala + 0.1, 1), 2.0)
+        self.aplicar_escala()
+
+    def diminuir_escala(self, event=None):
+        self.escala = max(round(self.escala - 0.1, 1), 0.75)
+        self.aplicar_escala()
+
     def get_tela(self, nome_tela: str):
         if nome_tela in self.telas:
             return self.telas[nome_tela]
