@@ -131,7 +131,8 @@ class TelaListagemBase(TelaBase):
         if valores:
             # Confirma a exclusão
             resposta = messagebox.askyesno("Confirmar Exclusão", 
-                                            f"Tem certeza que deseja excluir {(lambda e: f"{e[0]} {e[1]}")(self.get_descricao_entidade())} '{valores[1]}'?")
+                                            f"Tem certeza que deseja excluir {(lambda e: f'{e[0]} {e[1]}')(self.get_descricao_entidade())} '{valores[1]}'?")
+
             if resposta:
                 # Chama o controller para excluir
                 resp = self.controle.excluir(valores[0])
@@ -143,5 +144,5 @@ class TelaListagemBase(TelaBase):
                                                  " com sucesso!"))
                 else:
                     messagebox.showerror(title="Erro", 
-                                         message=f"Erro ao excluir {(lambda e: f"{e[0]} {e[1]}")(self.get_descricao_entidade())}!",
-                                         detail=f"{'\n'.join(resp.erros)}")
+                                         message=f"Erro ao excluir {(lambda e: f'{e[0]} {e[1]}')(self.get_descricao_entidade())}!",
+                                         detail = "{}".format("\n".join(resp.erros)))
