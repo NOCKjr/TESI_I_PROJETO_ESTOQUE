@@ -5,18 +5,27 @@ from tkinter import ttk
 from control.endereco_controller import EnderecoController
 from control.escola_controller import EscolaController
 from view.telas.gerenciador_de_janelas import GerenciadorDeJanelasBase
-from view.telas.tela_formulario_base import TelaFormularioBase
+from view.telas.cadastros.tela_formulario_base import TelaFormularioBase
 
 class TelaCadastrarEscola(TelaFormularioBase):
-    def __init__(self, master, gerenciador_de_janelas: GerenciadorDeJanelasBase, modo_editar=False, largura=constants.LARGURA_JANELA, altura=constants.ALTURA_JANELA):
-        super().__init__(master, gerenciador_de_janelas, modo_editar)
+    def __init__(self, master, 
+                       gerenciador_de_janelas: GerenciadorDeJanelasBase, 
+                       modo_editar=False, 
+                       largura=constants.LARGURA_JANELA, altura=constants.ALTURA_JANELA):
+        super().__init__(master, 
+                         gerenciador_de_janelas, 
+                         constants.ENTIDADE_ESCOLA, 
+                         EscolaController(), 
+                         modo_editar,
+                         largura, altura)
 
-        # Se o formulário foi aberto como edição, define-se o id da escola editado
-        self.id_escola_editado = None
-
-        # Controlador de escolas
-        self.controle_escolas = EscolaController()
+        # Cotrnoles
         self.controle_endereco = EnderecoController()
+
+        self.criar_campos_formulario()
+    
+    def criar_campos_formulario(self):
+        super().criar_campos_formulario()
         
         ## Escola
         
@@ -59,62 +68,47 @@ class TelaCadastrarEscola(TelaFormularioBase):
         self.ent_cep = tk.Entry(self.container_formulario)
         self.ent_cep.grid(row=16, column=20, columnspan=10, sticky='nsew')
 
-    def onConfirmar(self):
-        # Captura os valores dos campos
-        nome = self.ent_nome.get()
-        alunos = self.ent_numero_alunos.get()
-        campos_endereco = self.obter_campos_endereco()
-
-        if self.flag_editar:
-            # A escola já existe e já possui um endereço
-            id_escola = self.id_escola_editado
-            escola = self.controle_escolas.buscar_escola_por_id(id_escola)
-            endereco_id = escola["endereco_id"]
-            novo_endereco = (endereco_id, ) + campos_endereco
-
-            # Atualiza o endereço
-            self.controle_endereco.atualizar_endereco(*novo_endereco)
-
-            # Chama o controller para atualizar a escola
-            self.controle_escolas.atualizar_escola(id=id_escola, nome=nome, endereco_id=endereco_id, numero_alunos=alunos)
-        else:
-            # Chama o controller para inserir novo endereço
-            endereco_id = self.controle_endereco.inserir_endereco(*campos_endereco)
-            # Chama o controller para inserir nova escola
-            escola_id = self.controle_escolas.inserir_escola(nome=nome, endereco_id=endereco_id, numero_alunos=alunos)
-        
-        # Reseta os valores dos campos do formulário
-        self.limpar_campos()
-
-        # Volta para a tela de listagem
-        self.gerenciador_de_janelas.alterar_para_a_tela(constants.TELA_LISTAGEM_ESCOLAS)
-
-    def onCancelar(self):
-        
-        # Reseta os valores dos campos do formulário
-        self.limpar_campos()
-
-        # Volta para a tela de listagem
-        self.gerenciador_de_janelas.alterar_para_a_tela(constants.TELA_LISTAGEM_ESCOLAS)
-
-    def limpar_campos(self):
-        self.ent_nome.delete(0, 'end')
-        self.ent_logradouro.delete(0, 'end')
-        self.ent_bairro.delete(0, 'end')
-        self.ent_numero.delete(0, 'end')
-        self.ent_estado.delete(0, 'end')
-        self.ent_cep.delete(0, 'end')
-        self.ent_numero_alunos.delete(0, 'end')
-        self.flag_editar = False
-
     def editar_escola(self, escola):
         self.ent_nome.delete(0, 'end')
         self.ent_nome.insert(0, escola['nome'])
         self.ent_numero_alunos.delete(0, 'end')
         self.ent_numero_alunos.insert(0, escola['numero_alunos'])
-        self.id_escola_editado = escola['id']
+        self.id_para_edicao = escola['id']
         self.preencher_campos_endereco(escola["endereco_id"])
         self.flag_editar = True
+
+    def obter_valores_campos_formulario(self):
+        # Captura os valores dos campos
+        nome = self.ent_nome.get()
+        alunos = self.ent_numero_alunos.get()
+        campos_endereco = self.obter_campos_endereco()
+        
+        return (nome, alunos, campos_endereco)
+    
+    def onConfirmar(self):
+        nome, alunos, campos_endereco = self.obter_valores_campos_formulario()
+
+        if self.flag_editar:
+            # A escola já existe e já possui um endereço
+            escola = self.controle.buscar_por_id(self.id_para_edicao)
+            endereco_id = escola["endereco_id"]
+            novo_endereco = (endereco_id, ) + campos_endereco
+
+            # Atualiza o endereço
+            self.controle_endereco.atualizar(*novo_endereco)
+
+            # Atualiza a escola
+            self.controle.atualizar(self.id_para_edicao, nome, endereco_id, alunos)
+        else:
+            # Chama o controller para inserir novo endereço
+            endereco_id = self.controle_endereco.inserir(*campos_endereco)
+            self.controle.inserir(nome, endereco_id, alunos)
+        
+        # Reseta os valores dos campos do formulário
+        self.limpar_campos()
+
+        # Volta para a tela de listagem
+        self.gerenciador_de_janelas.alterar_para_a_tela(constants.TELA_LISTAGEM_ESCOLAS)
     
     def preencher_campos_endereco(self, endereco_id):
         endereco = self.controle_endereco.buscar_endereco_por_id(endereco_id)

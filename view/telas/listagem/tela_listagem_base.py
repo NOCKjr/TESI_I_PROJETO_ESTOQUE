@@ -8,7 +8,7 @@ from view.telas.menus.menu_painel_de_opcoes_crud import MenuPainelDeOpcoesCRUD
 from view.telas.tela_base import TelaBase
 
 class TelaListagemBase(TelaBase):
-    def __init__(self, master, gerenciador_de_janelas: GerenciadorDeJanelasBase, tipo_entidade: str, controle_entidade: ControllerBase , cabecalho: list[str] = [], chaves_dict: list[str] = [], largura=constants.LARGURA_JANELA, altura=constants.ALTURA_JANELA):
+    def __init__(self, master, gerenciador_de_janelas: GerenciadorDeJanelasBase, tipo_entidade: str, controle_entidade: ControllerBase , cabecalho: list[str] = [], chaves_dict: list[str] = [], larguras_colunas: list[int] = [], largura=constants.LARGURA_JANELA, altura=constants.ALTURA_JANELA):
         super().__init__(master, gerenciador_de_janelas)
 
         #Tipo de entidade manipulada (Usuario, Escola, Fornecedor ou Insumo)
@@ -28,7 +28,7 @@ class TelaListagemBase(TelaBase):
         self.painel_de_acoes.mostrar()
 
         # Criar e exibir a listagem de usuários
-        self.criar_listagem()
+        self.criar_listagem(larguras_colunas)
     
     def get_descricao_entidade(self):
         match self.tipo_entidade:
@@ -55,17 +55,30 @@ class TelaListagemBase(TelaBase):
         self.cabecalho = cabecalho
         self.chaves_dict = chaves_dict
 
-    def criar_listagem(self):
-        self.tvw_tabela = ttk.Treeview(self, height=self.linhas_treeview, columns=self.cabecalho, show='headings')
+    def criar_listagem(self, larguras_colunas: list[int] = None):
+        """
+        Cria o treeview da listagem.
+        
+        Args:
+            larguras_colunas (list[int], optional): Larguras para cada coluna do treeview. 
+                Deve ter o mesmo tamanho que self.cabecalho.
+                Se None, usa larguras padrão.
+        """
+        self.tvw_tabela = ttk.Treeview(
+            self, height=self.linhas_treeview, columns=self.cabecalho, show='headings'
+        )
 
-        for coluna in self.cabecalho:
+        for idx, coluna in enumerate(self.cabecalho):
             self.tvw_tabela.heading(coluna, text=coluna)
             self.tvw_tabela.column(coluna, anchor='center')
-            if coluna == 'ID':
-                self.tvw_tabela.column(coluna, width=25)
+
+            # Define largura
+            if larguras_colunas and idx < len(larguras_colunas):
+                self.tvw_tabela.column(coluna, width=larguras_colunas[idx])
+            else:
+                self.tvw_tabela.column(coluna)
 
         self.tvw_tabela.bind("<<TreeviewSelect>>", self.item_selecionado)
-
         self.tvw_tabela.pack(pady=17, padx=10, fill='x', expand=False)
 
     def item_selecionado(self, event):
@@ -117,6 +130,16 @@ class TelaListagemBase(TelaBase):
             # Obtém os valores das colunas correspondentes
             value = self.dict_to_tuple(item)
             self.tvw_tabela.insert('', 'end', values=value)
+        
+        # Ajusta largura das colunas automaticamente
+        for idx, coluna in enumerate(self.cabecalho):
+            max_largura = 25
+            for item_id in self.tvw_tabela.get_children():
+                valor = str(self.tvw_tabela.set(item_id, coluna))
+                largura_valor = max(50, len(valor) * 7)  # ajuste simples: 7 pixels por caractere
+                if largura_valor > max_largura:
+                    max_largura = largura_valor
+            self.tvw_tabela.column(coluna, width=max_largura)
     
     def adicionar(self):
         # Chama a tela de cadastro correspondente à entidade manipulada
@@ -129,7 +152,7 @@ class TelaListagemBase(TelaBase):
         item = self.controle.buscar_por_id(valores[0]).retorno
         
         if item:
-            self.gerenciador_de_janelas.editar(item)
+            self.gerenciador_de_janelas.editar(item, self.tipo_entidade)
 
     def excluir(self):
         """Exclui o item selecionado"""

@@ -1,13 +1,14 @@
+from control.controller_base import ControllerBase
 from model.model_base import ResponseQuery
 
-class MovimentacaoController:
+class MovimentacaoController(ControllerBase):
     def __init__(self):
         super().__init__()
         """
         Controller responsável por intermediar operações entre a aplicação e o banco
         de dados para a entidade 'movimentacao'.
         """
-
+        
         # Mapeamento dos campos da tupla de movimentação para seus índices.
         self.indices_campos = {
             "id": 0,
@@ -43,13 +44,20 @@ class MovimentacaoController:
                 - `retorno`: ID da movimentação inserida.
                 - `erros`: lista de erros em caso de falha.
         """
+        from utils import tratar_data_sql
+
+        data_sql = tratar_data_sql(data)
+        if not data_sql:
+            return ResponseQuery(erros=["Data inválida ou vazia."])
+
         sql = (
             "INSERT INTO movimentacao(mov_data, mov_tipo, fk_mov_usu_id, fk_mov_for_id, fk_mov_esc_id) "
-            f"VALUES ('{data}', '{tipo}', {usuario_id}, {fornecedor_id}, {escola_id});"
+            "VALUES (?, ?, ?, ?, ?);"
         )
-        return self.model.insert(sql)
+        valores = (data_sql, tipo, usuario_id, fornecedor_id, escola_id)
+        return self.model.insert(sql, valores)
 
-    def listar_movimentacao(self) -> ResponseQuery:
+    def listar_movimentacao(self, termo_buscar: str = "") -> ResponseQuery:
         """
         Lista todas as movimentações ordenadas por data decrescente.
 

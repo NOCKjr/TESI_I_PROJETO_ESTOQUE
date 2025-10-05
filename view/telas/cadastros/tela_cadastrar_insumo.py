@@ -4,17 +4,24 @@ import constants
 from tkinter import ttk
 from control.insumo_controller import InsumoController
 from view.telas.gerenciador_de_janelas import GerenciadorDeJanelasBase
-from view.telas.tela_formulario_base import TelaFormularioBase
+from view.telas.cadastros.tela_formulario_base import TelaFormularioBase
 
 class TelaCadastrarInsumo(TelaFormularioBase):
-    def __init__(self, master, gerenciador_de_janelas: GerenciadorDeJanelasBase, modo_editar=False, largura=constants.LARGURA_JANELA, altura=constants.ALTURA_JANELA):
-        super().__init__(master, gerenciador_de_janelas, modo_editar)
+    def __init__(self, master, 
+                       gerenciador_de_janelas: GerenciadorDeJanelasBase, 
+                       modo_editar=False, 
+                       largura=constants.LARGURA_JANELA, altura=constants.ALTURA_JANELA):
+        super().__init__(master, 
+                         gerenciador_de_janelas, 
+                         constants.ENTIDADE_INSUMO, 
+                         InsumoController(), 
+                         modo_editar,
+                         largura, altura)
 
-        # Se o formulário foi aberto como edição, define-se o id do insumo editado
-        self.id_insumo_editado = None
-
-        # Controlador de insumoes
-        self.controle_insumos = InsumoController()
+        self.criar_campos_formulario()
+    
+    def criar_campos_formulario(self):
+        super().criar_campos_formulario()
 
         # Nome/descrição
         self.lbl_nome = tk.Label(self.container_formulario, text="Nome/descrição:", anchor='w', bg=constants.cores['cinza'])
@@ -40,44 +47,6 @@ class TelaCadastrarInsumo(TelaFormularioBase):
         self.ent_estoque = tk.Entry(self.container_formulario)
         self.ent_estoque.grid(row=14, column=0, columnspan=5, sticky='nsew')
 
-    def onConfirmar(self):
-        ## --- valide os campos antes de inserir
-
-        # Captura os valores dos campos
-        nome = self.ent_nome.get()
-        media_consumo = self.ent_media_consumo.get()
-        unidade_medida = ["Quilograma", "Miligrama", "Litros"].index(self.cmb_unidade_medida.get()) + 1
-        estoque = self.ent_estoque.get()
-        
-        if self.flag_editar:
-            id = self.id_insumo_editado
-            # Chama o controller para atualizar o insumo
-            self.controle_insumos.atualizar_insumo(id, nome, media_consumo, estoque, unidade_medida)
-        else:
-            # Chama o controller para inserir novo insumo
-            self.controle_insumos.inserir_insumo(nome, media_consumo, estoque, unidade_medida)
-
-        # Reseta os valores dos campos do formulário
-        self.limpar_campos()
-
-        # Volta para a tela de listagem
-        self.gerenciador_de_janelas.alterar_para_a_tela(constants.TELA_LISTAGEM_INSUMOS)
-
-    def onCancelar(self):
-        
-        # Reseta os valores dos campos do formulário
-        self.limpar_campos()
-
-        # Volta para a tela de listagem
-        self.gerenciador_de_janelas.alterar_para_a_tela(constants.TELA_LISTAGEM_INSUMOS)
-
-    def limpar_campos(self):
-        self.ent_nome.delete(0, 'end')
-        self.ent_media_consumo.delete(0, 'end')
-        self.ent_estoque.delete(0, 'end')
-        self.cmb_unidade_medida.delete(0, 'end')
-        self.flag_editar = False
-
     def editar_insumo(self, insumo):
         self.ent_nome.delete(0, 'end')
         self.ent_nome.insert(0, insumo['nome'])
@@ -87,7 +56,14 @@ class TelaCadastrarInsumo(TelaFormularioBase):
         self.ent_estoque.insert(0, insumo['estoque'])
         self.cmb_unidade_medida.delete(0, 'end')
         self.cmb_unidade_medida.insert(0, insumo['medida'])
-        self.id_insumo_editado = insumo['id']
+        self.id_para_edicao = insumo['id']
         self.flag_editar = True
-
-
+    
+    def obter_valores_campos_formulario(self):
+        # Captura os valores dos campos
+        nome = self.ent_nome.get()
+        media_consumo = self.ent_media_consumo.get()
+        unidade_medida = ["Quilograma", "Miligrama", "Litros"].index(self.cmb_unidade_medida.get()) + 1
+        estoque = self.ent_estoque.get()
+        
+        return (nome, media_consumo, estoque, unidade_medida)

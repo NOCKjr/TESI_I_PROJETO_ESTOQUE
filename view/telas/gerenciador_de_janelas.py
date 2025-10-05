@@ -46,3 +46,6 @@ class GerenciadorDeJanelasBase(ttk.Frame, abc.ABC):
             
             # mostra a nova tela
             self.tela_atual.mostrar()
+        
+        else:
+            print(f'GerenciadorDeJanelas: Erro! A tela {proxima_tela} não foi encontrada.')

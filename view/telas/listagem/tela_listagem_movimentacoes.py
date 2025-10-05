@@ -16,7 +16,8 @@ class TelaListagemMovimentacoes(TelaListagemBase):
                          constants.ENTIDADE_MOVIMENTACAO, 
                          MovimentacaoController(), 
                          ['ID', 'DATA', 'TIPO', 'USUÁRIO', 'FORNECEDOR', 'ESCOLA'], 
-                         ['id', 'data', 'tipo', 'usuario_id', 'fornecedor_id', 'escola_id'])
+                         ['id', 'data', 'tipo', 'usuario_id', 'fornecedor_id', 'escola_id'],
+                         [10, 10, 30, 30, 30, 30])
 
         # Controladores
         self.controle_escola = EscolaController()
@@ -28,7 +29,7 @@ class TelaListagemMovimentacoes(TelaListagemBase):
         return (
             movimentacao["id"],
             movimentacao["data"],
-            movimentacao["tipo"],
+            ('Saída' if movimentacao["tipo"].upper() == 'S' else 'Entrada'),
             movimentacao["usuario_id"],
             movimentacao["fornecedor_id"],
             movimentacao["escola_id"],

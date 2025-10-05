@@ -3,7 +3,7 @@ import constants
 
 from tkinter import ttk
 from view.telas.gerenciador_de_janelas import GerenciadorDeJanelasBase
-from view.telas.tela_formulario_base import TelaFormularioBase
+from view.telas.cadastros.tela_formulario_base import TelaFormularioBase
 
 class MovimentacaoController:
     def __init__(self):

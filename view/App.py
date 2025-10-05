@@ -1,6 +1,7 @@
 import ttkbootstrap as ttk
 import constants
 
+from view.telas.cadastros.tela_cadastrar_movimentacao import TelaCadastrarMovimentacao
 from view.telas.gerenciador_de_janelas import GerenciadorDeJanelasBase
 
 from view.telas.listagem.tela_listagem_movimentacoes import TelaListagemMovimentacoes
@@ -8,7 +9,7 @@ from view.telas.tela_login import TelaLogin
 from view.telas.tela_base import TelaBase
 from view.telas.tela_menu_principal import TelaMenuPrincipal
 from view.telas.tela_menu_cadastros import TelaMenuCadastros
-from view.telas.tela_formulario_base import TelaFormularioBase
+from view.telas.cadastros.tela_formulario_base import TelaFormularioBase
 
 from view.telas.cadastros.tela_cadastrar_escola import TelaCadastrarEscola
 from view.telas.cadastros.tela_cadastrar_fornecedor import TelaCadastrarFornecedor
@@ -40,7 +41,7 @@ class App(GerenciadorDeJanelasBase):
             constants.TELA_CADASTRAR_ESCOLA:        TelaCadastrarEscola(self.content_frame, self),      # Tela cadsatro de escola
             constants.TELA_CADASTRAR_FORNECEDOR:    TelaCadastrarFornecedor(self.content_frame, self),  # Tela cadsatro de fornecedor
             constants.TELA_CADASTRAR_INSUMO:        TelaCadastrarInsumo(self.content_frame, self),      # Tela cadsatro de insumo
-            constants.TELA_FORMULARIO_MOVIMENTACOES:TelaFormularioMovimentacao(self.content_frame, self),        # Tela de inserir movimentações
+            constants.TELA_CADASTRAR_MOVIMENTACAO:  TelaCadastrarMovimentacao(self.content_frame, self),        # Tela de inserir movimentações
             constants.TELA_MOVIMENTACOES:           TelaMovimentacoes(self.content_frame, self),        # Tela de movimentações
             constants.TELA_HISTORICO:               TelaHistorico(self.content_frame, self),            # Tela de histórico
             constants.TELA_CONSULTAS:               TelaConsultas(self.content_frame, self),            # Tela de consultas
@@ -64,8 +65,9 @@ class App(GerenciadorDeJanelasBase):
         self.bind_all("<Control-=>", self.aumentar_escala)
         
         # Inicia na tela de login
-        self.alterar_para_a_tela(constants.TELA_LOGIN)
+        # self.alterar_para_a_tela(constants.TELA_LOGIN)
         # self.alterar_para_a_tela(constants.TELA_MENU_PRINCIPAL)
+        self.alterar_para_a_tela(constants.TELA_CADASTRAR_MOVIMENTACAO)
         # self.alterar_para_a_tela(constants.TELA_CADASTRAR_USUARIO)
         # self.alterar_para_a_tela(constants.TELA_CADASTRAR_INSUMO)
         # self.alterar_para_a_tela(constants.TELA_MENU_CADASTROS)
