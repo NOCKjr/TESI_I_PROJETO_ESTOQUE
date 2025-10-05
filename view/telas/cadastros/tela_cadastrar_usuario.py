@@ -83,7 +83,7 @@ class TelaCadastrarUsuario(TelaFormularioBase):
         self.id_para_edicao = usuario['id']
         self.flag_editar = True
 
-    def obter_campos_formulario(self):
+    def obter_valores_campos_formulario(self):
         
         # Captura os valores dos campos
         nick = self.ent_nick_usuario.get()
