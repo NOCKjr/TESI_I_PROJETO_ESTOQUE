@@ -36,10 +36,6 @@ class TelaCadastrarMovimentacao(TelaFormularioBase):
         self.lbl_data.grid(row=2, column=20, pady=(10, 0), sticky='nsw')
         self.ent_data = utils.DateEntry(self.container_formulario)
         self.ent_data.grid(row=3, column=20, columnspan=10, sticky='nsew')
-        # self.lbl_data = ttk.Label(self.container_formulario, text="Data:", anchor='w')
-        # self.lbl_data.grid(row=2, column=20, pady=(10, 0), sticky='nsw')
-        # self.ent_data = ttk.Entry(self.container_formulario)
-        # self.ent_data.grid(row=3, column=20, columnspan=10, sticky='nsew')
 
         # Usuário
         self.lbl_usuario = ttk.Label(self.container_formulario, text="Usuário:", anchor='w')
@@ -59,11 +55,10 @@ class TelaCadastrarMovimentacao(TelaFormularioBase):
         self.ent_escola = ttk.Entry(self.container_formulario)
         self.ent_escola.grid(row=13, column=0, columnspan=14, sticky='nsew')
 
-
     def obter_valores_campos_formulario(self):
         # Captura os valores dos campos
         data = self.ent_data.get()
-        tipo = self.cmb_tipo_movimentacao.get()
+        tipo = self.cmb_tipo_movimentacao.get()[0]
         usuario_id = self.ent_usuario.get()
         fornecedor_id = self.ent_fornecedor.get()
         escola_id = self.ent_escola.get()
