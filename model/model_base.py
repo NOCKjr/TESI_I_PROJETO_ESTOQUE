@@ -21,7 +21,7 @@ class ModelBase:
     def __init__(self):
         self.con = Conexao()
 
-    def get(self, sql):
+    def get(self, sql) -> ResponseQuery:
         """Faz uma consulta no banco"""
         resp = ResponseQuery()
         try:
@@ -34,7 +34,7 @@ class ModelBase:
             resp.add_erro(str(er))
         return resp
 
-    def insert(self, sql, params=None):
+    def insert(self, sql, params=None) -> ResponseQuery:
         """Insere um registro no banco e retorna o ID"""
         resp = ResponseQuery()
         try:
@@ -51,7 +51,7 @@ class ModelBase:
             resp.add_erro(str(er))
         return resp
 
-    def delete(self, sql):
+    def delete(self, sql) -> ResponseQuery:
         """Deleta um registro"""
         resp = ResponseQuery()
         try:
@@ -65,7 +65,7 @@ class ModelBase:
             resp.add_erro(str(er))
         return resp
 
-    def update(self, sql):
+    def update(self, sql) -> ResponseQuery:
         """Atualiza um registro"""
         resp = ResponseQuery()
         try:
