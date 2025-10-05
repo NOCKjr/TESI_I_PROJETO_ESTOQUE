@@ -3,6 +3,7 @@ import constants
 
 from tkinter import ttk
 from control.insumo_controller import InsumoController
+from control.medida_controller import MedidaController
 from view.telas.gerenciador_de_janelas import GerenciadorDeJanelasBase
 from view.telas.cadastros.tela_formulario_base import TelaFormularioBase
 
@@ -17,6 +18,14 @@ class TelaCadastrarInsumo(TelaFormularioBase):
                          InsumoController(), 
                          modo_editar,
                          largura, altura)
+
+        # Controles
+        self.controle_medidas = MedidaController()
+
+        # Rótulos para os valores na coluna de medida
+        # self.rotulos_de_medidas = ["Quilograma", "Miligrama", "Litros"]
+        self.rotulos_de_medidas = [medida["unidade"] for medida in self.controle_medidas.listar().retorno]
+
 
         self.criar_campos_formulario()
     
@@ -38,7 +47,8 @@ class TelaCadastrarInsumo(TelaFormularioBase):
         # Unidade de media
         self.lbl_unidade_medida = tk.Label(self.container_formulario, text="Unidade de medida:", anchor='w', bg=constants.cores['cinza'])
         self.lbl_unidade_medida.grid(row=9, column=0, pady=(0,0), sticky='nsw')
-        self.cmb_unidade_medida = ttk.Combobox(self.container_formulario, values=["Quilograma", "Miligrama", "Litros"], state="readonly")
+                # Rótulos para os valores na coluna de medida
+        self.cmb_unidade_medida = ttk.Combobox(self.container_formulario, values=self.rotulos_de_medidas, state="readonly")
         self.cmb_unidade_medida.grid(row=10, column=0, columnspan=5, sticky='nsew')
 
         # Quantidade em estoque
@@ -63,7 +73,8 @@ class TelaCadastrarInsumo(TelaFormularioBase):
         # Captura os valores dos campos
         nome = self.ent_nome.get()
         media_consumo = self.ent_media_consumo.get()
-        unidade_medida = ["Quilograma", "Miligrama", "Litros"].index(self.cmb_unidade_medida.get()) + 1
+                # Rótulos para os valores na coluna de medida
+        unidade_medida = self.rotulos_de_medidas.index(self.cmb_unidade_medida.get()) + 1
         estoque = self.ent_estoque.get()
         
         return (nome, media_consumo, estoque, unidade_medida)
