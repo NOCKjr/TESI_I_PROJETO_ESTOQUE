@@ -16,7 +16,6 @@ class TelaLogin(TelaBase):
         super().__init__(master, gerenciador_de_janelas)
 
         self.username = None
-        self.codigo_confirmado = False
 
         # Controlador de usuários
         self.controle_usuarios = UsuarioController()
@@ -67,7 +66,6 @@ class TelaLogin(TelaBase):
             self.modal_login, text='Continuar', command=self.onContinuar, bootstyle="success"
         )
         self.btn_continuar.pack(fill='x', pady=10)
-        self.btn_continuar.bind('<Return>', lambda event: self.onContinuar())
 
     
     def onContinuar(self):
@@ -90,7 +88,7 @@ class TelaLogin(TelaBase):
             return False
 
         # Conferir se o login existe
-        resp = self.controle_usuarios.buscar(login)
+        resp = self.controle_usuarios.buscar_usuario(login)
         usuario = resp.retorno
 
         # Usuário não encontrado
@@ -144,7 +142,7 @@ class TelaLogin(TelaBase):
                     Messagebox.show_error("Digite um nome de usuário!", title="Erro", parent=janela)
                     impede_interacao()
                     return
-                resp = self.controle_usuarios.buscar(nome)
+                resp = self.controle_usuarios.buscar_usuario(nome)
                 usuario = resp.retorno
 
                 if not usuario:
@@ -218,7 +216,7 @@ class TelaLogin(TelaBase):
                     Messagebox.show_error("Digite uma senha!", title="Erro", parent=janela)
                     impede_interacao()
                     return
-                resp = self.controle_usuarios.buscar(self.username)
+                resp = self.controle_usuarios.buscar_usuario(self.username)
                 user = resp.retorno
                 self.controle_usuarios.atualizar_usuario(user["id"], user["nick"], user["email"], senha, user["tipo"])
                 Messagebox.show_info("Senha redefinida com sucesso!", title="Sucesso", parent=janela)
