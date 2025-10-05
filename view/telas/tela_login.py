@@ -67,7 +67,6 @@ class TelaLogin(TelaBase):
             self.modal_login, text='Continuar', command=self.onContinuar, bootstyle="success"
         )
         self.btn_continuar.pack(fill='x', pady=10)
-        self.btn_continuar.bind('<Return>', lambda event: self.onContinuar())
 
     
     def onContinuar(self):
