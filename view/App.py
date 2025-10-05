@@ -62,12 +62,12 @@ class App(GerenciadorDeJanelasBase):
         # Bind dos atalhos
         self.bind_all("<Control-plus>", self.aumentar_escala)
         self.bind_all("<Control-minus>", self.diminuir_escala)
-        self.bind_all("<Control-0x3d>", self.aumentar_escala) # Código da tecla '=' deve funcionar em windows e linux agora
+        self.bind_all("<Control-equal>", self.aumentar_escala) # Código da tecla '=' deve funcionar em windows e linux agora (não funcionou no windows)
         
         # Inicia na tela de login
-        # self.alterar_para_a_tela(constants.TELA_LOGIN)
+        self.alterar_para_a_tela(constants.TELA_LOGIN)
         # self.alterar_para_a_tela(constants.TELA_MENU_PRINCIPAL)
-        self.alterar_para_a_tela(constants.TELA_CADASTRAR_MOVIMENTACAO)
+        # self.alterar_para_a_tela(constants.TELA_CADASTRAR_MOVIMENTACAO)
         # self.alterar_para_a_tela(constants.TELA_CADASTRAR_USUARIO)
         # self.alterar_para_a_tela(constants.TELA_CADASTRAR_INSUMO)
         # self.alterar_para_a_tela(constants.TELA_MENU_CADASTROS)
