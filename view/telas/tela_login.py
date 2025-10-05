@@ -142,7 +142,7 @@ class TelaLogin(TelaBase):
                     Messagebox.show_error("Digite um nome de usuário!", title="Erro", parent=janela)
                     impede_interacao()
                     return
-                resp = self.controle_usuarios.buscar(nome)
+                resp = self.controle_usuarios.buscar_usuario(nome)
                 usuario = resp.retorno
 
                 if not usuario:
@@ -216,7 +216,7 @@ class TelaLogin(TelaBase):
                     Messagebox.show_error("Digite uma senha!", title="Erro", parent=janela)
                     impede_interacao()
                     return
-                resp = self.controle_usuarios.buscar(self.username)
+                resp = self.controle_usuarios.buscar_usuario(self.username)
                 user = resp.retorno
                 self.controle_usuarios.atualizar_usuario(user["id"], user["nick"], user["email"], senha, user["tipo"])
                 Messagebox.show_info("Senha redefinida com sucesso!", title="Sucesso", parent=janela)
