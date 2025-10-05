@@ -27,7 +27,7 @@ class MovimentacaoController:
         self.funcao_atualizar_item = self.atualizar_movimentacao
         # self.funcao_to_dict = self.to_dict_movimentacao
 
-    def inserir_movimentacao(self, data: str, tipo: str, usuario_id: int, fornecedor_id: int, escola_id: int) -> ResponseQuery:
+    def inserir_movimentacao(self, data: str, tipo: str, usuario_id: int, fornecedor_id: int = None, escola_id: int = None) -> ResponseQuery:
         """
         Insere uma movimentação no banco.
 

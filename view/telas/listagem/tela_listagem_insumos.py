@@ -15,23 +15,12 @@ class TelaListagemInsumos(TelaListagemBase):
         # Controlador de unidade de medida
         self.controle_unidade_medida = MedidaController()
 
-    # Sobrescreve a função, pois uma das colunas tem tratamento diferente
-    def atualizar_listagem(self):
-        self.atualizar_listagem_insumos()
-    
-    def atualizar_listagem_insumos(self):
-        # Apaga os itens da treeview
-        self.tvw_tabela.delete(*self.tvw_tabela.get_children())
-
-        # Atualiza a treeview com os dados do banco
-        resp = self.controle.listar()
-        tuplas = resp.retorno if resp.ok else []
-        for item in tuplas:
-            value = (
-                item["id"],
-                item["nome"],
-                item["quantidade_estoque"],
-                item["media_consumida"],
-                self.controle_unidade_medida.buscar_medida(item["medida_id"])["unidade"],
-            )
-            self.tvw_tabela.insert('', 'end', values=value)
+    def dict_to_tuple(self, insumo):
+        """Mapeia os campos do dicionário para uma tupla"""
+        return tuple(
+            insumo["id"],
+            insumo["nome"],
+            insumo["quantidade_estoque"],
+            insumo["media_consumida"],
+            self.controle_unidade_medida.buscar_medida(insumo["medida_id"])["unidade"],
+        )

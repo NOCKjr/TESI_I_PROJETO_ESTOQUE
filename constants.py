@@ -35,6 +35,7 @@ ENTIDADE_FORNECEDOR = "fornecedor"
 ENTIDADE_INSUMO = "insumo"
 ENTIDADE_ENDERECO = "endereco"
 ENTIDADE_ITEM = "item"
+ENTIDADE_MOVIMENTACAO = "movimentacao"
 
 class Cores(Enum):
     PRINCIPAL = '#075F8B'

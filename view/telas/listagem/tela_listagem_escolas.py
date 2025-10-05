@@ -14,23 +14,11 @@ class TelaListagemEscolas(TelaListagemBase):
         # Controlador de endereço
         self.controle_endereco = EnderecoController()
 
-    # Sobrescreve a função, pois uma das colunas tem tratamento diferente
-    def atualizar_listagem(self):
-        self.atualizar_listagem_escolas()
-    
-    def atualizar_listagem_escolas(self):
-        """Atualiza o treeview com as escolas cadastradas"""
-        # Apaga os itens da treeview
-        self.tvw_tabela.delete(*self.tvw_tabela.get_children())
-
-        # Atualiza a treeview com os dados do banco
-        resp = self.controle.listar()
-        tuplas = resp.retorno if resp.ok() else []
-        for item in tuplas:
-            value = (
-                item["id"],
-                item["nome"],
-                self.controle_endereco.buscar_endereco_string(item["endereco_id"]),
-                item["numero_alunos"],
-            )
-            self.tvw_tabela.insert('', 'end', values=value)
+    def dict_to_tuple(self, escola):
+        """Mapeia os campos do dicionário escola para uma tupla"""
+        return tuple(
+            escola["id"],
+            escola["nome"],
+            self.controle_endereco.buscar_endereco_string(escola["endereco_id"]),
+            escola["numero_alunos"],
+        )

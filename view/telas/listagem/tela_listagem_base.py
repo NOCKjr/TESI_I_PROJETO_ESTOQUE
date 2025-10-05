@@ -8,7 +8,7 @@ from view.telas.menus.menu_painel_de_opcoes_crud import MenuPainelDeOpcoesCRUD
 from view.telas.tela_base import TelaBase
 
 class TelaListagemBase(TelaBase):
-    def __init__(self, master, gerenciador_de_janelas: GerenciadorDeJanelasBase, tipo_entidade: str, controle_entidade: ControllerBase , cabecalho: list[str], chaves_dict: list[str], largura=constants.LARGURA_JANELA, altura=constants.ALTURA_JANELA):
+    def __init__(self, master, gerenciador_de_janelas: GerenciadorDeJanelasBase, tipo_entidade: str, controle_entidade: ControllerBase , cabecalho: list[str] = [], chaves_dict: list[str] = [], largura=constants.LARGURA_JANELA, altura=constants.ALTURA_JANELA):
         super().__init__(master, gerenciador_de_janelas)
 
         #Tipo de entidade manipulada (Usuario, Escola, Fornecedor ou Insumo)
@@ -44,8 +44,16 @@ class TelaListagemBase(TelaBase):
                 return "o", "endereco"
             case constants.ENTIDADE_ITEM:
                 return "o", "item"
+            case constants.ENTIDADE_MOVIMENTACAO:
+                return "a", "movimentação"
             case _:
                 return "", ""
+    
+    def definir_cabecalho(self, cabecalho: list[str], chaves_dict: list[str]):
+        if len(cabecalho) != len(chaves_dict):
+            raise ValueError("Defina corretamente as chaves de acesso ao atributo para cada coluna no cabeçalho.")
+        self.cabecalho = cabecalho
+        self.chaves_dict = chaves_dict
 
     def criar_listagem(self):
         self.tvw_tabela = ttk.Treeview(self, height=self.linhas_treeview, columns=self.cabecalho, show='headings')
@@ -93,6 +101,10 @@ class TelaListagemBase(TelaBase):
     
     ### Controller
 
+    def dict_to_tuple(self, obj):
+        """Mapeia os campos do dicionário para uma tupla"""
+        return tuple(obj[campo] for campo in self.chaves_dict)
+
     def atualizar_listagem(self):
         # Apaga os itens da treeview
         self.tvw_tabela.delete(*self.tvw_tabela.get_children())
@@ -101,13 +113,9 @@ class TelaListagemBase(TelaBase):
         resp = self.controle.listar()
         tuplas = resp.retorno if resp.ok() else []
 
-        print(f'resposta: {resp}')
-        print(f'tuplas: {tuplas}')
         for item in tuplas:
-            print(f'item: {item}')
             # Obtém os valores das colunas correspondentes
-            value = tuple(item[campo] for campo in self.chaves_dict)
-            print(f'value: {value}')
+            value = self.dict_to_tuple(item)
             self.tvw_tabela.insert('', 'end', values=value)
     
     def adicionar(self):
