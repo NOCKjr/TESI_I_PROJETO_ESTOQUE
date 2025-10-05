@@ -90,7 +90,7 @@ class TelaCadastrarEscola(TelaFormularioBase):
 
         if self.flag_editar:
             # A escola já existe e já possui um endereço
-            escola = self.controle.buscar_por_id(self.id_para_edicao)
+            escola = self.controle.buscar_por_id(self.id_para_edicao).retorno
             endereco_id = escola["endereco_id"]
             novo_endereco = (endereco_id, ) + campos_endereco
 
@@ -101,14 +101,14 @@ class TelaCadastrarEscola(TelaFormularioBase):
             self.controle.atualizar(self.id_para_edicao, nome, endereco_id, alunos)
         else:
             # Chama o controller para inserir novo endereço
-            endereco_id = self.controle_endereco.inserir(*campos_endereco)
+            endereco_id = self.controle_endereco.inserir(*campos_endereco).retorno
             self.controle.inserir(nome, endereco_id, alunos)
         
         # Reseta os valores dos campos do formulário
         self.limpar_campos()
 
         # Volta para a tela de listagem
-        self.gerenciador_de_janelas.alterar_para_a_tela(constants.TELA_LISTAGEM_ESCOLAS)
+        self.ir_para_tela_de_listagem()
     
     def preencher_campos_endereco(self, endereco_id):
         endereco = self.controle_endereco.buscar_endereco_por_id(endereco_id)
