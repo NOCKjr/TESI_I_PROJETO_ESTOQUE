@@ -16,7 +16,6 @@ class TelaLogin(TelaBase):
         super().__init__(master, gerenciador_de_janelas)
 
         self.username = None
-        self.codigo_confirmado = False
 
         # Controlador de usuários
         self.controle_usuarios = UsuarioController()
@@ -89,7 +88,7 @@ class TelaLogin(TelaBase):
             return False
 
         # Conferir se o login existe
-        resp = self.controle_usuarios.buscar(login)
+        resp = self.controle_usuarios.buscar_usuario(login)
         usuario = resp.retorno
 
         # Usuário não encontrado
