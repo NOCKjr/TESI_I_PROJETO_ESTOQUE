@@ -18,7 +18,7 @@ class MedidaController(ControllerBase):
         # Funções de callback para operações CRUD 
         self.funcao_inserir_item = self.inserir_medida
         self.funcao_listar_item = self.listar_medida
-        # self.funcao_buscar_item = self.buscar_medida
+        self.funcao_buscar_item = self.buscar_medida
         # self.funcao_buscar_item_por_id = self.buscar_medida_por_id
         self.funcao_excluir_item = self.excluir_medida
         self.funcao_atualizar_item = self.atualizar_medida

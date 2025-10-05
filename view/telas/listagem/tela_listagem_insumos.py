@@ -17,10 +17,10 @@ class TelaListagemInsumos(TelaListagemBase):
 
     def dict_to_tuple(self, insumo):
         """Mapeia os campos do dicionário para uma tupla"""
-        return tuple(
+        return (
             insumo["id"],
             insumo["nome"],
             insumo["quantidade_estoque"],
             insumo["media_consumida"],
-            self.controle_unidade_medida.buscar_medida(insumo["medida_id"])["unidade"],
+            self.controle_unidade_medida.buscar(insumo["medida_id"]).retorno["unidade"],
         )

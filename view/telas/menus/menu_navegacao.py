@@ -13,7 +13,7 @@ class MenuNavegacao(ttk.Frame):
     
         # Dicionário de abas
         self.abas = {
-            "Movimentações": constants.TELA_MOVIMENTACOES,
+            "Movimentações": constants.TELA_LISTAGEM_MOVIMENTACOES,
             "Usuários": constants.TELA_LISTAGEM_USUARIOS,
             "Escolas": constants.TELA_LISTAGEM_ESCOLAS,
             "Fornecedores": constants.TELA_LISTAGEM_FORNECEDORES,

@@ -16,9 +16,9 @@ class TelaListagemEscolas(TelaListagemBase):
 
     def dict_to_tuple(self, escola):
         """Mapeia os campos do dicionário escola para uma tupla"""
-        return tuple(
+        return (
             escola["id"],
             escola["nome"],
-            self.controle_endereco.buscar_endereco_string(escola["endereco_id"]),
+            self.controle_endereco.buscar_endereco_string(escola["endereco_id"]).retorno,
             escola["numero_alunos"],
         )

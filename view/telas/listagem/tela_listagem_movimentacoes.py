@@ -25,7 +25,7 @@ class TelaListagemMovimentacoes(TelaListagemBase):
 
     def dict_to_tuple(self, movimentacao):
         """Mapeia os campos do dicionário para uma tupla"""
-        return tuple(
+        return (
             movimentacao["id"],
             movimentacao["data"],
             movimentacao["tipo"],
