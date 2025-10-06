@@ -43,7 +43,6 @@ class TelaLogin(TelaBase):
         self.lbl_usuario.pack(anchor='w')
         self.ent_usuario = ttk.Entry(self.container_usuario)
         self.ent_usuario.pack(fill='x')
-        self.ent_usuario.bind('<Return>', lambda event: self.onContinuar())
 
         ### Campo senha
         self.container_senha = ttk.Frame(self.modal_login)
@@ -53,6 +52,8 @@ class TelaLogin(TelaBase):
         self.ent_senha = ttk.Entry(self.container_senha, show='*')
         self.ent_senha.pack(fill='x')
         self.ent_senha.bind('<Return>', lambda event: self.onContinuar())
+
+        self.ent_usuario.bind('<Return>', lambda event: self.ent_senha.focus_set())
 
         ### Esqueci a senha
         self.lbl_esqueci_a_senha = ttk.Label(

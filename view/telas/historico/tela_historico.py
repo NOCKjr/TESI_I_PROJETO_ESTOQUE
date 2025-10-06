@@ -1,7 +1,6 @@
-import tkinter as tk
 import constants
 
-from tkinter import ttk
+import ttkbootstrap as ttk
 from view.telas.gerenciador_de_janelas import GerenciadorDeJanelasBase
 from view.telas.tela_base import TelaBase
 

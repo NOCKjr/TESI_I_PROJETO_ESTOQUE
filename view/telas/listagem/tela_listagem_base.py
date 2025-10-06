@@ -110,13 +110,13 @@ class TelaListagemBase(TelaBase):
         self.painel_de_acoes.btn_editar.pack_forget()
     
     def mostrar_botao_de_editar(self):
-        self.painel_de_acoes.btn_editar.pack(side='left')
+        self.painel_de_acoes.btn_editar.pack(side='left', padx=5)
     
     def esconder_botao_de_excluir(self):
         self.painel_de_acoes.btn_excluir.pack_forget()
 
     def mostrar_botao_de_excluir(self):
-        self.painel_de_acoes.btn_excluir.pack(side='left')
+        self.painel_de_acoes.btn_excluir.pack(side='left', padx=5)
 
     def mostrar(self):
         # Atualiza os dados

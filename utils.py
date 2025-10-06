@@ -19,7 +19,7 @@ def tratar_data_sql(data_str: str) -> str:
     return None
 
 import tkinter as tk
-from tkinter import ttk
+import ttkbootstrap as ttk
 from datetime import datetime
 
 class DateEntry(ttk.Entry):
@@ -40,7 +40,7 @@ class DateEntry(ttk.Entry):
     def set_today(self):
         """Define a data atual no campo."""
         hoje = datetime.now().strftime("%d/%m/%Y")
-        self.delete(0, tk.END)
+        self.delete(0, ttk.END)
         self.insert(0, hoje)
         self.config(foreground="black")
         self._placeholder_on = False

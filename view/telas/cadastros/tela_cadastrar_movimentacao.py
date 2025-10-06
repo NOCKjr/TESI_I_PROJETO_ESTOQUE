@@ -1,5 +1,4 @@
-import tkinter as tk
-from tkinter import ttk
+import ttkbootstrap as ttk
 import constants
 from control.escola_controller import EscolaController
 from control.fornecedor_controller import FornecedorController

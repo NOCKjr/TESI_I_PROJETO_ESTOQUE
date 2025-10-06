@@ -1,7 +1,7 @@
-import tkinter as tk
+import ttkbootstrap as ttk
+from ttkbootstrap.constants import *
 import constants
 
-from tkinter import ttk
 from control.fornecedor_controller import FornecedorController
 from view.telas.gerenciador_de_janelas import GerenciadorDeJanelasBase
 from view.telas.cadastros.tela_formulario_base import TelaFormularioBase
@@ -24,15 +24,15 @@ class TelaCadastrarFornecedor(TelaFormularioBase):
         super().criar_campos_formulario()
 
         # Razão Social
-        self.lbl_razao_social = tk.Label(self.container_formulario, text="Razão social:", anchor='w', bg=constants.cores['cinza'])
+        self.lbl_razao_social = ttk.Label(self.container_formulario, text="Razão social:", anchor='w')
         self.lbl_razao_social.grid(row=1, column=0, pady=(0,0), sticky='nsw')
-        self.ent_razao_social = tk.Entry(self.container_formulario)
+        self.ent_razao_social = ttk.Entry(self.container_formulario)
         self.ent_razao_social.grid(row=2, column=0, columnspan=30, sticky='nsew')
 
         # Telefone de contato
-        self.lbl_telefone_contato = tk.Label(self.container_formulario, text="Telefone de contato:", anchor='w', bg=constants.cores['cinza'])
+        self.lbl_telefone_contato = ttk.Label(self.container_formulario, text="Telefone de contato:", anchor='w')
         self.lbl_telefone_contato.grid(row=3, column=0, pady=(2,0), sticky='nsw')
-        self.ent_telefone_contato = tk.Entry(self.container_formulario)
+        self.ent_telefone_contato = ttk.Entry(self.container_formulario)
         self.ent_telefone_contato.grid(row=4, column=0, columnspan=4, sticky='nsew')
 
     def editar_fornecedor(self, fornecedor):

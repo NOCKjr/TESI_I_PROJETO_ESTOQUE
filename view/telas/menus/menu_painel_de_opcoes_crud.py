@@ -1,26 +1,27 @@
-import tkinter as tk
+import ttkbootstrap as ttk
+from ttkbootstrap.constants import *
 import constants
 
-class MenuPainelDeOpcoesCRUD(tk.Frame):
+class MenuPainelDeOpcoesCRUD(ttk.Frame):
     def __init__(self, master, tela_associada):
         super().__init__(master)
         self.tela_associada = tela_associada
 
         # Container com as ações disponíveis
-        self.container_acoes = tk.Frame(self)
+        self.container_acoes = ttk.Frame(self)
         self.container_acoes.pack()
         
         # Adicionar
-        self.btn_adicionar = tk.Button(self.container_acoes, text="Adicionar", command=self.adicionar)
-        self.btn_adicionar.pack(side='left')
+        self.btn_adicionar = ttk.Button(self.container_acoes, text="Adicionar", bootstyle="success", command=self.adicionar)
+        self.btn_adicionar.pack(side='left', padx=5)
 
         # Editar
-        self.btn_editar = tk.Button(self.container_acoes, text="Editar", bg=constants.cores['secundario'], state='disabled', command=self.editar)
-        self.btn_editar.pack(side='left')
+        self.btn_editar = ttk.Button(self.container_acoes, text="Editar", bootstyle="primary", state='disabled', command=self.editar)
+        self.btn_editar.pack(side='left', padx=5)
 
         # Excluir
-        self.btn_excluir = tk.Button(self.container_acoes, text="Excluir", bg=constants.cores['secundario'], state='disabled', command=self.excluir)
-        self.btn_excluir.pack(side='left')
+        self.btn_excluir = ttk.Button(self.container_acoes, text="Excluir", bootstyle="danger", state='disabled', command=self.excluir)
+        self.btn_excluir.pack(side='left', padx=5)
     
     def mostrar(self):
         self.pack(side='bottom')

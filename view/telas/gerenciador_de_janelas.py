@@ -2,7 +2,6 @@ import ttkbootstrap as ttk
 import constants
 import abc
 
-from tkinter import ttk
 from view.telas.menus.menu_navegacao import MenuNavegacao
 
 class GerenciadorDeJanelasBase(ttk.Frame, abc.ABC):

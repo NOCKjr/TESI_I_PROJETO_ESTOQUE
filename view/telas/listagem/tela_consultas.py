@@ -1,6 +1,6 @@
-import tkinter as tk
 import constants
 
+import ttkbootstrap as ttk
 from view.telas.gerenciador_de_janelas import GerenciadorDeJanelasBase
 from view.telas.tela_base import TelaBase
 
@@ -9,11 +9,11 @@ class TelaConsultas(TelaBase):
         super().__init__(master, gerenciador_de_janelas)
 
         ### Container com as opções de consultas disponíveis
-        self.container_visual = tk.Frame(self, bg=constants.cores['branco'], padx=30, pady=20)
+        self.container_visual = ttk.Frame(self, padding=(30, 20), bootstyle="info")
         self.container_visual.place(anchor='center', relx=0.5, rely=0.45)
 
         # Botão que ativa a consulta na lista de usuários
-        self.btn_usuarios = tk.Button(self.container_visual, text='Usuários', bg=constants.cores['principal'], fg=constants.cores['branco'], command=self.listar_usuarios)
+        self.btn_usuarios = ttk.Button(self.container_visual, text='Usuários', bootstyle="primary", command=self.listar_usuarios)
         self.btn_usuarios.grid(row=0, column=0, columnspan=1, sticky='nswe', padx=2, pady=2)
 
     def listar_usuarios(self):

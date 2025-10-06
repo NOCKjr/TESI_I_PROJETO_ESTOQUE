@@ -1,5 +1,4 @@
-import tkinter as tk
-from tkinter import ttk, messagebox
+import ttkbootstrap as ttk
 import constants
 
 from control.fornecedor_controller import FornecedorController
