@@ -1,5 +1,5 @@
-import tkinter as tk
-from tkinter import ttk, messagebox
+import ttkbootstrap as ttk
+from ttkbootstrap.dialogs import Messagebox
 import constants
 
 from control.controller_base import ControllerBase
@@ -65,7 +65,7 @@ class TelaListagemBase(TelaBase):
                 Se None, usa larguras padrão.
         """
         self.tvw_tabela = ttk.Treeview(
-            self, height=self.linhas_treeview, columns=self.cabecalho, show='headings'
+            self, height=self.linhas_treeview, columns=self.cabecalho, show='headings', bootstyle="dark"
         )
 
         for idx, coluna in enumerate(self.cabecalho):
@@ -189,8 +189,8 @@ class TelaListagemBase(TelaBase):
         
         if valores:
             # Confirma a exclusão
-            resposta = messagebox.askyesno("Confirmar Exclusão", 
-                                            f"Tem certeza que deseja excluir {(lambda e: f'{e[0]} {e[1]}')(self.get_descricao_entidade())} '{valores[1]}'?")
+            resposta = Messagebox.yesno(f"Tem certeza que deseja excluir {(lambda e: f'{e[0]} {e[1]}')(self.get_descricao_entidade())} '{valores[1]}'?",
+                                        title="Confirmar Exclusão")
 
             if resposta:
                 # Chama o controller para excluir
@@ -198,10 +198,10 @@ class TelaListagemBase(TelaBase):
                 if resp.ok():
                     # Remove o item da treeview
                     self.tvw_tabela.delete(item_selecionado)
-                    messagebox.showinfo(title="Sucesso",
+                    Messagebox.show_info(title="Sucesso",
                                         message=(f"{(lambda e: f'{e[1].capitalize()} excluíd{e[0]}')(self.get_descricao_entidade())}"
                                                  " com sucesso!"))
                 else:
-                    messagebox.showerror(title="Erro", 
-                                         message=f"Erro ao excluir {(lambda e: f'{e[0]} {e[1]}')(self.get_descricao_entidade())}!",
-                                         detail = "{}".format("\n".join(resp.erros)))
+                    Messagebox.show_error(title="Erro", 
+                                         message=f"Erro ao excluir {(lambda e: f'{e[0]} {e[1]}')(self.get_descricao_entidade())}!\n" +
+                                         "{}".format("\n".join(resp.erros)))

@@ -1,7 +1,5 @@
-import tkinter as tk
 import constants
-
-from tkinter import ttk
+import ttkbootstrap as ttk
 from control.controller_base import ControllerBase
 from view.telas.gerenciador_de_janelas import GerenciadorDeJanelasBase
 from view.telas.tela_base import TelaBase
@@ -31,7 +29,7 @@ class TelaFormularioBase(TelaBase):
         self.numero_colunas_formulario = 30
         
         ### Container com o formulário de cadastro
-        self.container_formulario = tk.Frame(self, bg=constants.cores['cinza'], padx=10, pady=10)
+        self.container_formulario = ttk.Frame(self, padding=(10, 10))
         self.container_formulario.place(anchor='center', relx=0.5, rely=0.5)
 
         for c in range(self.numero_colunas_formulario):
@@ -39,10 +37,10 @@ class TelaFormularioBase(TelaBase):
     
     def criar_campos_formulario(self):
         ### Botões Confirmar e Cancelar
-        self.btn_confirmar = tk.Button(self.container_formulario, text="Confirmar", bg=constants.cores['verde'], command=self.onConfirmar)
+        self.btn_confirmar = ttk.Button(self.container_formulario, text="Confirmar", command=self.onConfirmar, bootstyle="success")
         self.btn_confirmar.grid(row=60, column=0, sticky='nswe', pady=(10,0))
 
-        self.btn_cancelar = tk.Button(self.container_formulario, text="Cancelar", bg=constants.cores['vermelho'], command=self.onCancelar)
+        self.btn_cancelar = ttk.Button(self.container_formulario, text="Cancelar", command=self.onCancelar, bootstyle="danger")
         self.btn_cancelar.grid(row=60, column=2, columnspan=10, sticky='nswe', pady=(10,0))
 
     def ir_para_tela_de_listagem(self):
@@ -51,14 +49,14 @@ class TelaFormularioBase(TelaBase):
     def get_campos_formulario(self, frame):
         """Retorna todos os widgets interativos de um frame (preenchíveis pelo usuário)."""
         tipos = (
-            tk.Entry, ttk.Entry,
-            tk.Text,
-            tk.Spinbox, ttk.Spinbox,
+            ttk.Entry,
+            ttk.Text,
+            ttk.Spinbox,
             ttk.Combobox,
-            tk.Checkbutton, ttk.Checkbutton,
-            tk.Radiobutton, ttk.Radiobutton,
-            tk.Scale, ttk.Scale,
-            tk.OptionMenu, ttk.OptionMenu,
+            ttk.Checkbutton,
+            ttk.Radiobutton,
+            ttk.Scale,
+            ttk.OptionMenu,
         )
 
         campos = []
@@ -71,16 +69,17 @@ class TelaFormularioBase(TelaBase):
     
     def limpar_campos(self):
         """Limpa todos os campos preenchíveis do formulário"""
+        import tkinter as tk
 
         self.flag_editar = False
         
         for campo in self.get_campos_formulario(self.container_formulario):
             # Entry e ttk.Entry
-            if isinstance(campo, (tk.Entry, ttk.Entry)):
+            if isinstance(campo, ttk.Entry):
                 campo.delete(0, tk.END)
 
             # Text (multilinha)
-            elif isinstance(campo, tk.Text):
+            elif isinstance(campo, ttk.Text):
                 campo.delete("1.0", tk.END)
 
             # Combobox
@@ -88,7 +87,7 @@ class TelaFormularioBase(TelaBase):
                 campo.set('')
 
             # Spinbox
-            elif isinstance(campo, (tk.Spinbox, ttk.Spinbox)):
+            elif isinstance(campo, ttk.Spinbox):
                 try:
                     campo.delete(0, tk.END)
                     campo.insert(0, campo.cget("from"))  # opcional: volta pro valor mínimo
@@ -96,23 +95,23 @@ class TelaFormularioBase(TelaBase):
                     campo.delete(0, tk.END)
 
             # Checkbutton
-            elif isinstance(campo, (tk.Checkbutton, ttk.Checkbutton)):
+            elif isinstance(campo, ttk.Checkbutton):
                 var = campo.cget('variable')
                 if var:
                     campo._root().setvar(var, 0)
 
             # Radiobutton
-            elif isinstance(campo, (tk.Radiobutton, ttk.Radiobutton)):
+            elif isinstance(campo, ttk.Radiobutton):
                 var = campo.cget('variable')
                 if var:
                     campo._root().setvar(var, '')
 
             # Scale
-            elif isinstance(campo, (tk.Scale, ttk.Scale)):
+            elif isinstance(campo, ttk.Scale):
                 campo.set(campo.cget('from'))
 
             # OptionMenu
-            elif isinstance(campo, (tk.OptionMenu, ttk.OptionMenu)):
+            elif isinstance(campo, ttk.OptionMenu):
                 var = campo.cget('textvariable')
                 if var:
                     campo._root().setvar(var, '')
