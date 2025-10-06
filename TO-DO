@@ -1,16 +1,11 @@
 1. 
 Tarefa: tela de movimentações
-Situação: a fazer
-
-2.
-Tarefa: deixar o fluxo de "esqueceu a senha" em um 
-único toplevel
-Situação: CONCLUÍDO
+Situação: falta adicionar os campos para inserir os itens movimentados
 
 3.
 Tarefa: definir dinamicamente a geometria (largura, altura) 
 da janela ao abrir a aplicação
-Situação: FEITO (dá pra melhorar)
+Situação: FEITO (dá pra melhorar [a dimensão dos widgets não está mudando])
 
 4.
 Tarefa: esconder o menu de ações (Adicionar, Editar e Excluir) 
