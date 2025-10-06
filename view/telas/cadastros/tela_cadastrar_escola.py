@@ -111,7 +111,9 @@ class TelaCadastrarEscola(TelaFormularioBase):
         self.ir_para_tela_de_listagem()
     
     def preencher_campos_endereco(self, endereco_id):
-        endereco = self.controle_endereco.buscar_endereco_por_id(endereco_id)
+        resposta = self.controle_endereco.buscar_endereco_por_id(endereco_id)
+
+        endereco = resposta.retorno
         self.ent_logradouro.delete(0, 'end')
         self.ent_logradouro.insert(0, endereco['logradouro'])
         self.ent_numero.delete(0, 'end')
