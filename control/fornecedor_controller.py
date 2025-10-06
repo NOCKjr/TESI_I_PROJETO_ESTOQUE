@@ -20,7 +20,7 @@ class FornecedorController(ControllerBase):
         self.funcao_inserir_item = self.inserir_fornecedor
         self.funcao_listar_item = self.listar_fornecedor
         # self.funcao_buscar_item = self.buscar_fornecedor
-        # self.funcao_buscar_item_por_id = self.buscar_fornecedor_por_id
+        self.funcao_buscar_item_por_id = self.buscar_fornecedor_por_id
         self.funcao_excluir_item = self.excluir_fornecedor
         self.funcao_atualizar_item = self.atualizar_fornecedor
         # self.funcao_to_dict = self.to_dict_fornecedor
@@ -37,6 +37,27 @@ class FornecedorController(ControllerBase):
         if not resp.ok():
             return resp
         resp.retorno = [self.to_dict(f) for f in resp.retorno]
+        return resp
+
+    def buscar_fornecedor_por_id(self, id: int) -> ResponseQuery:
+        """
+        Busca um fornecedor pelo ID.
+
+        Args:
+            id (int): ID do fornecedor.
+
+        Returns:
+            ResponseQuery:
+                - `retorno`: fornecedor como dicionário.
+                - `erros`: lista de erros em caso de falha.
+        """
+        sql = f"SELECT * FROM fornecedor WHERE for_id = {id};"
+        resp = self.model.get(sql)
+        if not resp.ok():
+            return resp
+        if not resp.retorno:
+            return ResponseQuery(erros=[f"Fornecedor com ID {id} não encontrado."])
+        resp.retorno = self.to_dict(resp.retorno[0])
         return resp
 
     def excluir_fornecedor(self, id: int) -> ResponseQuery:

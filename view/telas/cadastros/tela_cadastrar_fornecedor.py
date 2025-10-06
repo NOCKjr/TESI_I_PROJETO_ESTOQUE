@@ -37,9 +37,10 @@ class TelaCadastrarFornecedor(TelaFormularioBase):
 
     def editar_fornecedor(self, fornecedor):
         self.ent_razao_social.delete(0, 'end')
-        self.ent_razao_social.insert(0, fornecedor['razao-social'])
+        self.ent_razao_social.insert(0, fornecedor['razao_social']) 
         self.ent_telefone_contato.delete(0, 'end')
         self.ent_telefone_contato.insert(0, fornecedor['contato'])
+
         self.id_para_edicao = fornecedor['id']
         self.flag_editar = True
 
