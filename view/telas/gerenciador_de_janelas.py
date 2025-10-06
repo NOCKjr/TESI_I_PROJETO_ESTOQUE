@@ -9,6 +9,7 @@ class GerenciadorDeJanelasBase(ttk.Frame, abc.ABC):
     def __init__(self, master):
         super().__init__(master)
         self.tela_atual = None
+        self.usuario_logado = None
 
         ### Menu superior de navegação
         self.container_menu = ttk.Frame(self)

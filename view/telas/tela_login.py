@@ -69,8 +69,10 @@ class TelaLogin(TelaBase):
 
     
     def onContinuar(self):
+        usuario = self.autenticar_login()
 
-        if self.autenticar_login():
+        if usuario:
+            self.gerenciador_de_janelas.usuario_logado = usuario
             self.gerenciador_de_janelas.alterar_para_a_tela(constants.TELA_MENU_PRINCIPAL)
             self.limpar_campos()
         else:
@@ -81,11 +83,10 @@ class TelaLogin(TelaBase):
         self.ent_senha.delete(0, 'end')
     
     def autenticar_login(self):
-        login = self.ent_usuario.get()
-        senha = self.ent_senha.get()
+        login, senha = self.ent_usuario.get(), self.ent_senha.get()
 
         if login == '' or senha == '':
-            return False
+            return None
 
         # Conferir se o login existe
         resp = self.controle_usuarios.buscar_usuario(login)
@@ -94,7 +95,7 @@ class TelaLogin(TelaBase):
         # Usuário não encontrado
         if not usuario:
             # Messagebox.show_info("Usuário não encontrado.", title="Quem é você?")
-            return False
+            return None
         
         # Criptografa a senha digitada pelo usuário 
         hash = hashlib.sha256(senha.encode('utf-8')).hexdigest()
@@ -102,10 +103,10 @@ class TelaLogin(TelaBase):
         # A senha é diferente da encontrada no banco de dados
         if hash != usuario["senha"]:
             # Messagebox.show_info("Senha incorreta", title="Senha incorreta")
-            return False
+            return None
 
         # Login válido
-        return True
+        return usuario
     
     def redefinir_senha(self, event):
         root = self.gerenciador_de_janelas.master

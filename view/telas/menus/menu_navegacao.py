@@ -14,10 +14,10 @@ class MenuNavegacao(ttk.Frame):
         # Dicionário de abas
         self.abas = {
             "Movimentações": constants.TELA_LISTAGEM_MOVIMENTACOES,
-            "Usuários": constants.TELA_LISTAGEM_USUARIOS,
             "Escolas": constants.TELA_LISTAGEM_ESCOLAS,
             "Fornecedores": constants.TELA_LISTAGEM_FORNECEDORES,
             "Insumos": constants.TELA_LISTAGEM_INSUMOS,
+            "Usuários": constants.TELA_LISTAGEM_USUARIOS,
             "Sair": constants.TELA_LOGIN
         }
 
@@ -39,6 +39,11 @@ class MenuNavegacao(ttk.Frame):
         self.gerenciador_de_janelas.alterar_para_a_tela(self.aba_atual)
     
     def exibir(self):
+        usuario = getattr(self.gerenciador_de_janelas, 'usuario_logado', None)
+        if usuario and usuario.get('tipo') != 'A':
+            self.botoes['Usuários'].pack_forget()
+        else:
+            self.botoes['Usuários'].pack(side='left', padx=1, pady=2)
         self.pack(side='top', fill='x')
     
     def esconder(self):

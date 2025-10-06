@@ -25,6 +25,9 @@ class MenuPainelDeOpcoesCRUD(tk.Frame):
     
     def mostrar(self):
         self.pack(side='bottom')
+    
+    def esconder(self):
+        self.pack_forget()
 
     def adicionar(self):
         self.tela_associada.adicionar()
