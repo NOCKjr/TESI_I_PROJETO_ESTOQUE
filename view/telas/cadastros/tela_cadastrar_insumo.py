@@ -74,7 +74,7 @@ class TelaCadastrarInsumo(TelaFormularioBase):
         nome = self.ent_nome.get()
         media_consumo = self.ent_media_consumo.get()
                 # Rótulos para os valores na coluna de medida
-        unidade_medida = self.rotulos_de_medidas.index(self.cmb_unidade_medida.get()) + 1
+        unidade_medida_id = self.rotulos_de_medidas.index(self.cmb_unidade_medida.get()) + 1
         estoque = self.ent_estoque.get()
         
-        return (nome, media_consumo, estoque, unidade_medida)
+        return (nome, media_consumo, estoque, unidade_medida_id)

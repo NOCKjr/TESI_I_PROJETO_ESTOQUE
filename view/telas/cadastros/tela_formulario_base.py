@@ -34,9 +34,6 @@ class TelaFormularioBase(TelaBase):
         self.container_formulario = tk.Frame(self, bg=constants.cores['cinza'], padx=10, pady=10)
         self.container_formulario.place(anchor='center', relx=0.5, rely=0.5)
 
-        # /--- Inserir campos do formulário aqui ---/
-        self.criar_campos_formulario()
-
         for c in range(self.numero_colunas_formulario):
             self.container_formulario.columnconfigure(c, minsize=10)
     
