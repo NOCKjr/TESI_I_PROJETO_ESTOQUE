@@ -22,7 +22,7 @@ class InsumoController(ControllerBase):
         self.funcao_inserir_item = self.inserir_insumo
         self.funcao_listar_item = self.listar_insumo
         # self.funcao_buscar_item = self.buscar_insumo
-        # self.funcao_buscar_item_por_id = self.buscar_insumo_por_id
+        self.funcao_buscar_item_por_id = self.buscar_insumo_por_id
         self.funcao_excluir_item = self.excluir_insumo
         self.funcao_atualizar_item = self.atualizar_insumo
         # self.funcao_to_dict = self.to_dict_insumo
@@ -42,6 +42,27 @@ class InsumoController(ControllerBase):
         if not resp.ok():
             return resp
         resp.retorno = [self.to_dict(i) for i in resp.retorno]
+        return resp
+
+    def buscar_insumo_por_id(self, id: int) -> ResponseQuery:
+        """
+        Busca um insumo pelo ID.
+
+        Args:
+            id (int): ID do insumo.
+
+        Returns:
+            ResponseQuery:
+                - `retorno`: insumo como dicionário.
+                - `erros`: lista de erros em caso de falha.
+        """
+        sql = f"SELECT * FROM insumo WHERE ins_id = {id};"
+        resp = self.model.get(sql)
+        if not resp.ok():
+            return resp
+        if not resp.retorno:
+            return ResponseQuery(erros=[f"Insumo com ID {id} não encontrado."])
+        resp.retorno = self.to_dict(resp.retorno[0])
         return resp
 
     def excluir_insumo(self, id: int) -> ResponseQuery:

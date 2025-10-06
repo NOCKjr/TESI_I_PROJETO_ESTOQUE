@@ -21,7 +21,6 @@ class MenuPainelDeOpcoesCRUD(tk.Frame):
         # Excluir
         self.btn_excluir = tk.Button(self.container_acoes, text="Excluir", bg=constants.cores['secundario'], state='disabled', command=self.excluir)
         self.btn_excluir.pack(side='left')
-
     
     def mostrar(self):
         self.pack(side='bottom')

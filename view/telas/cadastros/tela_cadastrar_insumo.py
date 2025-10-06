@@ -61,11 +61,19 @@ class TelaCadastrarInsumo(TelaFormularioBase):
         self.ent_nome.delete(0, 'end')
         self.ent_nome.insert(0, insumo['nome'])
         self.ent_media_consumo.delete(0, 'end')
-        self.ent_media_consumo.insert(0, insumo['media-consumo'])
+        self.ent_media_consumo.insert(0, insumo['media_consumida'])
         self.ent_estoque.delete(0, 'end')
-        self.ent_estoque.insert(0, insumo['estoque'])
-        self.cmb_unidade_medida.delete(0, 'end')
-        self.cmb_unidade_medida.insert(0, insumo['medida'])
+        self.ent_estoque.insert(0, insumo['quantidade_estoque'])  # Fixed: use 'quantidade_estoque' instead of 'estoque'
+        
+        # Get the medida unit name from the medida_id
+        medida_id = insumo['medida_id']
+        # Find the corresponding unit in the dropdown list
+        medidas = self.controle_medidas.listar().retorno
+        for medida in medidas:
+            if medida['id'] == medida_id:
+                self.cmb_unidade_medida.set(medida['unidade'])
+                break
+        
         self.id_para_edicao = insumo['id']
         self.flag_editar = True
     
