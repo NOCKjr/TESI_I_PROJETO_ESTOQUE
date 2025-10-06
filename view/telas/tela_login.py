@@ -1,13 +1,12 @@
 
 from ttkbootstrap.dialogs import Messagebox
-import tkinter as tk
 import constants
 import hashlib
 import smtplib
 import random
 from email.mime.text import MIMEText
 
-from tkinter import ttk
+import ttkbootstrap as ttk
 from view.telas.tela_base import TelaBase
 from view.telas.gerenciador_de_janelas import GerenciadorDeJanelasBase
 from control.usuario_controller import UsuarioController
@@ -111,7 +110,7 @@ class TelaLogin(TelaBase):
     
     def redefinir_senha(self, event):
         root = self.gerenciador_de_janelas.master
-        janela = tk.Toplevel(root)
+        janela = ttk.Toplevel(root)
         janela.title("Redefinir Senha")
         janela.geometry("300x150")
 
