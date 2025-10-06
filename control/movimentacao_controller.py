@@ -23,7 +23,7 @@ class MovimentacaoController(ControllerBase):
         self.funcao_inserir_item = self.inserir_movimentacao
         self.funcao_listar_item = self.listar_movimentacao
         # self.funcao_buscar_item = self.buscar_movimentacao
-        # self.funcao_buscar_item_por_id = self.buscar_movimentacao_por_id
+        self.funcao_buscar_item_por_id = self.buscar_movimentacao_por_id
         self.funcao_excluir_item = self.excluir_movimentacao
         self.funcao_atualizar_item = self.atualizar_movimentacao
         # self.funcao_to_dict = self.to_dict_movimentacao
@@ -71,6 +71,27 @@ class MovimentacaoController(ControllerBase):
         if not resp.ok():
             return resp
         resp.retorno = [self.to_dict(m) for m in resp.retorno]
+        return resp
+
+    def buscar_movimentacao_por_id(self, id: int) -> ResponseQuery:
+        """
+        Busca uma movimentação pelo ID.
+
+        Args:
+            id (int): ID da movimentação.
+
+        Returns:
+            ResponseQuery:
+                - `retorno`: movimentação como dicionário.
+                - `erros`: lista de erros em caso de falha.
+        """
+        sql = f"SELECT * FROM movimentacao WHERE mov_id = {id};"
+        resp = self.model.get(sql)
+        if not resp.ok():
+            return resp
+        if not resp.retorno:
+            return ResponseQuery(erros=[f"Movimentação com ID {id} não encontrada."])
+        resp.retorno = self.to_dict(resp.retorno[0])
         return resp
 
     def listar_movimentacao_por_fornecedor(self, fornecedor_id: int) -> ResponseQuery:
