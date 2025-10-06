@@ -105,15 +105,37 @@ class TelaListagemBase(TelaBase):
     
     def desabilitar_botao_de_excluir(self):
         self.painel_de_acoes.btn_excluir.config(state='disabled')
+    
+    def esconder_botao_de_editar(self):
+        self.painel_de_acoes.btn_editar.pack_forget()
+    
+    def mostrar_botao_de_editar(self):
+        self.painel_de_acoes.btn_editar.pack(side='left')
+    
+    def esconder_botao_de_excluir(self):
+        self.painel_de_acoes.btn_excluir.pack_forget()
+
+    def mostrar_botao_de_excluir(self):
+        self.painel_de_acoes.btn_excluir.pack(side='left')
 
     def mostrar(self):
         # Atualiza os dados
         self.atualizar_listagem()
         usuario = getattr(self.gerenciador_de_janelas, 'usuario_logado', None)
+
         if usuario and usuario.get('tipo') != 'A':
-            self.painel_de_acoes.esconder()
+            if self.tipo_entidade == constants.ENTIDADE_MOVIMENTACAO:
+                self.painel_de_acoes.mostrar()
+                self.esconder_botao_de_editar()
+                self.esconder_botao_de_excluir()
+            else:
+                self.painel_de_acoes.esconder()
         else:
             self.painel_de_acoes.mostrar()
+
+            if self.tipo_entidade == constants.ENTIDADE_MOVIMENTACAO:
+                self.mostrar_botao_de_editar()
+                self.mostrar_botao_de_excluir()
 
         # Mostra o componente na tela
         self.pack(expand=True, fill='both', anchor='center')
