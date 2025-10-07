@@ -94,10 +94,9 @@ class TelaListagemBase(TelaBase):
 
     def item_selecionado(self, event):
         selecao = self.tvw_tabela.selection()
-        usuario = getattr(self.gerenciador_de_janelas, 'usuario_logado', None)
 
         # Só edita/exclui se houver apenas uma opção selecionada
-        if len(selecao) == 1 and usuario and usuario.get('tipo') == 'A':
+        if len(selecao) == 1 and get_context().usuario_logado.get('tipo') == 'A':
             self.habilitar_botao_de_editar()
             self.habilitar_botao_de_excluir()
         else:
