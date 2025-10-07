@@ -167,7 +167,7 @@ class TelaListagemBase(TelaBase):
 
         for item in tuplas:
             # Obtém os valores das colunas correspondentes
-            value = self.dict_to_tuple(item)
+            value = tuple(v if v is not None else '-' for v in self.dict_to_tuple(item))
             self.tvw_tabela.insert('', 'end', values=value)
         
         # Ajusta largura das colunas automaticamente
