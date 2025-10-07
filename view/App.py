@@ -77,34 +77,24 @@ class App(GerenciadorDeJanelasBase):
 
     def aplicar_escala(self):
         """Aplica o fator de escala atual à interface."""
+        get_context().atualizar_fonte(self.escala)
+
         style = ttk.Style()
-        style.configure('.', font=('Arial', max(int(12 * self.escala), 1)))
 
         # --- Logo ---
-        style.configure('Logo.TLabel', font=('Arial', max(int(24 * self.escala), 1), 'bold'))
+        style.configure('Logo.TLabel', font=('Arial', max(int(20 * self.escala), 1), 'bold'))
+        style.configure('.', font=('Arial', max(int(12 * self.escala), 1)))
 
         # --- Treeview ---
         base_rowheight = 20
         nova_altura = int(base_rowheight * self.escala)
-
-        style.configure(
-            'Listagem.Treeview',
-            font=('Calibri', int(11 * self.escala)),
-            background='#ecf0f1',
-            fieldbackground='#bdc3c7',
-            foreground='black'
-        )
-        style.map(
-            'Listagem.Treeview',
-            background=[('selected', '#3498db')],
-            foreground=[('selected', 'white')]
-        )
-
-        # Atualiza o contexto global (fonte, etc.)
-        get_context().atualizar_fonte(self.escala)
-
-        # Notifica todas as telas com treeviews
         self._atualizar_treeviews_em_todas_as_telas(nova_altura)
+
+        # Atualiza widgets Entry, Label, Combobox etc em todas as telas
+        for tela in self.telas.values():
+            if hasattr(tela, 'atualizar_fonte_widgets'):
+                tela.atualizar_fonte_widgets(self.escala)
+
 
     def aumentar_escala(self, event=None):
         self.escala = min(round(self.escala + 0.1, 1), 1.5)

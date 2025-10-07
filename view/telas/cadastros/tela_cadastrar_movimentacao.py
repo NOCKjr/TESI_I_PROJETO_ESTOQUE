@@ -123,14 +123,12 @@ class TelaCadastrarMovimentacao(TelaFormularioBase):
         """Abre uma janelinha para escolher o insumo e quantidade"""
         janela = ttk.Toplevel(self)
         janela.title("Adicionar item")
-        # janela.geometry("300x150")
 
-        def impede_interacao(): 
-            janela.update_idletasks() # Garante que a janela seja desenhada
-            janela.grab_set() # Bloqueia interações com outras janelas
-            janela.focus_set()
-        
-        impede_interacao()
+        # Tornar modal / sempre à frente da janela principal
+        janela.update_idletasks() # Garante que a janela seja desenhada
+        janela.transient(self.winfo_toplevel()) # Deixa sempre em cima da janela principal
+        janela.grab_set()
+        janela.lift() # Posiciona à frente de todas as janelas
 
         ttk.Label(janela, text="Insumo:").pack(pady=5)
         cmb_insumo = ttk.Combobox(

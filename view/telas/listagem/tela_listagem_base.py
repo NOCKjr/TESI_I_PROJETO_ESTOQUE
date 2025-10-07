@@ -1,8 +1,9 @@
 import ttkbootstrap as ttk
-from ttkbootstrap.dialogs import Messagebox
-from app_context import get_context
+import tkinter as tk
 import constants
 
+from app_context import get_context
+from ttkbootstrap.dialogs import Messagebox
 from control.controller_base import ControllerBase
 from view.telas.gerenciador_de_janelas import GerenciadorDeJanelasBase
 from view.telas.menus.menu_painel_de_opcoes_crud import MenuPainelDeOpcoesCRUD
@@ -215,27 +216,3 @@ class TelaListagemBase(TelaBase):
                     Messagebox.show_error(title="Erro", 
                                          message=f"Erro ao excluir {(lambda e: f'{e[0]} {e[1]}')(self.get_descricao_entidade())}!\n" +
                                          "{}".format("\n".join(resp.erros)))
-
-    def find_treeviews(self, widget):
-        """Gera todos os ttk.Treeview filhos (recursivo)."""
-        for child in widget.winfo_children():
-            if isinstance(child, ttk.Treeview):
-                yield child
-            yield from self.find_treeviews(child)
-    
-    def atualizar_altura_treeviews(self, nova_altura: int):
-        """Ajusta a altura dos Treeviews."""
-        style = ttk.Style()
-        for tv in self.find_treeviews(self):
-            style_name = tv.cget('style') or 'Treeview'
-
-            style.configure(style_name, rowheight=nova_altura,
-                            font=('Calibri', max(int(11 * get_context().escala), 1)))
-
-            # try:
-            #     tv.tk.call('ttk::style', 'configure', style_name, '-rowheight', nova_altura)
-            # except Exception:
-            #     pass
-
-            # garante recalcular geometria e redesenhar
-            tv.update_idletasks()
