@@ -16,6 +16,7 @@ class TelaBase(ttk.Frame):
     def mostrar(self):
         """Exibe a tela"""
         self.pack(expand=True, fill='both', anchor='center')
+        self.focus_set()
     
     def esconder(self):
         """Esconde a tela"""
@@ -24,15 +25,6 @@ class TelaBase(ttk.Frame):
     def alterar_para_a_tela(self, proxima_tela):
         """Chama o gerenciador de janelas para alterar entre janelas"""
         self.gerenciador_de_janelas.alterar_para_a_tela(proxima_tela)
-    
-    # def atualizar_fonte_widgets(self, nova_escala):
-    #     """
-    #     Atualiza a fonte de todos os Entry, Label, Combobox e Button
-    #     com base na nova escala fornecida.
-    #     """
-    #     nova_fonte = ('Arial', max(int(12 * nova_escala), 1))
-    #     for child in self.winfo_children():
-    #         self._atualizar_fonte_recursivo(child, nova_fonte)
 
     def atualizar_fonte_widgets(self, nova_escala):
         """Atualiza a fonte de todos os Entry, Label, Combobox e Button."""
