@@ -1,5 +1,6 @@
 
 from ttkbootstrap.dialogs import Messagebox
+from app_context import get_context
 import constants
 import hashlib
 import smtplib
@@ -24,11 +25,27 @@ class TelaLogin(TelaBase):
         self.container_visual = ttk.Frame(self, padding=(30, 20))
         self.container_visual.place(anchor='center', relx=0.5, rely=0.45)
 
-        ### Logo (centralizado automaticamente com pack)
+        # Estilos
+        style = ttk.Style()
+        style.configure('Logo.TLabel', font=('Arial', 24, 'bold'))
+        # style.configure('TEntry',
+        #         font=('Arial', 12),
+        #         fieldbackground='white',
+        #         foreground='black',
+        #         padding=5)
+        
+        ctx = get_context()
+        style.configure("TEntry",
+                        font=ctx.entry_font,
+                        fieldbackground='white',
+                        foreground='black',
+                        padding=5)
+        
+        ### Logo
         self.lbl_sigeme = ttk.Label(
             self.container_visual,
             text='SIGEME',
-            font=("Arial", 24, "bold")
+            style='Logo.TLabel'
         )
         self.lbl_sigeme.pack(pady=10)
 
@@ -41,7 +58,7 @@ class TelaLogin(TelaBase):
         self.container_usuario.pack(pady=5, fill='x')
         self.lbl_usuario = ttk.Label(self.container_usuario, text='Usuário:')
         self.lbl_usuario.pack(anchor='w')
-        self.ent_usuario = ttk.Entry(self.container_usuario)
+        self.ent_usuario = ttk.Entry(self.container_usuario, style='TEntry')
         self.ent_usuario.pack(fill='x')
 
         ### Campo senha
@@ -49,7 +66,7 @@ class TelaLogin(TelaBase):
         self.container_senha.pack(pady=5, fill='x')
         self.lbl_senha = ttk.Label(self.container_senha, text='Senha:')
         self.lbl_senha.pack(anchor='w')
-        self.ent_senha = ttk.Entry(self.container_senha, show='*')
+        self.ent_senha = ttk.Entry(self.container_senha, show='*', style='TEntry')
         self.ent_senha.pack(fill='x')
         self.ent_senha.bind('<Return>', lambda event: self.onContinuar())
 
@@ -73,6 +90,7 @@ class TelaLogin(TelaBase):
         usuario = self.autenticar_login()
 
         if usuario:
+            get_context().usuario_logado = usuario
             self.gerenciador_de_janelas.usuario_logado = usuario
             self.gerenciador_de_janelas.alterar_para_a_tela(constants.TELA_MENU_PRINCIPAL)
             self.limpar_campos()
@@ -83,7 +101,7 @@ class TelaLogin(TelaBase):
         self.ent_usuario.delete(0, 'end')
         self.ent_senha.delete(0, 'end')
     
-    def autenticar_login(self):
+    def autenticar_login(self) -> dict | None:
         login, senha = self.ent_usuario.get(), self.ent_senha.get()
 
         if login == '' or senha == '':

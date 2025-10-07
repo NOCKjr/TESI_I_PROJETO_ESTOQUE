@@ -1,5 +1,6 @@
 import tkinter as tk
 import ttkbootstrap as ttk
+from app_context import get_context
 import constants
 from view.App import App
 from model import init_db
@@ -13,7 +14,7 @@ def configurar_janela(root: tk.Tk):
     altura_tela = root.winfo_screenheight()
 
     # Define a proporção desejada
-    proporcao = 0.8
+    proporcao = get_context().proporcao
     largura_janela = int(largura_tela * proporcao)
     altura_janela = int(altura_tela * proporcao)
 

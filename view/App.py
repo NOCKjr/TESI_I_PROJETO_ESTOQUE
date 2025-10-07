@@ -1,4 +1,5 @@
 import ttkbootstrap as ttk
+from app_context import get_context
 import constants
 
 from view.telas.cadastros.tela_cadastrar_movimentacao import TelaCadastrarMovimentacao
@@ -57,12 +58,13 @@ class App(GerenciadorDeJanelasBase):
         }
 
         # Escala inicial
-        self.escala = 1.0
+        self.escala = get_context().escala
+        self.aplicar_escala()
 
         # Bind dos atalhos
         self.bind_all("<Control-plus>", self.aumentar_escala)
         self.bind_all("<Control-minus>", self.diminuir_escala)
-        self.bind_all("<Control-equal>", self.aumentar_escala) # Código da tecla '=' deve funcionar em windows e linux agora (não funcionou no windows)
+        self.bind_all("<Control-equal>", self.aumentar_escala)
         
         # Inicia na tela de login
         self.alterar_para_a_tela(constants.TELA_LOGIN)
@@ -72,25 +74,61 @@ class App(GerenciadorDeJanelasBase):
         # self.alterar_para_a_tela(constants.TELA_CADASTRAR_INSUMO)
         # self.alterar_para_a_tela(constants.TELA_MENU_CADASTROS)
         # self.alterar_para_a_tela(constants.TELA_CONSULTAS)
-    
+
     def aplicar_escala(self):
         """Aplica o fator de escala atual à interface."""
         style = ttk.Style()
-        style.configure('.', font=('Arial', int(12 * self.escala)))
+        style.configure('.', font=('Arial', max(int(12 * self.escala), 1)))
+
+        # --- Logo ---
+        style.configure('Logo.TLabel', font=('Arial', max(int(24 * self.escala), 1), 'bold'))
+
+        # --- Treeview ---
+        base_rowheight = 20
+        nova_altura = int(base_rowheight * self.escala)
+
+        style.configure(
+            'Listagem.Treeview',
+            font=('Calibri', int(11 * self.escala)),
+            background='#ecf0f1',
+            fieldbackground='#bdc3c7',
+            foreground='black'
+        )
+        style.map(
+            'Listagem.Treeview',
+            background=[('selected', '#3498db')],
+            foreground=[('selected', 'white')]
+        )
+
+        # Atualiza o contexto global (fonte, etc.)
+        get_context().atualizar_fonte(self.escala)
+
+        # Notifica todas as telas com treeviews
+        self._atualizar_treeviews_em_todas_as_telas(nova_altura)
 
     def aumentar_escala(self, event=None):
-        self.escala = min(round(self.escala + 0.1, 1), 2.0)
+        self.escala = min(round(self.escala + 0.1, 1), 1.5)
+        get_context().atualizar_fonte(self.escala)
         self.aplicar_escala()
 
     def diminuir_escala(self, event=None):
         self.escala = max(round(self.escala - 0.1, 1), 0.75)
+        get_context().atualizar_fonte(self.escala)
         self.aplicar_escala()
+    
+    def _atualizar_treeviews_em_todas_as_telas(self, nova_altura: int):
+        """Chama o método de ajuste em cada tela registrada."""
+        for tela in self.telas.values():
+            if hasattr(tela, "atualizar_altura_treeviews"):
+                tela.atualizar_altura_treeviews(nova_altura)
 
     def get_tela(self, nome_tela: str):
+        """Retorna a instância da tela com o nome fornecido"""
         if nome_tela in self.telas:
             return self.telas[nome_tela]
     
     def editar(self, item, tipo_entidade):
+        """Abre a tela de edição para o `item` do `tipo_de_entidade` fornecido"""
         match tipo_entidade:
             case constants.ENTIDADE_USUARIO:
                 self.editar_usuario(item)

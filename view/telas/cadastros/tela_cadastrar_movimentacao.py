@@ -1,5 +1,6 @@
 from ttkbootstrap.dialogs import Messagebox
 import ttkbootstrap as ttk
+from app_context import get_context
 import constants
 from control.item_controller import ItemController
 import utils
@@ -122,12 +123,20 @@ class TelaCadastrarMovimentacao(TelaFormularioBase):
         """Abre uma janelinha para escolher o insumo e quantidade"""
         janela = ttk.Toplevel(self)
         janela.title("Adicionar item")
-        janela.geometry("300x150")
+        # janela.geometry("300x150")
+
+        def impede_interacao(): 
+            janela.update_idletasks() # Garante que a janela seja desenhada
+            janela.grab_set() # Bloqueia interações com outras janelas
+            janela.focus_set()
+        
+        impede_interacao()
 
         ttk.Label(janela, text="Insumo:").pack(pady=5)
         cmb_insumo = ttk.Combobox(
             janela, 
-            values=self.lista_insumos
+            values=self.lista_insumos,
+            state="readonly"
         )
         cmb_insumo.pack(fill='x', padx=10)
 
@@ -221,7 +230,8 @@ class TelaCadastrarMovimentacao(TelaFormularioBase):
         """Captura os valores dos campos"""
         data = self.ent_data.get_date()
         tipo = self.cmb_tipo_movimentacao.get()[0] if self.cmb_tipo_movimentacao.get() else ""
-        responsavel_id = None # <- alterar para pegar o id do usuário que está logado
+        usuario = get_context().usuario_logado
+        responsavel_id = usuario['id'] if usuario else None
 
         fornecedor_id = None
         escola_id = None

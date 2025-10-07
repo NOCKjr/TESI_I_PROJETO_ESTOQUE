@@ -1,5 +1,6 @@
 import ttkbootstrap as ttk
 from ttkbootstrap.dialogs import Messagebox
+from app_context import get_context
 import constants
 
 from control.controller_base import ControllerBase
@@ -29,6 +30,10 @@ class TelaListagemBase(TelaBase):
 
         # Criar e exibir a listagem de usuários
         self.criar_listagem(larguras_colunas)
+    
+    def criar_estilos(self):
+        style = ttk.Style()
+        pass
     
     def get_descricao_entidade(self):
         match self.tipo_entidade:
@@ -65,7 +70,12 @@ class TelaListagemBase(TelaBase):
                 Se None, usa larguras padrão.
         """
         self.tvw_tabela = ttk.Treeview(
-            self, height=self.linhas_treeview, columns=self.cabecalho, show='headings', bootstyle="dark"
+            self, 
+            height=self.linhas_treeview, 
+            columns=self.cabecalho, 
+            show='headings', 
+            bootstyle="dark",
+            # style='Treeview',
         )
 
         for idx, coluna in enumerate(self.cabecalho):
@@ -205,3 +215,27 @@ class TelaListagemBase(TelaBase):
                     Messagebox.show_error(title="Erro", 
                                          message=f"Erro ao excluir {(lambda e: f'{e[0]} {e[1]}')(self.get_descricao_entidade())}!\n" +
                                          "{}".format("\n".join(resp.erros)))
+
+    def find_treeviews(self, widget):
+        """Gera todos os ttk.Treeview filhos (recursivo)."""
+        for child in widget.winfo_children():
+            if isinstance(child, ttk.Treeview):
+                yield child
+            yield from self.find_treeviews(child)
+    
+    def atualizar_altura_treeviews(self, nova_altura: int):
+        """Ajusta a altura dos Treeviews."""
+        style = ttk.Style()
+        for tv in self.find_treeviews(self):
+            style_name = tv.cget('style') or 'Treeview'
+
+            style.configure(style_name, rowheight=nova_altura,
+                            font=('Calibri', max(int(11 * get_context().escala), 1)))
+
+            # try:
+            #     tv.tk.call('ttk::style', 'configure', style_name, '-rowheight', nova_altura)
+            # except Exception:
+            #     pass
+
+            # garante recalcular geometria e redesenhar
+            tv.update_idletasks()
