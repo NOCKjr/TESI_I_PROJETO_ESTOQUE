@@ -1,6 +1,8 @@
 from model.conexao import Conexao
 from sqlite3 import Error, IntegrityError
 
+import utils
+
 class ResponseQuery:
     def __init__(self, retorno=None, erros=None):
         # Retorno esperado da consulta (lista, id, linhas afetadas etc.)
@@ -20,6 +22,7 @@ class ResponseQuery:
 class ModelBase:
     def __init__(self):
         self.con = Conexao()
+        self.DEBUG = False
 
     def get(self, sql) -> ResponseQuery:
         """Faz uma consulta no banco"""
@@ -32,6 +35,7 @@ class ModelBase:
             resp.retorno = resultado
         except Error as er:
             resp.add_erro(str(er))
+        if self.DEBUG: print('Get:'); utils.print_response_query(resp)
         return resp
 
     def insert(self, sql, params=None) -> ResponseQuery:
@@ -49,6 +53,7 @@ class ModelBase:
             con.close()
         except (IntegrityError, Error) as er:
             resp.add_erro(str(er))
+        if self.DEBUG: print('Insert:'); utils.print_response_query(resp)
         return resp
 
     def delete(self, sql) -> ResponseQuery:
@@ -63,6 +68,7 @@ class ModelBase:
             con.close()
         except Error as er:
             resp.add_erro(str(er))
+        if self.DEBUG: print('Delete:'); utils.print_response_query(resp)
         return resp
 
     def update(self, sql) -> ResponseQuery:
@@ -77,4 +83,5 @@ class ModelBase:
             con.close()
         except Error as er:
             resp.add_erro(str(er))
+        if self.DEBUG: print('Update:'); utils.print_response_query(resp)
         return resp

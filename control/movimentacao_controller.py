@@ -70,7 +70,7 @@ class MovimentacaoController(ControllerBase):
                 - `retorno`: lista de movimentações como dicionários.
                 - `erros`: lista de erros em caso de falha.
         """
-        sql = "SELECT * FROM movimentacao ORDER BY mov_data DESC;"
+        sql = "SELECT * FROM movimentacao ORDER BY mov_data DESC, mov_id DESC;"
         resp = self.model.get(sql)
         if not resp.ok():
             return resp
