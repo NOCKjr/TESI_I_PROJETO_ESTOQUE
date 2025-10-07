@@ -1,8 +1,11 @@
+from ttkbootstrap.dialogs import Messagebox
 import ttkbootstrap as ttk
 import constants
+from control.item_controller import ItemController
+import utils
 from control.escola_controller import EscolaController
 from control.fornecedor_controller import FornecedorController
-import utils
+from control.insumo_controller import InsumoController
 
 from control.movimentacao_controller import MovimentacaoController
 from view.telas.gerenciador_de_janelas import GerenciadorDeJanelasBase
@@ -24,20 +27,30 @@ class TelaCadastrarMovimentacao(TelaFormularioBase):
         # Controladores
         self.controle_fornecedores = FornecedorController()
         self.controle_escolas = EscolaController()
+        self.controle_insumos = InsumoController()
+        self.controle_itens = ItemController()
 
         # Dicionários de associação nome → id
         self.map_fornecedor = {}
         self.map_escola = {}
+        self.map_insumo = {}
 
         # Listas de nomes exibidos nos comboboxes
         self.lista_fornecedores = []
         self.lista_escolas = []
+        self.lista_insumos = []
+
+        # Lista interna para armazenar os itens movimentados
+        self.itens: list[dict] = []
 
         self.criar_campos_formulario()
         self._atualizar_listas()
         self._configurar_eventos()
         self._ocultar_campos_iniciais()
 
+    def mostrar(self):
+        self._atualizar_listas()
+        super().mostrar()
 
     def criar_campos_formulario(self):
         super().criar_campos_formulario()
@@ -59,12 +72,6 @@ class TelaCadastrarMovimentacao(TelaFormularioBase):
         self.ent_data = utils.DateEntry(self.container_formulario)
         self.ent_data.grid(row=3, column=20, columnspan=10, sticky='nsew')
 
-        # # Responsável
-        # self.lbl_responsavel = ttk.Label(self.container_formulario, text="Responsável:", anchor='w')
-        # self.lbl_responsavel.grid(row=8, column=0, pady=(10, 0), sticky='nsw')
-        # self.ent_responsavel = ttk.Entry(self.container_formulario)
-        # self.ent_responsavel.grid(row=9, column=0, columnspan=14, sticky='nsew')
-
         # Fornecedor
         self.lbl_fornecedor = ttk.Label(self.container_formulario, text="Fornecedor:", anchor='w')
         self.lbl_fornecedor.grid(row=10, column=0, pady=(10, 0), sticky='nsw')
@@ -85,10 +92,78 @@ class TelaCadastrarMovimentacao(TelaFormularioBase):
         )
         self.cmb_escola.grid(row=13, column=0, columnspan=14, sticky='nsew')
 
+        # --- Itens da movimentação ---
+        self.lbl_itens = ttk.Label(self.container_formulario, text="Itens da movimentação:", anchor='w')
+        self.lbl_itens.grid(row=14, column=0, pady=(10, 0), sticky='nsw')
+
+        # Treeview de itens
+        self.tvw_itens = ttk.Treeview(
+            self.container_formulario,
+            columns=("insumo", "quantidade"),
+            show="headings",
+            height=6
+        )
+        self.tvw_itens.heading("insumo", text="Insumo")
+        self.tvw_itens.heading("quantidade", text="Quantidade")
+        self.tvw_itens.grid(row=15, column=0, columnspan=24, sticky='nsew')
+
+        # Botões
+        frm_botoes = ttk.Frame(self.container_formulario)
+        frm_botoes.grid(row=16, column=0, columnspan=24, pady=5, sticky='w')
+
+        ttk.Button(frm_botoes, text="Adicionar item", command=self._abrir_janela_item).pack(side='left', padx=5)
+        ttk.Button(frm_botoes, text="Remover item", command=self._remover_item).pack(side='left', padx=5)
 
     def _configurar_eventos(self):
         """Associa eventos aos campos"""
         self.cmb_tipo_movimentacao.bind("<<ComboboxSelected>>", self._ao_selecionar_tipo)
+
+    def _abrir_janela_item(self):
+        """Abre uma janelinha para escolher o insumo e quantidade"""
+        janela = ttk.Toplevel(self)
+        janela.title("Adicionar item")
+        janela.geometry("300x150")
+
+        ttk.Label(janela, text="Insumo:").pack(pady=5)
+        cmb_insumo = ttk.Combobox(
+            janela, 
+            values=self.lista_insumos
+        )
+        cmb_insumo.pack(fill='x', padx=10)
+
+        ttk.Label(janela, text="Quantidade:").pack(pady=5)
+        ent_qtd = ttk.Entry(janela)
+        ent_qtd.pack(fill='x', padx=10)
+
+        def confirmar():
+            insumo = cmb_insumo.get()
+            qtd = ent_qtd.get()
+
+            if not insumo or not qtd:
+                Messagebox.show_error(title="Campos vazios!", message="Preencha todos os campos.")
+                return
+
+            item_id = None
+            insumo_id = self.map_insumo[insumo]
+            mov_id = None
+            item = self.controle_itens.to_dict((item_id, qtd, insumo_id, mov_id))
+            
+            self.itens.append(item)
+            self.tvw_itens.insert("", "end", values=(insumo, qtd))
+            janela.destroy()
+
+        ttk.Button(janela, text="Adicionar", command=confirmar).pack(pady=10)
+
+
+    def _remover_item(self):
+        """Remove o item selecionado da lista e da Treeview"""
+        sel = self.tvw_itens.selection()
+        if not sel:
+            return
+        for i in sel:
+            valores = self.tvw_itens.item(i, "values")
+            self.itens = [x for x in self.itens if (x["insumo"], x["quantidade"]) != tuple(valores)]
+            self.tvw_itens.delete(i)
 
 
     def _ocultar_campos_iniciais(self):
@@ -108,10 +183,6 @@ class TelaCadastrarMovimentacao(TelaFormularioBase):
 
         # Esconde tudo antes
         self._ocultar_campos_iniciais()
-
-        # # Mostra "Responsável" sempre
-        # self.lbl_responsavel.grid()
-        # self.ent_responsavel.grid()
 
         if tipo == "Entrada":
             self.lbl_fornecedor.grid()
@@ -139,12 +210,17 @@ class TelaCadastrarMovimentacao(TelaFormularioBase):
         self.lista_escolas = list(self.map_escola.keys())
         self.cmb_escola["values"] = self.lista_escolas
 
+        # Insumos
+        resp_i = self.controle_insumos.listar()
+        tuplas_i = resp_i.retorno if resp_i.ok() else []
+
+        self.map_insumo = {e["nome"]: e["id"] for e in tuplas_i}
+        self.lista_insumos = list(self.map_insumo.keys())
 
     def obter_valores_campos_formulario(self):
         """Captura os valores dos campos"""
         data = self.ent_data.get_date()
         tipo = self.cmb_tipo_movimentacao.get()[0] if self.cmb_tipo_movimentacao.get() else ""
-        # responsavel_id = self.ent_responsavel.get()
         responsavel_id = None # <- alterar para pegar o id do usuário que está logado
 
         fornecedor_id = None
@@ -157,4 +233,80 @@ class TelaCadastrarMovimentacao(TelaFormularioBase):
             nome_escola = self.cmb_escola.get()
             escola_id = self.map_escola.get(nome_escola)
 
-        return (data, tipo, responsavel_id, fornecedor_id, escola_id)
+        return (data, tipo, responsavel_id, fornecedor_id, escola_id, self.itens)
+    
+    def onConfirmar(self):
+        campos = self.obter_valores_campos_formulario()
+
+        data, tipo, responsavel_id, fornecedor_id, escola_id, itens = campos
+
+        # Validação dos campos 
+        if not tipo:
+            Messagebox.show_error("Por favor, selecione o tipo de movimentação.")
+            self.cmb_tipo_movimentacao.focus()
+            return
+
+        if not data:
+            Messagebox.show_error("Por favor, informe a data da movimentação.", "Erro")
+            self.ent_data.focus()
+            return
+
+        if tipo == "E" and not fornecedor_id:
+            Messagebox.show_error("Por favor, selecione o fornecedor.", "Erro")
+            self.cmb_fornecedor.focus()
+            return
+
+        if tipo == "S" and not escola_id:
+            Messagebox.show_error("Por favor, selecione a escola.", "Erro")
+            self.cmb_escola.focus()
+            return
+
+        if not itens or len(itens) == 0:
+            Messagebox.show_error("Adicione ao menos um item à movimentação.", "Erro")
+            return
+
+        # --- continua
+        
+        itens = campos[-1]
+        campos = campos[:-1]
+        
+        if self.flag_editar:
+            campos = (self.id_para_edicao,) + campos
+            self.controle.atualizar(*campos)
+
+            # Atualizar os itens
+            for item in itens:
+                self.controle_itens.atualizar(item['id'], item['quantidade'], item['insumo_id'], self.id_para_edicao)
+        else:
+            resp = self.controle.inserir(*campos)
+            if resp.ok():
+                mov_id = resp.retorno
+                # Inserir os itens
+                for item in itens:
+                    self.controle_itens.inserir(item['quantidade'], item['insumo_id'], mov_id)
+        
+        # Reseta os valores dos campos do formulário
+        self.limpar_campos()
+        
+        # Volta para a tela de listagem
+        self.ir_para_tela_de_listagem()
+
+    def limpar_campos(self):
+        """Limpa todos os campos do formulário e zera a lista de itens"""
+        super().limpar_campos()
+
+        # Deseleciona comboboxes
+        self.cmb_tipo_movimentacao.set("")
+        self.cmb_fornecedor.set("")
+        self.cmb_escola.set("")
+
+        # Limpa a lista interna de itens
+        self.itens.clear()
+
+        # Limpa a TreeView de itens
+        for item in self.tvw_itens.get_children():
+            self.tvw_itens.delete(item)
+
+        # Esconde campos condicionais (fornecedor/escola)
+        self._ocultar_campos_iniciais()
+

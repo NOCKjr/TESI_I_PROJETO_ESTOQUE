@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import ttk
-import ttkbootstrap as ttk
 
 class App(tk.Tk):
     def __init__(self):
@@ -46,5 +45,14 @@ class App(tk.Tk):
         self.aplicar_escala()
 
 
+import app_context
+
 if __name__ == "__main__":
-    App().mainloop()
+    # App().mainloop()
+
+    args = (1, 4, 7, 3)
+    itens = args[-1]
+    args = args[:-1]
+    
+    print(args)
+    print(itens)

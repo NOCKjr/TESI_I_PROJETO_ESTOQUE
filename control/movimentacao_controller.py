@@ -1,4 +1,5 @@
 from control.controller_base import ControllerBase
+from control.item_controller import ItemController
 from model.model_base import ResponseQuery
 
 class MovimentacaoController(ControllerBase):
@@ -8,6 +9,9 @@ class MovimentacaoController(ControllerBase):
         Controller responsável por intermediar operações entre a aplicação e o banco
         de dados para a entidade 'movimentacao'.
         """
+        
+        # Controladores
+        self.controle_itens = ItemController()
         
         # Mapeamento dos campos da tupla de movimentação para seus índices.
         self.indices_campos = {
@@ -28,7 +32,7 @@ class MovimentacaoController(ControllerBase):
         self.funcao_atualizar_item = self.atualizar_movimentacao
         # self.funcao_to_dict = self.to_dict_movimentacao
 
-    def inserir_movimentacao(self, data: str, tipo: str, usuario_id: int, fornecedor_id: int = None, escola_id: int = None) -> ResponseQuery:
+    def inserir_movimentacao(self, data: str, tipo: str, usuario_id: int, fornecedor_id: int = None, escola_id: int = None, itens: list[dict] = []) -> ResponseQuery:
         """
         Insere uma movimentação no banco.
 
