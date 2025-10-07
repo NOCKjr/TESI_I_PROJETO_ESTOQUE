@@ -47,12 +47,15 @@ class App(tk.Tk):
 
 import app_context
 
+def test(**kwargs):
+    print(kwargs)
+
 if __name__ == "__main__":
     # App().mainloop()
-
-    args = (1, 4, 7, 3)
-    itens = args[-1]
-    args = args[:-1]
+    test(p=10)
+    # args = (1, 4, 7, 3)
+    # itens = args[-1]
+    # args = args[:-1]
     
-    print(args)
-    print(itens)
+    # print(args)
+    # print(itens)

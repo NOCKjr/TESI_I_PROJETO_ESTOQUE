@@ -55,6 +55,8 @@ class App(GerenciadorDeJanelasBase):
             constants.TELA_EDITAR_ESCOLA:           TelaCadastrarEscola(self.content_frame, self),      # Tela de editar uma escola
             constants.TELA_EDITAR_FORNECEDOR:       TelaCadastrarFornecedor(self.content_frame, self),  # Tela de editar um fornecedor
             constants.TELA_EDITAR_INSUMO:           TelaCadastrarInsumo(self.content_frame, self),      # Tela de editar um insumo
+            constants.TELA_EDITAR_MOVIMENTACAO:     TelaCadastrarMovimentacao(self.content_frame, self),      # Tela de editar um insumo
+            constants.TELA_DETALHAR_MOVIMENTACAO:   TelaCadastrarMovimentacao(self.content_frame, self),      # Tela de editar um insumo
         }
 
         # Escala inicial
@@ -128,6 +130,8 @@ class App(GerenciadorDeJanelasBase):
                 self.editar_fornecedor(item)
             case constants.ENTIDADE_INSUMO:
                 self.editar_insumo(item)
+            case constants.ENTIDADE_MOVIMENTACAO:
+                self.editar_movimentacao(item)
             case _:
                 pass
     
@@ -146,6 +150,15 @@ class App(GerenciadorDeJanelasBase):
 
         # Abre o formulário para edição
         self.alterar_para_a_tela(constants.TELA_EDITAR_USUARIO)
+    
+    def editar_movimentacao(self, movimentacao):
+        tela_editar = self.get_tela(constants.TELA_EDITAR_MOVIMENTACAO)
+
+        # Configura o formulário para editar a movimentacao informada
+        tela_editar.editar_movimentacao(movimentacao)
+
+        # Abre o formulário para edição
+        self.alterar_para_a_tela(constants.TELA_EDITAR_MOVIMENTACAO)
     
     def editar_escola(self, escola):
         tela_editar = self.get_tela(constants.TELA_EDITAR_ESCOLA)
@@ -187,6 +200,15 @@ class App(GerenciadorDeJanelasBase):
 
         # Abre o formulário para edição
         self.alterar_para_a_tela(constants.TELA_EDITAR_INSUMO)
+    
+    def detalhar_movimentacao(self, movimentacao_id):
+        tela_detalhar = self.get_tela(constants.TELA_DETALHAR_MOVIMENTACAO)
+
+        # Preenche os campos da tela
+        tela_detalhar.detalhar(movimentacao_id)
+
+        # Mostra a tela detalhada
+        self.alterar_para_a_tela(constants.TELA_DETALHAR_MOVIMENTACAO)
     
     def atualizar_status_da_barra_de_menu(self):
         """Desativa a barra de menu caso esteja na tela de login."""

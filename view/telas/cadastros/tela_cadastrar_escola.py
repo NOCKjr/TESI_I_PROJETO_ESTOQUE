@@ -57,11 +57,16 @@ class TelaCadastrarEscola(TelaFormularioBase):
         self.lbl_numero.grid(row=11, column=26, pady=(2,0), sticky='nsw')
         self.ent_numero = ttk.Entry(self.container_formulario)
         self.ent_numero.grid(row=12, column=26, columnspan=4, sticky='nsew')
+        # Cidade
+        self.lbl_cidade = ttk.Label(self.container_formulario, text="Cidade:", anchor='w')
+        self.lbl_cidade.grid(row=15, column=0, pady=(2,0), sticky='nsw')
+        self.ent_cidade = ttk.Entry(self.container_formulario)
+        self.ent_cidade.grid(row=16, column=0, columnspan=14, sticky='nsew')
         # Estado
         self.lbl_estado = ttk.Label(self.container_formulario, text="Estado:", anchor='w')
-        self.lbl_estado.grid(row=15, column=0, pady=(2,0), sticky='nsw')
+        self.lbl_estado.grid(row=15, column=14, pady=(2,0), sticky='nsw')
         self.ent_estado = ttk.Entry(self.container_formulario)
-        self.ent_estado.grid(row=16, column=0, columnspan=20, sticky='nsew')
+        self.ent_estado.grid(row=16, column=14, columnspan=6, sticky='nsew')
         # CEP
         self.lbl_cep = ttk.Label(self.container_formulario, text="CEP:", anchor='w')
         self.lbl_cep.grid(row=15, column=20, pady=(2,0), sticky='nsw')
@@ -120,6 +125,8 @@ class TelaCadastrarEscola(TelaFormularioBase):
         self.ent_numero.insert(0, endereco['numero'])
         self.ent_bairro.delete(0, 'end')
         self.ent_bairro.insert(0, endereco['bairro'])
+        self.ent_cidade.delete(0, 'end')
+        self.ent_cidade.insert(0, endereco['cidade'])
         self.ent_estado.delete(0, 'end')
         self.ent_estado.insert(0, endereco['estado'])
         self.ent_cep.delete(0, 'end')
@@ -135,11 +142,11 @@ class TelaCadastrarEscola(TelaFormularioBase):
         logradouro = self.ent_logradouro.get()
         numero = self.ent_numero.get()
         bairro = self.ent_bairro.get()
+        cidade = self.ent_cidade.get()
         estado = self.ent_estado.get()
         cep = self.ent_cep.get()
 
         # TO-DO: adicionar ao formulário os seguintes campos
-        cidade = ''
         complemento = ''
         ponto_referencia = ''
 

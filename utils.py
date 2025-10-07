@@ -1,7 +1,5 @@
 import ttkbootstrap as ttk
 import tkinter as tk
-
-from tkinter import ttk
 from datetime import datetime
 
 def tratar_data_sql(data_str: str) -> str:
@@ -34,6 +32,7 @@ def tratar_data_sql(data_str: str) -> str:
             continue
     return None
 
+
 class DateEntry(ttk.Entry):
     def __init__(self, master=None, placeholder="DD/MM/YYYY", **kwargs):
         super().__init__(master, **kwargs)
@@ -51,6 +50,10 @@ class DateEntry(ttk.Entry):
         self.bind("<FocusOut>", self._on_focus_out)
         self.bind("<KeyRelease>", self._format_date)
 
+    # -------------------------------
+    # Métodos públicos
+    # -------------------------------
+
     def set_today(self):
         """Define a data atual no campo (apenas DD/MM/YYYY)."""
         self.data = datetime.now().date()
@@ -60,6 +63,75 @@ class DateEntry(ttk.Entry):
         self.insert(0, hoje)
         self.config(foreground="black")
         self._placeholder_on = False
+
+    def set_data(self, data_val):
+        """Define a data manualmente (aceita str ou date)."""
+        if isinstance(data_val, str):
+            try:
+                # Tenta vários formatos comuns
+                self.data = datetime.strptime(data_val.strip(), "%d/%m/%Y").date()
+            except ValueError:
+                try:
+                    self.data = datetime.strptime(data_val.strip(), "%Y-%m-%d").date()
+                except ValueError:
+                    return  # ignora se inválido
+        elif hasattr(data_val, "year"):  # é um objeto date/datetime
+            self.data = data_val if hasattr(data_val, "day") else data_val.date()
+        else:
+            return
+
+        # Atualiza o texto do campo
+        self.delete(0, tk.END)
+        self.insert(0, self.data.strftime("%d/%m/%Y"))
+
+    def set_hora(self, hora_val):
+        """Define a hora manualmente (aceita str ou time)."""
+        if isinstance(hora_val, str):
+            try:
+                self.hora = datetime.strptime(hora_val.strip(), "%H:%M:%S").time()
+            except ValueError:
+                try:
+                    self.hora = datetime.strptime(hora_val.strip(), "%H:%M").time()
+                except ValueError:
+                    return  # ignora se inválido
+        elif hasattr(hora_val, "hour"):  # é um objeto time/datetime
+            self.hora = hora_val if hasattr(hora_val, "minute") else hora_val.time()
+        else:
+            return
+
+    def update_datetime(self):
+        """Atualiza os atributos self.data e self.hora com base no Entry."""
+        s = self.get().strip()
+        if not s:
+            self.set_today()
+            return
+
+        try:
+            dt = datetime.strptime(s, "%d/%m/%Y")
+            self.data = dt.date()
+            # Mantém a hora atual
+            self.hora = datetime.now().time().replace(microsecond=0)
+        except ValueError:
+            pass  # mantém valores antigos se inválido
+
+    def get_date(self) -> str:
+        """Retorna apenas a data no formato DD/MM/YYYY."""
+        self.update_datetime()
+        return self.data.strftime("%d/%m/%Y")
+
+    def get_time(self) -> str:
+        """Retorna apenas a hora no formato HH:MM:SS."""
+        self.update_datetime()
+        return self.hora.strftime("%H:%M:%S")
+
+    def get_datetime(self) -> str:
+        """Retorna data e hora juntos: DD/MM/YYYY HH:MM:SS."""
+        self.update_datetime()
+        return f"{self.get_date()} {self.get_time()}"
+
+    # -------------------------------
+    # Eventos internos
+    # -------------------------------
 
     def _on_focus_in(self, event=None):
         if self._placeholder_on:
@@ -86,36 +158,6 @@ class DateEntry(ttk.Entry):
         self.delete(0, tk.END)
         self.insert(0, new_s)
 
-    def update_datetime(self):
-        """Atualiza os atributos self.data e self.hora com base no Entry."""
-        s = self.get().strip()
-        if not s:
-            self.set_today()
-            return
-
-        try:
-            dt = datetime.strptime(s, "%d/%m/%Y")
-            self.data = dt.date()
-            # Mantém a hora atual
-            self.hora = datetime.now().time().replace(microsecond=0)
-        except ValueError:
-            # Se não for uma data válida, mantém valores antigos
-            pass
-
-    def get_date(self) -> str:
-        """Retorna apenas a data no formato DD/MM/YYYY"""
-        self.update_datetime()
-        return self.data.strftime("%d/%m/%Y")
-
-    def get_time(self) -> str:
-        """Retorna apenas a hora no formato HH:MM:SS"""
-        self.update_datetime()
-        return self.hora.strftime("%H:%M:%S")
-
-    def get_datetime(self) -> str:
-        """Retorna data e hora juntos: DD/MM/YYYY HH:MM:SS"""
-        self.update_datetime()
-        return f"{self.get_date()} {self.get_time()}"
 
 def print_response_query(resp):
     print(f'resposta: ok?{resp.ok()} | erros: {resp.erros} | retorno: {resp.retorno}')

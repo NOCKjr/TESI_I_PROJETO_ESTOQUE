@@ -112,8 +112,10 @@ class TelaCadastrarMovimentacao(TelaFormularioBase):
         frm_botoes = ttk.Frame(self.container_formulario)
         frm_botoes.grid(row=16, column=0, columnspan=24, pady=5, sticky='w')
 
-        ttk.Button(frm_botoes, text="Adicionar item", command=self._abrir_janela_item).pack(side='left', padx=5)
-        ttk.Button(frm_botoes, text="Remover item", command=self._remover_item).pack(side='left', padx=5)
+        self.btn_adicionar_item = ttk.Button(frm_botoes, text="Adicionar item", command=self._abrir_janela_item)
+        self.btn_adicionar_item.pack(side='left', padx=5)
+        self.btn_remover_item = ttk.Button(frm_botoes, text="Remover item", command=self._remover_item)
+        self.btn_remover_item.pack(side='left', padx=5)
 
     def _configurar_eventos(self):
         """Associa eventos aos campos"""
@@ -284,7 +286,8 @@ class TelaCadastrarMovimentacao(TelaFormularioBase):
 
             # Atualizar os itens
             for item in itens:
-                self.controle_itens.atualizar(item['id'], item['quantidade'], item['insumo_id'], self.id_para_edicao)
+                resp = self.controle_itens.atualizar(item['id'], item['quantidade'], item['insumo_id'], self.id_para_edicao)
+            
         else:
             resp = self.controle.inserir(*campos)
             if resp.ok():
@@ -317,4 +320,62 @@ class TelaCadastrarMovimentacao(TelaFormularioBase):
 
         # Esconde campos condicionais (fornecedor/escola)
         self._ocultar_campos_iniciais()
+    
+    def editar_movimentacao(self, movimentacao):
+        """
+        Preenche o formulário com os dados da movimentação selecionada
+        para edição.
+        """
+        # Limpa campos antigos
+        self.limpar_campos()
+
+        # --- Tipo ---
+        tipo = 'Entrada' if movimentacao['tipo'].upper() == 'E' else 'Saída'
+        self.cmb_tipo_movimentacao.set(tipo)
+        self._ao_selecionar_tipo()  # Mostra os campos corretos
+
+        # --- Data ---
+        if movimentacao.get('data'):
+            data, hora = movimentacao['data'].split()
+            self.ent_data.set_data(data)
+            self.ent_data.set_hora(hora)
+
+        # --- Usuário responsável (apenas referência, não editável) ---
+        # Poderia ser exibido num campo desativado se desejar
+
+        # --- Fornecedor / Escola ---
+        if movimentacao['tipo'].upper() == 'E' and movimentacao.get('fornecedor_id'):
+            # Localiza o nome pelo id
+            for nome, fid in self.map_fornecedor.items():
+                if fid == movimentacao['fornecedor_id']:
+                    self.cmb_fornecedor.set(nome)
+                    break
+
+        elif movimentacao['tipo'].upper() == 'S' and movimentacao.get('escola_id'):
+            for nome, eid in self.map_escola.items():
+                if eid == movimentacao['escola_id']:
+                    self.cmb_escola.set(nome)
+                    break
+
+        # --- Itens associados ---
+        self.itens.clear()
+        for item in self.controle_itens.listar(movimentacao['id']).retorno:
+            insumo_id = item['insumo_id']
+            quantidade = item['quantidade']
+
+            # Busca o nome do insumo
+            insumo_nome = next((nome for nome, iid in self.map_insumo.items() if iid == insumo_id), None)
+            if not insumo_nome:
+                continue
+
+            # Guarda localmente
+            self.itens.append(item)
+
+            # Mostra na Treeview
+            self.tvw_itens.insert("", "end", values=(insumo_nome, quantidade))
+
+        # Marca modo edição
+        self.id_para_edicao = movimentacao['id']
+        self.flag_editar = True
+
 
