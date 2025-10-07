@@ -10,21 +10,14 @@ Situação: FEITO (dá pra melhorar [a dimensão dos widgets não está mudando]
 4.
 Tarefa: esconder o menu de ações (Adicionar, Editar e Excluir) 
 para usuários do tipo diferente de administrador nas tabelas de listagem
-Situação: a fazer
+Situação: FEITO 
 
 5.
 Tarefa: adicionar uma dica ao passar o mouse por cima dos 
 botões informando a ação que será realizada ao clicar no botão
-Situação: a fazer
+Situação: TÁ SEM ZAP
 
 6.
 Tarefa: adicionar o módulo com dashboards com gráficos e 
 relatórios relevantes
-Situação: a fazer
-
-7.
-Tarefa: exibir um tooltip nas telas de listagem ao passar o mouse
-por cima de alguma celula cujo o comprimento é maior que a largura da coluna
-Situação: a fazer
-
-
+Situação: INFELIZMENTE SEM ZAP TAMBÉM
